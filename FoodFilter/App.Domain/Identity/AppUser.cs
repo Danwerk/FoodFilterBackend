@@ -14,9 +14,13 @@ public class AppUser :  IdentityUser<Guid>, IDomainEntityId
     [MaxLength(128)]
     public string LastName { get; set; } = default!;
 
+    public int EarnedPoints { get; set; }
+    
+    public int TrustPoints { get; set; }
     public ICollection<AppRefreshToken>? AppRefreshTokens { get; set; }
 
-    // public ICollection<Restaurant>? Restaurants { get; set; }
+    public ICollection<Restaurant>? Restaurants { get; set; }
+    public ICollection<SubAdmin>? SubAdmins { get; set; }
 
     
 }

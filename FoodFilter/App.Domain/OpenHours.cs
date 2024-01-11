@@ -3,18 +3,22 @@ using Domain.Base;
 
 namespace App.Domain;
 
-public class Unit : DomainEntityId
+public class OpenHours : DomainEntityId
 {
-    [MaxLength(128)]
-    public string UnitName { get; set; } = default!;
+    public Guid RestaurantId { get; set; }
+    public Restaurant? Restaurant { get; set; }
+
+    [MaxLength(32)]
+    public string Weekday { get; set; } = default!;
+    
+    public DateTime StartTime { get; set; }
+    
+    public DateTime EndTime { get; set; }
     
     [DataType(DataType.DateTime)] 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-    public ICollection<FoodNutrient>? FoodNutrients { get; set; }
-    public ICollection<FoodIngredient>? FoodIngredients { get; set; }
 
 }
