@@ -8,6 +8,17 @@ namespace DAL.EF;
 
 public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 {
+    public DbSet<Allergen> Allergens { get; set; } = default!;
+    public DbSet<Category> Categories { get; set; } = default!;
+    public DbSet<Food> Foods { get; set; } = default!;
+    public DbSet<FoodAllergen> FoodAllergens { get; set; } = default!;
+    public DbSet<FoodIngredient> FoodIngredients { get; set; } = default!;
+    public DbSet<FoodNutrient> FoodNutrients { get; set; } = default!;
+    public DbSet<Ingredient> Ingredients { get; set; } = default!;
+    public DbSet<Nutrient> Nutrients { get; set; } = default!;
+    public DbSet<OpenHours> OpenHours { get; set; } = default!;
+    public DbSet<Restaurant> Restaurants { get; set; } = default!;
+    public DbSet<SubAdmin> SubAdmins { get; set; } = default!;
     public DbSet<Unit> Units { get; set; } = default!;
     public DbSet<AppRefreshToken> AppRefreshTokens { get; set; } = default!;
     
