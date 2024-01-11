@@ -1,7 +1,4 @@
-Name: Danyil Kurbatov,
-Uni-id: dakurb,
-Code: 213253IADB
-
+Author: Danyil Kurbatov,
 
 # INSTALL OR UPDATE DOTNET TOOL
 ```
@@ -33,15 +30,6 @@ Microsoft.EntityFrameworkCore.SqlServer
 
 cd WebApp
 ```
-dotnet aspnet-codegenerator controller -name CartsController       -actions -m  Cart    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
-dotnet aspnet-codegenerator controller -name CartProductsController       -actions -m  CartProduct    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
-dotnet aspnet-codegenerator controller -name DiscountsController       -actions -m  Discount    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
-dotnet aspnet-codegenerator controller -name OrdersController       -actions -m  Order    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
-dotnet aspnet-codegenerator controller -name OrderProductsController       -actions -m  OrderProduct    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
-dotnet aspnet-codegenerator controller -name PaymentsController       -actions -m  Payment    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
-dotnet aspnet-codegenerator controller -name PricesController       -actions -m  Price    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
-dotnet aspnet-codegenerator controller -name ProductsController       -actions -m  Product    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
-dotnet aspnet-codegenerator controller -name ProductTypesController       -actions -m  ProductType   -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
 dotnet aspnet-codegenerator controller -name UnitsController       -actions -m  Unit    -dc ApplicationDbContext -outDir Areas/Admin/Controllers --useDefaultLayout --useAsyncActions --referenceScriptLibraries -f
 ```
 
@@ -50,17 +38,7 @@ dotnet aspnet-codegenerator controller -name UnitsController       -actions -m  
 
 cd WebApp
 ```
-dotnet aspnet-codegenerator controller -name CartsController -actions -m App.Domain.Cart -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
-dotnet aspnet-codegenerator controller -name CartProductsController -actions -m App.Domain.CartProduct -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
-dotnet aspnet-codegenerator controller -name DiscountsController -actions -m App.Domain.Discount -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
-dotnet aspnet-codegenerator controller -name OrdersController -actions -m App.Domain.Order -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
-dotnet aspnet-codegenerator controller -name OrderProductsController -actions -m App.Domain.OrderProduct -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
-dotnet aspnet-codegenerator controller -name PaymentsController -actions -m App.Domain.Payment -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
-dotnet aspnet-codegenerator controller -name PricesController -actions -m App.Domain.Price -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
-dotnet aspnet-codegenerator controller -name ProductsController -actions -m App.Domain.Product -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
-dotnet aspnet-codegenerator controller -name ProductTypesController -actions -m App.Domain.ProductType -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
 dotnet aspnet-codegenerator controller -name UnitsController -actions -m App.Domain.Unit -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
- 
 ```
 
 
