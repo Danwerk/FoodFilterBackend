@@ -1,27 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.Contracts.DAL;
+using App.Domain;
+using DAL.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.Domain;
-using DAL.EF;
 
-namespace WebApp.Areas_Admin_Controllers
+namespace WebApp.Areas.Admin.Controllers
 {
     public class AllergensController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public AllergensController(ApplicationDbContext context)
+        private readonly IAppUOW _uow;
+        public AllergensController(ApplicationDbContext context, IAppUOW uow)
         {
+            _uow = uow;
             _context = context;
         }
 
         // GET: Allergens
         public async Task<IActionResult> Index()
         {
+            
             var applicationDbContext = _context.Allergens.Include(a => a.Ingredient);
             return View(await applicationDbContext.ToListAsync());
         }
