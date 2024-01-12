@@ -1,6 +1,5 @@
 using App.Contracts.DAL;
 using App.Domain;
-using DAL.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,33 +8,29 @@ namespace WebApp.Areas.Admin.Controllers
 {
     public class AllergensController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IAppUOW _uow;
-        public AllergensController(ApplicationDbContext context, IAppUOW uow)
+
+        public AllergensController(IAppUOW uow)
         {
             _uow = uow;
-            _context = context;
         }
 
         // GET: Allergens
         public async Task<IActionResult> Index()
         {
-            
-            var applicationDbContext = _context.Allergens.Include(a => a.Ingredient);
-            return View(await applicationDbContext.ToListAsync());
+            var vm = await _uow.AllergenRepository.AllAsync();
+            return View(vm);
         }
 
         // GET: Allergens/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Allergens == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var allergen = await _context.Allergens
-                .Include(a => a.Ingredient)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var allergen = await _uow.AllergenRepository.FindAsync(id.Value);
             if (allergen == null)
             {
                 return NotFound();
@@ -47,13 +42,11 @@ namespace WebApp.Areas.Admin.Controllers
         // GET: Allergens/Create
         public IActionResult Create()
         {
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Description");
+            ViewData["IngredientId"] = new SelectList(_uow.IngredientRepository.AllAsync().Result, "Id", "Description");
             return View();
         }
 
         // POST: Allergens/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IngredientId,CreatedAt,UpdatedAt,Id")] Allergen allergen)
@@ -61,34 +54,36 @@ namespace WebApp.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 allergen.Id = Guid.NewGuid();
-                _context.Add(allergen);
-                await _context.SaveChangesAsync();
+                _uow.AllergenRepository.Add(allergen);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Description", allergen.IngredientId);
+
+            ViewData["IngredientId"] = new SelectList(await _uow.IngredientRepository.AllAsync(), "Id", "Description",
+                allergen.IngredientId);
             return View(allergen);
         }
 
         // GET: Allergens/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Allergens == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var allergen = await _context.Allergens.FindAsync(id);
+            var allergen = await _uow.AllergenRepository.FindAsync(id.Value);
             if (allergen == null)
             {
                 return NotFound();
             }
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Description", allergen.IngredientId);
+
+            ViewData["IngredientId"] = new SelectList(_uow.IngredientRepository.AllAsync().Result, "Id", "Description",
+                allergen.IngredientId);
             return View(allergen);
         }
 
         // POST: Allergens/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("IngredientId,CreatedAt,UpdatedAt,Id")] Allergen allergen)
@@ -102,8 +97,8 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(allergen);
-                    await _context.SaveChangesAsync();
+                    _uow.AllergenRepository.Update(allergen);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,23 +111,24 @@ namespace WebApp.Areas.Admin.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IngredientId"] = new SelectList(_context.Ingredients, "Id", "Description", allergen.IngredientId);
+
+            ViewData["IngredientId"] = new SelectList(_uow.IngredientRepository.AllAsync().Result, "Id", "Description",
+                allergen.IngredientId);
             return View(allergen);
         }
 
         // GET: Allergens/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Allergens == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var allergen = await _context.Allergens
-                .Include(a => a.Ingredient)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var allergen = await _uow.AllergenRepository.FindAsync(id.Value);
             if (allergen == null)
             {
                 return NotFound();
@@ -146,23 +142,19 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.Allergens == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Allergens'  is null.");
-            }
-            var allergen = await _context.Allergens.FindAsync(id);
+            var allergen = await _uow.AllergenRepository.FindAsync(id);
             if (allergen != null)
             {
-                _context.Allergens.Remove(allergen);
+                _uow.AllergenRepository.Remove(allergen);
             }
-            
-            await _context.SaveChangesAsync();
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AllergenExists(Guid id)
         {
-          return (_context.Allergens?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_uow.AllergenRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

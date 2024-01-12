@@ -1,42 +1,36 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using App.Contracts.DAL;
 using App.Domain;
 using DAL.EF;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace WebApp.Areas_Admin_Controllers
+namespace WebApp.Areas.Admin.Controllers
 {
     public class IngredientsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public IngredientsController(ApplicationDbContext context)
+        public IngredientsController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Ingredients
         public async Task<IActionResult> Index()
         {
-              return _context.Ingredients != null ? 
-                          View(await _context.Ingredients.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Ingredients'  is null.");
+            var vm = await _uow.IngredientRepository.AllAsync();
+            return View(vm);
         }
 
         // GET: Ingredients/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Ingredients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var ingredient = await _uow.IngredientRepository.FindAsync(id.Value);
             if (ingredient == null)
             {
                 return NotFound();
@@ -52,17 +46,15 @@ namespace WebApp.Areas_Admin_Controllers
         }
 
         // POST: Ingredients/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,IsConfirmed,CreatedAt,UpdatedAt,Id")] Ingredient ingredient)
+        public async Task<IActionResult> Create(Ingredient ingredient)
         {
             if (ModelState.IsValid)
             {
                 ingredient.Id = Guid.NewGuid();
-                _context.Add(ingredient);
-                await _context.SaveChangesAsync();
+                _uow.IngredientRepository.Add(ingredient);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(ingredient);
@@ -71,12 +63,12 @@ namespace WebApp.Areas_Admin_Controllers
         // GET: Ingredients/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Ingredients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredients.FindAsync(id);
+            var ingredient = await _uow.IngredientRepository.FindAsync(id.Value);
             if (ingredient == null)
             {
                 return NotFound();
@@ -85,11 +77,9 @@ namespace WebApp.Areas_Admin_Controllers
         }
 
         // POST: Ingredients/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Description,IsConfirmed,CreatedAt,UpdatedAt,Id")] Ingredient ingredient)
+        public async Task<IActionResult> Edit(Guid id, Ingredient ingredient)
         {
             if (id != ingredient.Id)
             {
@@ -100,8 +90,8 @@ namespace WebApp.Areas_Admin_Controllers
             {
                 try
                 {
-                    _context.Update(ingredient);
-                    await _context.SaveChangesAsync();
+                    _uow.IngredientRepository.Update(ingredient);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -122,13 +112,12 @@ namespace WebApp.Areas_Admin_Controllers
         // GET: Ingredients/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Ingredients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var ingredient = await _uow.IngredientRepository.FindAsync(id.Value);
             if (ingredient == null)
             {
                 return NotFound();
@@ -142,23 +131,19 @@ namespace WebApp.Areas_Admin_Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.Ingredients == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Ingredients'  is null.");
-            }
-            var ingredient = await _context.Ingredients.FindAsync(id);
+            var ingredient = await _uow.IngredientRepository.FindAsync(id);
             if (ingredient != null)
             {
-                _context.Ingredients.Remove(ingredient);
+                _uow.IngredientRepository.Remove(ingredient);
             }
             
-            await _context.SaveChangesAsync();
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool IngredientExists(Guid id)
         {
-          return (_context.Ingredients?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_uow.IngredientRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

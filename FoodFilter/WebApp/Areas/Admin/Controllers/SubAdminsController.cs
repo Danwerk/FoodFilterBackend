@@ -1,42 +1,42 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.Contracts.DAL;
+using App.Domain;
+using App.Domain.Identity;
+using DAL.EF;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.Domain;
-using DAL.EF;
 
-namespace WebApp.Areas_Admin_Controllers
+namespace WebApp.Areas.Admin.Controllers
 {
     public class SubAdminsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAppUOW _uow;
+        private readonly UserManager<AppUser> _userManager;
 
-        public SubAdminsController(ApplicationDbContext context)
+
+        public SubAdminsController(UserManager<AppUser> userManager, IAppUOW uow)
         {
-            _context = context;
+            _userManager = userManager;
+            _uow = uow;
         }
 
         // GET: SubAdmins
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.SubAdmins.Include(s => s.AppUser);
-            return View(await applicationDbContext.ToListAsync());
+            var vm = await _uow.SubAdminRepository.AllAsync();
+            return View(vm);
         }
 
         // GET: SubAdmins/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.SubAdmins == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var subAdmin = await _context.SubAdmins
-                .Include(s => s.AppUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var subAdmin = await _uow.SubAdminRepository.FindAsync(id.Value);
             if (subAdmin == null)
             {
                 return NotFound();
@@ -48,51 +48,49 @@ namespace WebApp.Areas_Admin_Controllers
         // GET: SubAdmins/Create
         public IActionResult Create()
         {
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "FirstName");
+            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName");
             return View();
         }
 
         // POST: SubAdmins/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AppUserId,Region,Languages,Productivity,Id")] SubAdmin subAdmin)
+        public async Task<IActionResult> Create(SubAdmin subAdmin)
         {
             if (ModelState.IsValid)
             {
                 subAdmin.Id = Guid.NewGuid();
-                _context.Add(subAdmin);
-                await _context.SaveChangesAsync();
+                _uow.SubAdminRepository.Add(subAdmin);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "FirstName", subAdmin.AppUserId);
+
+            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName", subAdmin.AppUserId);
             return View(subAdmin);
         }
 
         // GET: SubAdmins/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.SubAdmins == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var subAdmin = await _context.SubAdmins.FindAsync(id);
+            var subAdmin = await _uow.SubAdminRepository.FindAsync(id.Value);
             if (subAdmin == null)
             {
                 return NotFound();
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "FirstName", subAdmin.AppUserId);
+
+            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName", subAdmin.AppUserId);
             return View(subAdmin);
         }
 
         // POST: SubAdmins/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("AppUserId,Region,Languages,Productivity,Id")] SubAdmin subAdmin)
+        public async Task<IActionResult> Edit(Guid id, SubAdmin subAdmin)
         {
             if (id != subAdmin.Id)
             {
@@ -103,8 +101,8 @@ namespace WebApp.Areas_Admin_Controllers
             {
                 try
                 {
-                    _context.Update(subAdmin);
-                    await _context.SaveChangesAsync();
+                    _uow.SubAdminRepository.Update(subAdmin);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -117,23 +115,23 @@ namespace WebApp.Areas_Admin_Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_context.Users, "Id", "FirstName", subAdmin.AppUserId);
+
+            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName", subAdmin.AppUserId);
             return View(subAdmin);
         }
 
         // GET: SubAdmins/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.SubAdmins == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var subAdmin = await _context.SubAdmins
-                .Include(s => s.AppUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var subAdmin = await _uow.SubAdminRepository.FindAsync(id.Value);
             if (subAdmin == null)
             {
                 return NotFound();
@@ -147,23 +145,19 @@ namespace WebApp.Areas_Admin_Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.SubAdmins == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.SubAdmins'  is null.");
-            }
-            var subAdmin = await _context.SubAdmins.FindAsync(id);
+            var subAdmin = await _uow.SubAdminRepository.FindAsync(id);
             if (subAdmin != null)
             {
-                _context.SubAdmins.Remove(subAdmin);
+                _uow.SubAdminRepository.Remove(subAdmin);
             }
-            
-            await _context.SaveChangesAsync();
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SubAdminExists(Guid id)
         {
-          return (_context.SubAdmins?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_uow.SubAdminRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

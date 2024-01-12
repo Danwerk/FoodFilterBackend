@@ -1,43 +1,36 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.Contracts.DAL;
+using App.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.Domain;
-using DAL.EF;
 
-namespace WebApp.Areas_Admin_Controllers
+namespace WebApp.Areas.Admin.Controllers
 {
     public class FoodsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public FoodsController(ApplicationDbContext context)
+        public FoodsController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Foods
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Foods.Include(f => f.Category).Include(f => f.Restaurant);
-            return View(await applicationDbContext.ToListAsync());
+            var vm = await _uow.FoodRepository.AllAsync();
+            return View(vm);
         }
 
         // GET: Foods/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Foods == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var food = await _context.Foods
-                .Include(f => f.Category)
-                .Include(f => f.Restaurant)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var food = await _uow.FoodRepository.FindAsync(id.Value);
             if (food == null)
             {
                 return NotFound();
@@ -49,14 +42,12 @@ namespace WebApp.Areas_Admin_Controllers
         // GET: Foods/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address");
+            ViewData["CategoryId"] = new SelectList(_uow.CategoryRepository.AllAsync().Result, "Id", "Name");
+            ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Address");
             return View();
         }
 
         // POST: Foods/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,RestaurantId,Name,Description,Price,ImageUrl,ImageData,CreatedAt,UpdatedAt,Id")] Food food)
@@ -64,39 +55,37 @@ namespace WebApp.Areas_Admin_Controllers
             if (ModelState.IsValid)
             {
                 food.Id = Guid.NewGuid();
-                _context.Add(food);
-                await _context.SaveChangesAsync();
+                _uow.FoodRepository.Add(food);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", food.CategoryId);
-            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", food.RestaurantId);
+            ViewData["CategoryId"] = new SelectList(_uow.CategoryRepository.AllAsync().Result, "Id", "Name", food.CategoryId);
+            ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Address", food.RestaurantId);
             return View(food);
         }
 
         // GET: Foods/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Foods == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var food = await _context.Foods.FindAsync(id);
+            var food = await _uow.FoodRepository.FindAsync(id.Value);
             if (food == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", food.CategoryId);
-            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", food.RestaurantId);
+            ViewData["CategoryId"] = new SelectList(_uow.CategoryRepository.AllAsync().Result, "Id", "Name", food.CategoryId);
+            ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Address", food.RestaurantId);
             return View(food);
         }
 
         // POST: Foods/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("CategoryId,RestaurantId,Name,Description,Price,ImageUrl,ImageData,CreatedAt,UpdatedAt,Id")] Food food)
+        public async Task<IActionResult> Edit(Guid id, Food food)
         {
             if (id != food.Id)
             {
@@ -107,8 +96,8 @@ namespace WebApp.Areas_Admin_Controllers
             {
                 try
                 {
-                    _context.Update(food);
-                    await _context.SaveChangesAsync();
+                    _uow.FoodRepository.Update(food);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,23 +112,20 @@ namespace WebApp.Areas_Admin_Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", food.CategoryId);
-            ViewData["RestaurantId"] = new SelectList(_context.Restaurants, "Id", "Address", food.RestaurantId);
+            ViewData["CategoryId"] = new SelectList(_uow.CategoryRepository.AllAsync().Result, "Id", "Name", food.CategoryId);
+            ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Address", food.RestaurantId);
             return View(food);
         }
 
         // GET: Foods/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Foods == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var food = await _context.Foods
-                .Include(f => f.Category)
-                .Include(f => f.Restaurant)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var food = await _uow.FoodRepository.FindAsync(id.Value);
             if (food == null)
             {
                 return NotFound();
@@ -153,23 +139,19 @@ namespace WebApp.Areas_Admin_Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.Foods == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Foods'  is null.");
-            }
-            var food = await _context.Foods.FindAsync(id);
+            var food = await _uow.FoodRepository.FindAsync(id);
             if (food != null)
             {
-                _context.Foods.Remove(food);
+                _uow.FoodRepository.Remove(food);
             }
             
-            await _context.SaveChangesAsync();
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool FoodExists(Guid id)
         {
-          return (_context.Foods?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_uow.FoodRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -1,44 +1,38 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.Contracts.DAL;
+using App.Domain;
+using DAL.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.Domain;
-using DAL.EF;
 
-namespace WebApp.Areas_Admin_Controllers
+namespace WebApp.Areas.Admin.Controllers
 {
     public class FoodNutrientsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public FoodNutrientsController(ApplicationDbContext context)
+        public FoodNutrientsController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: FoodNutrients
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.FoodNutrients.Include(f => f.Food).Include(f => f.Nutrient).Include(f => f.Unit);
-            return View(await applicationDbContext.ToListAsync());
+            var vm = await _uow.FoodNutrientRepository.AllAsync();
+            return View(vm);
         }
 
         // GET: FoodNutrients/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.FoodNutrients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var foodNutrient = await _context.FoodNutrients
-                .Include(f => f.Food)
-                .Include(f => f.Nutrient)
-                .Include(f => f.Unit)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var foodNutrient = await _uow.FoodNutrientRepository.FindAsync(id.Value);
+               
             if (foodNutrient == null)
             {
                 return NotFound();
@@ -50,57 +44,53 @@ namespace WebApp.Areas_Admin_Controllers
         // GET: FoodNutrients/Create
         public IActionResult Create()
         {
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Description");
-            ViewData["NutrientId"] = new SelectList(_context.Nutrients, "Id", "Name");
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "UnitName");
+            ViewData["FoodId"] = new SelectList(_uow.FoodRepository.AllAsync().Result, "Id", "Description");
+            ViewData["NutrientId"] = new SelectList(_uow.NutrientRepository.AllAsync().Result, "Id", "Name");
+            ViewData["UnitId"] = new SelectList(_uow.UnitRepository.AllAsync().Result, "Id", "UnitName");
             return View();
         }
 
         // POST: FoodNutrients/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UnitId,FoodId,NutrientId,Amount,CreatedAt,UpdatedAt,Id")] FoodNutrient foodNutrient)
+        public async Task<IActionResult> Create(FoodNutrient foodNutrient)
         {
             if (ModelState.IsValid)
             {
                 foodNutrient.Id = Guid.NewGuid();
-                _context.Add(foodNutrient);
-                await _context.SaveChangesAsync();
+                _uow.FoodNutrientRepository.Add(foodNutrient);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Description", foodNutrient.FoodId);
-            ViewData["NutrientId"] = new SelectList(_context.Nutrients, "Id", "Name", foodNutrient.NutrientId);
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "UnitName", foodNutrient.UnitId);
+            ViewData["FoodId"] = new SelectList(_uow.FoodRepository.AllAsync().Result, "Id", "Description", foodNutrient.FoodId);
+            ViewData["NutrientId"] = new SelectList(_uow.NutrientRepository.AllAsync().Result, "Id", "Name", foodNutrient.NutrientId);
+            ViewData["UnitId"] = new SelectList(_uow.UnitRepository.AllAsync().Result, "Id", "UnitName", foodNutrient.UnitId);
             return View(foodNutrient);
         }
 
         // GET: FoodNutrients/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.FoodNutrients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var foodNutrient = await _context.FoodNutrients.FindAsync(id);
+            var foodNutrient = await _uow.FoodNutrientRepository.FindAsync(id.Value);
             if (foodNutrient == null)
             {
                 return NotFound();
             }
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Description", foodNutrient.FoodId);
-            ViewData["NutrientId"] = new SelectList(_context.Nutrients, "Id", "Name", foodNutrient.NutrientId);
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "UnitName", foodNutrient.UnitId);
+            ViewData["FoodId"] = new SelectList(_uow.FoodRepository.AllAsync().Result, "Id", "Description", foodNutrient.FoodId);
+            ViewData["NutrientId"] = new SelectList(_uow.NutrientRepository.AllAsync().Result, "Id", "Name", foodNutrient.NutrientId);
+            ViewData["UnitId"] = new SelectList(_uow.UnitRepository.AllAsync().Result, "Id", "UnitName", foodNutrient.UnitId);
             return View(foodNutrient);
         }
 
         // POST: FoodNutrients/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("UnitId,FoodId,NutrientId,Amount,CreatedAt,UpdatedAt,Id")] FoodNutrient foodNutrient)
+        public async Task<IActionResult> Edit(Guid id, FoodNutrient foodNutrient)
         {
             if (id != foodNutrient.Id)
             {
@@ -111,8 +101,8 @@ namespace WebApp.Areas_Admin_Controllers
             {
                 try
                 {
-                    _context.Update(foodNutrient);
-                    await _context.SaveChangesAsync();
+                    _uow.FoodNutrientRepository.Update(foodNutrient);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -127,25 +117,21 @@ namespace WebApp.Areas_Admin_Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FoodId"] = new SelectList(_context.Foods, "Id", "Description", foodNutrient.FoodId);
-            ViewData["NutrientId"] = new SelectList(_context.Nutrients, "Id", "Name", foodNutrient.NutrientId);
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "UnitName", foodNutrient.UnitId);
+            ViewData["FoodId"] = new SelectList(_uow.FoodRepository.AllAsync().Result, "Id", "Description", foodNutrient.FoodId);
+            ViewData["NutrientId"] = new SelectList(_uow.NutrientRepository.AllAsync().Result, "Id", "Name", foodNutrient.NutrientId);
+            ViewData["UnitId"] = new SelectList(_uow.UnitRepository.AllAsync().Result, "Id", "UnitName", foodNutrient.UnitId);
             return View(foodNutrient);
         }
 
         // GET: FoodNutrients/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.FoodNutrients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var foodNutrient = await _context.FoodNutrients
-                .Include(f => f.Food)
-                .Include(f => f.Nutrient)
-                .Include(f => f.Unit)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var foodNutrient = await _uow.FoodNutrientRepository.FindAsync(id.Value);
             if (foodNutrient == null)
             {
                 return NotFound();
@@ -159,23 +145,19 @@ namespace WebApp.Areas_Admin_Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.FoodNutrients == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.FoodNutrients'  is null.");
-            }
-            var foodNutrient = await _context.FoodNutrients.FindAsync(id);
+            var foodNutrient = await _uow.FoodNutrientRepository.FindAsync(id);
             if (foodNutrient != null)
             {
-                _context.FoodNutrients.Remove(foodNutrient);
+                _uow.FoodNutrientRepository.Remove(foodNutrient);
             }
             
-            await _context.SaveChangesAsync();
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool FoodNutrientExists(Guid id)
         {
-          return (_context.FoodNutrients?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_uow.FoodNutrientRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

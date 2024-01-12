@@ -1,42 +1,36 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using App.Contracts.DAL;
 using App.Domain;
 using DAL.EF;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace WebApp.Areas_Admin_Controllers
+namespace WebApp.Areas.Admin.Controllers
 {
     public class NutrientsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public NutrientsController(ApplicationDbContext context)
+        public NutrientsController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Nutrients
         public async Task<IActionResult> Index()
         {
-              return _context.Nutrients != null ? 
-                          View(await _context.Nutrients.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Nutrients'  is null.");
+            var vm = await _uow.NutrientRepository.AllAsync();
+            return View(vm);
         }
 
         // GET: Nutrients/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Nutrients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var nutrient = await _context.Nutrients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var nutrient = await _uow.NutrientRepository.FindAsync(id.Value);
             if (nutrient == null)
             {
                 return NotFound();
@@ -52,17 +46,15 @@ namespace WebApp.Areas_Admin_Controllers
         }
 
         // POST: Nutrients/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,CreatedAt,UpdatedAt,Id")] Nutrient nutrient)
+        public async Task<IActionResult> Create(Nutrient nutrient)
         {
             if (ModelState.IsValid)
             {
                 nutrient.Id = Guid.NewGuid();
-                _context.Add(nutrient);
-                await _context.SaveChangesAsync();
+                _uow.NutrientRepository.Add(nutrient);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(nutrient);
@@ -71,12 +63,12 @@ namespace WebApp.Areas_Admin_Controllers
         // GET: Nutrients/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Nutrients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var nutrient = await _context.Nutrients.FindAsync(id);
+            var nutrient = await _uow.NutrientRepository.FindAsync(id.Value);
             if (nutrient == null)
             {
                 return NotFound();
@@ -85,11 +77,9 @@ namespace WebApp.Areas_Admin_Controllers
         }
 
         // POST: Nutrients/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,CreatedAt,UpdatedAt,Id")] Nutrient nutrient)
+        public async Task<IActionResult> Edit(Guid id, Nutrient nutrient)
         {
             if (id != nutrient.Id)
             {
@@ -100,8 +90,8 @@ namespace WebApp.Areas_Admin_Controllers
             {
                 try
                 {
-                    _context.Update(nutrient);
-                    await _context.SaveChangesAsync();
+                    _uow.NutrientRepository.Update(nutrient);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -122,13 +112,12 @@ namespace WebApp.Areas_Admin_Controllers
         // GET: Nutrients/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Nutrients == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var nutrient = await _context.Nutrients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var nutrient = await _uow.NutrientRepository.FindAsync(id.Value);
             if (nutrient == null)
             {
                 return NotFound();
@@ -142,23 +131,19 @@ namespace WebApp.Areas_Admin_Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.Nutrients == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Nutrients'  is null.");
-            }
-            var nutrient = await _context.Nutrients.FindAsync(id);
+            var nutrient = await _uow.NutrientRepository.FindAsync(id);
             if (nutrient != null)
             {
-                _context.Nutrients.Remove(nutrient);
+                _uow.NutrientRepository.Remove(nutrient);
             }
             
-            await _context.SaveChangesAsync();
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool NutrientExists(Guid id)
         {
-          return (_context.Nutrients?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_uow.NutrientRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

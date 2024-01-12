@@ -9,4 +9,6 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
     public IngredientRepository(ApplicationDbContext dbContext) : base(dbContext)
     {
     }
+    
+    
 }
