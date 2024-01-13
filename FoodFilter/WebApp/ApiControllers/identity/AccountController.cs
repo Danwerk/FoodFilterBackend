@@ -84,8 +84,8 @@ public class AccountController : ControllerBase
         var appRefreshToken = new AppRefreshToken();
         appUser = new AppUser()
         {
-            FirstName = registrationData.FirstName,
-            LastName = registrationData.LastName,
+            // FirstName = registrationData.FirstName,
+            // LastName = registrationData.LastName,
             Email = registrationData.Email,
             UserName = registrationData.Email,
             AppRefreshTokens = new List<AppRefreshToken>()
@@ -108,11 +108,11 @@ public class AccountController : ControllerBase
 
 
         // save into claims also the user full name
-        result = await _userManager.AddClaimsAsync(appUser, new List<Claim>()
-        {
-            new(ClaimTypes.GivenName, appUser.FirstName),
-            new(ClaimTypes.Surname, appUser.LastName)
-        });
+        // result = await _userManager.AddClaimsAsync(appUser, new List<Claim>()
+        // {
+        //     new(ClaimTypes.GivenName, appUser.FirstName),
+        //     new(ClaimTypes.Surname, appUser.LastName)
+        // });
 
 
         if (!result.Succeeded)

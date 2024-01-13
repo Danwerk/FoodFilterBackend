@@ -23,7 +23,8 @@ public class Food : DomainEntityId
     public string ImageUrl { get; set; } = default!;
     
     public byte[]? ImageData { get; set; }
-    
+
+    public bool IsActive { get; set; }
     [DataType(DataType.DateTime)] 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     

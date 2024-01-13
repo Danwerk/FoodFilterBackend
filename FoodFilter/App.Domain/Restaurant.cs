@@ -26,6 +26,11 @@ public class Restaurant : DomainEntityId
     [MaxLength(512)]
     public string Website { get; set; } = default!;
     
+    
+    
+    public Guid ApprovedById { get; set; }
+    public AppUser? ApprovedBy { get; set; }
+    
     [DataType(DataType.DateTime)] 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     

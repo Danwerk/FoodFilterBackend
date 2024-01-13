@@ -47,7 +47,7 @@ namespace WebApp.Areas.Admin.Controllers
         // GET: Restaurants/Create
         public IActionResult Create()
         {
-            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName");
+            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "Email");
             return View();
         }
 

@@ -91,6 +91,9 @@ namespace DAL.EF.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -282,9 +285,6 @@ namespace DAL.EF.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<int>("EarnedPoints")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -292,15 +292,8 @@ namespace DAL.EF.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -327,9 +320,6 @@ namespace DAL.EF.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
-
-                    b.Property<int>("TrustPoints")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -449,6 +439,9 @@ namespace DAL.EF.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ApprovedById")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -481,6 +474,8 @@ namespace DAL.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
+
+                    b.HasIndex("ApprovedById");
 
                     b.ToTable("Restaurants");
                 });
@@ -772,7 +767,15 @@ namespace DAL.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("App.Domain.Identity.AppUser", "ApprovedBy")
+                        .WithMany("approvedRestaurants")
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("AppUser");
+
+                    b.Navigation("ApprovedBy");
                 });
 
             modelBuilder.Entity("App.Domain.SubAdmin", b =>
@@ -863,6 +866,8 @@ namespace DAL.EF.Migrations
                     b.Navigation("Restaurants");
 
                     b.Navigation("SubAdmins");
+
+                    b.Navigation("approvedRestaurants");
                 });
 
             modelBuilder.Entity("App.Domain.Ingredient", b =>

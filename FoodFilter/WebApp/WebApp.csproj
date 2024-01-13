@@ -31,11 +31,8 @@
         
         <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
         <ProjectReference Include="..\App.Public.DTO\App.Public.DTO.csproj" />
+        <ProjectReference Include="..\App.Resources\App.Resources.csproj" />
         <ProjectReference Include="..\Base.Helpers\Base.Helpers.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Areas\Identity\Pages\Account" />
     </ItemGroup>
 
     <ItemGroup>

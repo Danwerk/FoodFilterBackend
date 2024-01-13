@@ -60,8 +60,8 @@ public class CustomWebAppFactory<TStartup> : WebApplicationFactory<TStartup>
                         Id = Guid.NewGuid(),
                         Email = "some@account.com",
                         PhoneNumber = "0123456789",
-                        FirstName = "some",
-                        LastName = "account",
+                        // FirstName = "some",
+                        // LastName = "account",
                         UserName = "some",
                         EmailConfirmed = true
                     };
