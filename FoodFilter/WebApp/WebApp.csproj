@@ -82,6 +82,11 @@
       <_ContentIncludedByDefault Remove="Views\CartProducts\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\CartProducts\Index.cshtml" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Areas\Admin\Views" />
+      <Folder Include="Areas\Identity\Management" />
+    </ItemGroup>
     
     <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
