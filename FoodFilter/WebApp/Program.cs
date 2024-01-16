@@ -1,6 +1,7 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using App.BLL.Services;
+using App.BLL.Services.Identity;
 using App.Contracts.BLL;
 using App.Contracts.DAL;
 using App.Domain.Identity;
@@ -27,6 +28,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register our UOW with scoped lifecycle
 builder.Services.AddScoped<IAppUOW, AppUOW>();
 builder.Services.AddScoped<IAppBLL, AppBLL>();
+
+// todo: create separate static class and move services registering services there
+builder.Services.AddScoped<IdentityBLL>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

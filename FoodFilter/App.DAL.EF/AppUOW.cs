@@ -1,7 +1,9 @@
 ﻿using App.Contracts.DAL;
+using App.Contracts.DAL.Identity;
 using App.Domain;
 using Base.DAL.EF;
 using DAL.EF.Repositories;
+using DAL.EF.Repositories.Identity;
 
 namespace DAL.EF;
 
@@ -23,6 +25,7 @@ public class AppUOW : EFBaseUOW<ApplicationDbContext>, IAppUOW
     public IRestaurantRepository? _restaurantRepository;
     public ISubAdminRepository? _subAdminRepository;
     public IUnitRepository? _unitRepository;
+    public IUserRepository? _userRepository;
 
     public IAllergenRepository AllergenRepository => _allergenRepository ??= new AllergenRepository(UowDbContext);
     public ICategoryRepository CategoryRepository => _categoryRepository ??= new CategoryRepository(UowDbContext);
@@ -36,6 +39,7 @@ public class AppUOW : EFBaseUOW<ApplicationDbContext>, IAppUOW
     public IRestaurantRepository RestaurantRepository => _restaurantRepository ??= new RestaurantRepository(UowDbContext);
     public ISubAdminRepository SubAdminRepository => _subAdminRepository ??= new SubAdminRepository(UowDbContext);
     public IUnitRepository UnitRepository => _unitRepository ??= new UnitRepository(UowDbContext);
+    public IUserRepository UserRepository => _userRepository ??= new UserRepository(UowDbContext);
     
 
 }

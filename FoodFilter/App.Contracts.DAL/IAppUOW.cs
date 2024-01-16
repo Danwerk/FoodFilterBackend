@@ -1,4 +1,5 @@
-﻿using Base.Contracts.DAL;
+﻿using App.Contracts.DAL.Identity;
+using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
@@ -17,5 +18,6 @@ public interface IAppUOW : IBaseUOW
     IRestaurantRepository RestaurantRepository { get; }
     ISubAdminRepository SubAdminRepository { get; }
     IUnitRepository UnitRepository { get; }
+    IUserRepository UserRepository { get; }
 
 }
