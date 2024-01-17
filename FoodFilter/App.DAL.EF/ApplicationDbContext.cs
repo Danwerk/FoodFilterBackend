@@ -1,12 +1,14 @@
 ﻿using App.Domain;
 using App.Domain.Identity;
 using Domain.Base;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.EF;
 
-public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid>
+public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid, IdentityUserClaim<Guid>, AppUserRole, 
+    IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>
 {
     public DbSet<Allergen> Allergens { get; set; } = default!;
     public DbSet<Category> Categories { get; set; } = default!;
@@ -31,6 +33,19 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+
+        builder.Entity<AppUser>()
+            .HasMany(e => e.AppUserRoles)
+            .WithOne(e => e.AppUser)
+            .HasForeignKey(e => e.UserId)
+            .IsRequired();
+        
+        builder.Entity<AppRole>()
+            .HasMany(e => e.AppUserRoles)
+            .WithOne(e => e.AppRole)
+            .HasForeignKey(e => e.RoleId)
+            .IsRequired();
         
         // disable cascade delete
         foreach (var foreignKey in builder.Model

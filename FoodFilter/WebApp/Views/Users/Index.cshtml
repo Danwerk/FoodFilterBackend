@@ -1,0 +1,43 @@
+﻿@model WebApp.Areas.Admin.ViewModels.UsersViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Email
+        </th>
+        <th>
+            Roles
+        </th>
+        <th>
+            Is Approved
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model.Users)
+    {
+        <tr>
+            <td>
+                @user.Id
+            </td>
+            <td>
+                @user.UserName
+            </td>
+            <td>
+                @string.Join(", ", user.AppUserRoles.Select(ur => ur.AppRole!.Name))
+            </td>
+            <td>
+                @user.IsApproved
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

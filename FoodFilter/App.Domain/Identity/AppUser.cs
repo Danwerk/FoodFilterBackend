@@ -28,6 +28,7 @@ public class AppUser :  IdentityUser<Guid>, IDomainEntityId
     public ICollection<Restaurant>? Restaurants { get; set; }
     
     public ICollection<SubAdmin>? SubAdmins { get; set; }
+    public ICollection<AppUserRole>? AppUserRoles { get; set; }
 
     
 }

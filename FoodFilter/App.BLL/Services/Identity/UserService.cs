@@ -19,7 +19,7 @@ public class UserService
         _userMapper = new UserMapper(mapper);
     }
 
-    private IAppUOW Uow => _identityBll.UserService.Uow;
+    private IAppUOW Uow => _identityBll.Uow;
 
     public async Task ApproveUserAsync(Guid userId)
     {
@@ -43,5 +43,12 @@ public class UserService
         }
 
         return string.Empty;
+    }
+
+    public async Task<IEnumerable<AppUser>> GetUsersWithRolesAsync()
+    {
+        var users = await _identityBll.Uow.UserRepository.GetAllUsersWithRolesAsync();
+
+        return users.Select(e => _userMapper.Map(e)!).ToList();
     }
 }  

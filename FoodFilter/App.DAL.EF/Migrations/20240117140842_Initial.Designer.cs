@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240113013858_Initial")]
+    [Migration("20240117140842_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -343,6 +343,21 @@ namespace DAL.EF.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("App.Domain.Identity.AppUserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
             modelBuilder.Entity("App.Domain.Ingredient", b =>
                 {
                     b.Property<Guid>("Id")
@@ -603,21 +618,6 @@ namespace DAL.EF.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -751,6 +751,25 @@ namespace DAL.EF.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("App.Domain.Identity.AppUserRole", b =>
+                {
+                    b.HasOne("App.Domain.Identity.AppRole", "AppRole")
+                        .WithMany("AppUserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("App.Domain.Identity.AppUser", "AppUser")
+                        .WithMany("AppUserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppRole");
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("App.Domain.OpenHours", b =>
                 {
                     b.HasOne("App.Domain.Restaurant", "Restaurant")
@@ -819,21 +838,6 @@ namespace DAL.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.HasOne("App.Domain.Identity.AppRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("App.Domain.Identity.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("App.Domain.Identity.AppUser", null)
@@ -862,9 +866,16 @@ namespace DAL.EF.Migrations
                     b.Navigation("FoodNutrients");
                 });
 
+            modelBuilder.Entity("App.Domain.Identity.AppRole", b =>
+                {
+                    b.Navigation("AppUserRoles");
+                });
+
             modelBuilder.Entity("App.Domain.Identity.AppUser", b =>
                 {
                     b.Navigation("AppRefreshTokens");
+
+                    b.Navigation("AppUserRoles");
 
                     b.Navigation("Restaurants");
 

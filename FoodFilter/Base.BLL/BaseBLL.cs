@@ -6,7 +6,7 @@ namespace Base.BLL;
 public abstract class BaseBLL<TUOW> : IBaseBLL
 where TUOW: IBaseUOW
 {
-    protected readonly TUOW Uow;
+    public TUOW Uow { get; }
 
     protected BaseBLL(TUOW uow)
     {
