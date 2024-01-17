@@ -1,5 +1,8 @@
-﻿using App.BLL.Services.Identity;
+﻿using App.BLL.Services;
+using App.BLL.Services.Identity;
 using App.Common;
+using App.Contracts.BLL;
+using Base.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,8 +43,10 @@ public class UsersApprovalController : Controller
     [HttpGet]
     public async Task<IActionResult> Approve(Guid id)
     {
-        Console.WriteLine("iaaaaaaaaaaaaaaamnotheeeeeeeeeeeeere");
         await _bll.UserService.ApproveUserAsync(id);
+        
+        await _bll.UserService.CreateRestaurantForApprovedRestaurantUserAsync(id, User.GetUserId());
+        
         await _bll.SaveChangesAsync();
         // Redirect back to the index page or any other page as needed
         return RedirectToAction(nameof(Index));

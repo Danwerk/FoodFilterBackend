@@ -1,7 +1,7 @@
-﻿using App.Domain.Identity;
-using AppUser = App.BLL.DTO.Identity.AppUser;
+﻿using AppUser = App.BLL.DTO.Identity.AppUser;
 
 namespace WebApp.Areas.Admin.ViewModels;
+#pragma warning disable CS1591
 
 public class UsersViewModel
 {

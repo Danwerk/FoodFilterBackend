@@ -81,3 +81,101 @@
 }
     </tbody>
 </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @model WebApp.Areas.Admin.ViewModels.RestaurantSearchModel *@
+@* *@
+@* @{ *@
+@*     ViewData["Title"] = "Index"; *@
+@* } *@
+@* *@
+@* <form method="get" asp-action="Index"> *@
+@*     <input asp-for="RestaurantName" type="search" placeholder="Restaurant..."/> *@
+@*     <input asp-for="City" type="search" placeholder="City..."/> *@
+@*     <input asp-for="Street" type="search" placeholder="Street..."/> *@
+@*     <input asp-for="StreetNumber" type="search" placeholder="Street nr..."/> *@
+@*     <input type="submit" class="btn btn-primary" value="Apply filter"/> *@
+@* *@
+@* </form> *@
+@* *@
+@* <p> *@
+@*     <a asp-action="Create">Create New</a> *@
+@* </p> *@
+@* <table class="table"> *@
+@*     <thead> *@
+@*     <tr> *@
+@*         <th> *@
+@*             Restaurant *@
+@*         </th> *@
+@*         <th> *@
+@*             City *@
+@*         </th> *@
+@*         <th> *@
+@*             Street *@
+@*         </th> *@
+@*         <th> *@
+@*             Street nr *@
+@*         </th> *@
+@*         $1$ <th> #1# *@
+@*         $1$     @Html.DisplayNameFor(model => model.Address) #1# *@
+@*         $1$ </th> #1# *@
+@*         $1$ <th> #1# *@
+@*         $1$     @Html.DisplayNameFor(model => model.PhoneNumber) #1# *@
+@*         $1$ </th> #1# *@
+@*         $1$ <th> #1# *@
+@*         $1$     @Html.DisplayNameFor(model => model.Website) #1# *@
+@*         $1$ </th> #1# *@
+@*         $1$ <th> #1# *@
+@*         $1$     @Html.DisplayNameFor(model => model.CreatedAt) #1# *@
+@*         $1$ </th> #1# *@
+@*         $1$ <th> #1# *@
+@*         $1$     @Html.DisplayNameFor(model => model.UpdatedAt) #1# *@
+@*         $1$ </th> #1# *@
+@*         <th></th> *@
+@*     </tr> *@
+@*     </thead> *@
+@*     <tbody> *@
+@*     @if (Model.SearchResult != null) *@
+@*     { *@
+@*         @foreach (var res in Model.SearchResult) *@
+@*         { *@
+@*             <tr> *@
+@*                 <td> *@
+@*                     @Model.RestaurantName *@
+@*                 </td> *@
+@* *@
+@*                 <td> *@
+@*                     @Model.City *@
+@*                 </td> *@
+@*                 <td> *@
+@*                     @Model.Street *@
+@*                 </td> *@
+@*                 <td> *@
+@*                     @Model.StreetNumber *@
+@*                 </td> *@
+@*             </tr> *@
+@*         } *@
+@*     } *@
+@*     </tbody> *@
+@* </table> *@

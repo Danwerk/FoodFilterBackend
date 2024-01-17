@@ -447,7 +447,6 @@ namespace DAL.EF.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
@@ -464,17 +463,14 @@ namespace DAL.EF.Migrations
                         .HasColumnType("bytea");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
@@ -482,7 +478,6 @@ namespace DAL.EF.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Website")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 

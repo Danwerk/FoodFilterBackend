@@ -10,21 +10,21 @@ public class Restaurant : DomainEntityId
     public AppUser? AppUser { get; set; }
     
     [MaxLength(256)]
-    public string Name { get; set; } = default!;
+    public string? Name { get; set; }
     
     [MaxLength(512)] 
-    public string ImageUrl { get; set; } = default!;
+    public string? ImageUrl { get; set; }
     
     public byte[]? ImageData { get; set; }
 
     [MaxLength(128)]
-    public string Address { get; set; } = default!;
+    public string? Address { get; set; }
 
     [MaxLength(32)]
-    public string PhoneNumber { get; set; } = default!;
+    public string? PhoneNumber { get; set; }
 
     [MaxLength(512)]
-    public string Website { get; set; } = default!;
+    public string? Website { get; set; } 
     
     
     

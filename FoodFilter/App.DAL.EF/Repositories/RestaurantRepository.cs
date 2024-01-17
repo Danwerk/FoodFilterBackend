@@ -1,4 +1,5 @@
-﻿using App.Contracts.DAL;
+﻿using App.Common;
+using App.Contracts.DAL;
 using App.Domain;
 using Base.DAL.EF;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,10 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
     {
         return await RepositoryDbSet
             .Include(e => e.AppUser)
+            .ThenInclude(e=> e!.AppUserRoles)!
+            .ThenInclude(e=> e.AppRole)
+            .Where(r => r.AppUser!.AppUserRoles!
+                .Any(ur=> ur.AppRole!.Name == RoleNames.Restaurant))
             .ToListAsync();
     }
     

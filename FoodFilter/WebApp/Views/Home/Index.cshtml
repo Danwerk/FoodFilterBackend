@@ -4,6 +4,34 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome to FoodFilter</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <h3 class="display-4"><a href="/swagger/index.html">Swagger</a>.</h3>
+    <p class="lead">Explore...</p>
+    <div class="button-container">
+        <a asp-controller="Restaurants" asp-action="Index" class="blue-button">Restaurants</a>
+        @if (User.Identity?.IsAuthenticated ?? true)
+        {
+            <a asp-controller="Restaurants" asp-action="Index" class="blue-button">My Profile</a>
+        }
+    </div>
 </div>
+
+<style>
+    .blue-button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 12px 24px;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 5px;
+        margin-right: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .blue-button:hover {
+        background-color: #0056b3;
+         color: #fff;
+    }
+
+    .button-container {
+        margin-top: 30px;
+    }
+</style>

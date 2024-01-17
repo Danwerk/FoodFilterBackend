@@ -21,9 +21,12 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     }
     
     private IUnitService? _units;
-    // private IUserService? _users;
-    
     public IUnitService UnitService => _units ??= new UnitService(Uow, new UnitMapper(_mapper));
+    
+    // private IUserService? _users;
     // public IUserService UserService => _users ??= new UserService(Uow, new UserMapper(_mapper));
-   
+    
+    
+    private IRestaurantService? _restaurants;
+    public IRestaurantService RestaurantService => _restaurants ??= new RestaurantService(Uow, new RestaurantMapper(_mapper));
 }

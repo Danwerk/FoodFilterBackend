@@ -1,5 +1,5 @@
-﻿using App.BLL.DTO;
-using App.Domain.Identity;
+﻿using App.Domain.Identity;
+#pragma warning disable CS1591
 
 namespace WebApp.Areas.Admin.ViewModels;
 
