@@ -40,7 +40,9 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
 
     public async  Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street, string? streetNumber)
     {
+        // todo: fetch images that are approved
         var query = RepositoryDbSet
+            .Include(r=>r.Images)
             .Include(e => e.AppUser)
             .Where(r => r.AppUser!.AppUserRoles!
                 .Any(ur => ur.AppRole!.Name == RoleNames.Restaurant));

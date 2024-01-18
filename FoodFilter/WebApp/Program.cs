@@ -11,6 +11,7 @@ using DAL.EF;
 using DAL.EF.Seeding;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -117,6 +118,9 @@ else
 }
 
 app.UseHttpsRedirection();
+
+// app.UseStaticFiles(new StaticFileOptions(){
+//     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/RestaurantImages")), RequestPath = new PathString("/wwwroot/RestaurantImages")});
 app.UseStaticFiles();
 
 app.UseRouting();

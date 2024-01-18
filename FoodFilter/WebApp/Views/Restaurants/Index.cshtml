@@ -17,10 +17,13 @@
     <thead>
     <tr>
         <th>
+            Image
+        </th>
+        <th>
             Restaurant
         </th>
         <th>
-           Address
+            Address
         </th>
         <th>
             Phone
@@ -28,21 +31,6 @@
         <th>
             Website
         </th>
-        @* <th> *@
-        @*     @Html.DisplayNameFor(model => model.Address) *@
-        @* </th> *@
-        @* <th> *@
-        @*     @Html.DisplayNameFor(model => model.PhoneNumber) *@
-        @* </th> *@
-        @* <th> *@
-        @*     @Html.DisplayNameFor(model => model.Website) *@
-        @* </th> *@
-        @* <th> *@
-        @*     @Html.DisplayNameFor(model => model.CreatedAt) *@
-        @* </th> *@
-        @* <th> *@
-        @*     @Html.DisplayNameFor(model => model.UpdatedAt) *@
-        @* </th> *@
         <th></th>
     </tr>
     </thead>
@@ -52,6 +40,12 @@
         @foreach (var res in Model.SearchResult)
         {
             <tr>
+                <td>
+                    @if (res.Images != null && res.Images.Any())
+                    {
+                        <img src="@Url.Content("~" + res.Images.First().Url)" alt="Restaurant Image" style="max-width: 60px; max-height: 60px;" />
+                    }
+                </td>
                 <td>
                     @res.Name
                 </td>
@@ -69,8 +63,6 @@
     }
     </tbody>
 </table>
-
-
 
 
 @* @model IEnumerable<App.Domain.Restaurant> *@

@@ -18,5 +18,7 @@ public class AutomapperConfig : Profile
                 options => options
                     .MapFrom(src => RestaurantHelperMethods.ConstructFullAddress(src)))
             .ReverseMap();
+        CreateMap<BLL.DTO.Image, App.Domain.Image>().ReverseMap();
+
     }
 }

@@ -1,30 +1,36 @@
 ﻿using App.Contracts.BLL.Services;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace App.BLL.Services;
-
-public class ImageService : IImageService
+namespace App.BLL.Services
 {
-    public async Task<string> SaveImageToFileSystemAsync(IFormFile file)
+    public class ImageService : IImageService
     {
-        string fileNameWithPath = "";
-        if (file.Length > 0)
+        public async Task<string> SaveImageToFileSystemAsync(IFormFile file)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/RestaurantImages");
-            if (!Directory.Exists(path))
+            if (file == null || file.Length == 0)
             {
-                Directory.CreateDirectory(path);
+                throw new ArgumentException("Invalid file");
+            }
+
+            var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
+            
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
             }
 
             var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(directory, fileName);
 
-            fileNameWithPath = Path.Combine(path, fileName);
-            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+            using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
             {
-                file.CopyTo(stream);
+                await file.CopyToAsync(stream);
             }
-        }
 
-        return fileNameWithPath;
+            return $"/images/{fileName}";
+        }
     }
 }

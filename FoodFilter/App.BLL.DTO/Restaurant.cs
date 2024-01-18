@@ -10,7 +10,10 @@ public class Restaurant : DomainEntityId
     
     public string OpenHours { get; set; } = default!;
     public string PhoneNumber { get; set; } = default!;
-    public string? Website { get; set; } 
-
+    public string? Website { get; set; }
+    
     public Guid AppUserId { get; set; }
+    
+    public List<Image>? Images { get; set; }
+
 }
