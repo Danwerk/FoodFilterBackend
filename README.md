@@ -52,6 +52,7 @@ dotnet aspnet-codegenerator controller -name UnitsController       -actions -m  
 
 cd WebApp
 ```
+dotnet aspnet-codegenerator controller -name RestaurantsController -actions -m App.Domain.Restaurant -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
 dotnet aspnet-codegenerator controller -name UnitsController -actions -m App.Domain.Unit -dc ApplicationDbContext -outDir ApiControllers -api --useAsyncActions -f
 ```
 

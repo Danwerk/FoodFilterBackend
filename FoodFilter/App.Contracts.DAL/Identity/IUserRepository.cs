@@ -7,5 +7,6 @@ namespace App.Contracts.DAL.Identity;
 public interface IUserRepository: IBaseRepository<AppUser>
 {
     public Task<IEnumerable<AppUser>> GetAllUsersWithRolesAsync();
-    
+
+    public Task<AppUser?> GetUserWithRolesAsync(Guid id);
 }

@@ -19,6 +19,12 @@ public class Restaurant : DomainEntityId
 
     [MaxLength(128)]
     public string? Address { get; set; }
+    [MaxLength(128)]
+    public string? City { get; set; }
+    [MaxLength(128)]
+    public string? Street { get; set; }
+    [MaxLength(128)]
+    public string? StreetNumber { get; set; }
 
     [MaxLength(32)]
     public string? PhoneNumber { get; set; }
@@ -26,9 +32,7 @@ public class Restaurant : DomainEntityId
     [MaxLength(512)]
     public string? Website { get; set; } 
     
-    
-    
-    public Guid ApprovedById { get; set; }
+    public Guid? ApprovedById { get; set; }
     public AppUser? ApprovedBy { get; set; }
     
     [DataType(DataType.DateTime)] 

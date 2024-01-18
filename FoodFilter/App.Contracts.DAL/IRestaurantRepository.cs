@@ -5,5 +5,5 @@ namespace App.Contracts.DAL;
 
 public interface IRestaurantRepository : IBaseRepository<Restaurant>
 {
-    
+    Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street, string? streetNumber);
 }

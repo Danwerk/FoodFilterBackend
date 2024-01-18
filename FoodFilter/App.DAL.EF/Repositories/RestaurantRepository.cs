@@ -38,7 +38,30 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    
+    public async  Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street, string? streetNumber)
+    {
+        var query = RepositoryDbSet
+            .Include(e => e.AppUser)
+            .Where(r => r.AppUser!.AppUserRoles!
+                .Any(ur => ur.AppRole!.Name == RoleNames.Restaurant));
+
+        if (!string.IsNullOrWhiteSpace(restaurantName))
+            query = query.Where(r => r.Name!.ToUpper().Contains(restaurantName.ToUpper()));
+
+        if (!string.IsNullOrWhiteSpace(city))
+            query = query.Where(r => r.City!.ToUpper().Contains(city.ToUpper()));
+
+        if (!string.IsNullOrWhiteSpace(street))
+            query = query.Where(r => r.Street!.ToUpper().Contains(street.ToUpper()));
+
+        if (!string.IsNullOrWhiteSpace(streetNumber))
+            query = query.Where(r => r.StreetNumber!.Contains(streetNumber));
+
+        var result = await query.ToListAsync();
+        return result;
+    }
+
+
     public virtual async Task<Restaurant?> FindAsync(Guid id, Guid userId)
     {
         return await RepositoryDbSet

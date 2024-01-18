@@ -58,6 +58,11 @@ public class UserService
 
         return users.Select(e => _userMapper.Map(e)!).ToList();
     }
+    
+    public async Task<AppUser?> GetUserWithRoles(Guid id)
+    {
+        return _userMapper.Map(await Uow.UserRepository.GetUserWithRolesAsync(id));
+    }
 
     public async Task CreateRestaurantForApprovedRestaurantUserAsync(Guid userId, Guid approverId)
     {
@@ -77,7 +82,9 @@ public class UserService
         {
             Id = id,
             AppUserId = userId,
-            ApprovedById = approverId
+            ApprovedById = approverId,
+            Name = "aaaaaa",
+            Address = "Kohila 22"
         };
         return _restaurantMapper.Map(Uow.RestaurantRepository.Add(restaurant))!;
     }

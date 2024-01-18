@@ -16,10 +16,18 @@ public class UserRepository : EFBaseRepository<AppUser, ApplicationDbContext>, I
 
     public async Task<IEnumerable<AppUser>> GetAllUsersWithRolesAsync()
     {
-        var m = await RepositoryDbSet
+       return await RepositoryDbSet
             .Include(u => u.AppUserRoles!)
             .ThenInclude(u => u.AppRole)
             .ToListAsync();
-        return m;
+    }
+
+    public async Task<AppUser?> GetUserWithRolesAsync(Guid id)
+    {
+        return await RepositoryDbSet
+            .Include(e => e.AppUserRoles!)
+            .ThenInclude(e => e.AppRole)
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync();
     }
 }

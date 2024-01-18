@@ -7,8 +7,10 @@ public class Restaurant : DomainEntityId
 {
     public string Name { get; set; } = default!;
     public string FullAddress { get; set; } = default!;
+    
     public string OpenHours { get; set; } = default!;
     public string PhoneNumber { get; set; } = default!;
-    public string WebSiteUrl { get; set; } = default!;
+    public string? Website { get; set; } 
+
     public Guid AppUserId { get; set; }
 }

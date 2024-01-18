@@ -1,9 +1,9 @@
 ﻿using App.BLL.Services.Identity;
 using App.Common;
+using App.Domain;
 using Base.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApp.Areas.Admin.ViewModels;
 
 namespace WebApp.Areas.Admin.Controllers;
@@ -29,4 +29,6 @@ public class UsersController : Controller
             Users = allUsers
         });
     }
+
+    
 }

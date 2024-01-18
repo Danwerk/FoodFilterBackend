@@ -1,31 +1,42 @@
+using App.Common;
+using App.Contracts.BLL;
 using App.Contracts.DAL;
 using App.Domain;
 using App.Domain.Identity;
+using Base.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WebApp.Areas.Admin.ViewModels;
 
 namespace WebApp.Areas.Admin.Controllers
 {
     public class RestaurantsController : Controller
     {
         private readonly IAppUOW _uow;
+        private readonly IAppBLL _bll;
         private readonly UserManager<AppUser> _userManager;
 
 
-        public RestaurantsController(UserManager<AppUser> userManager, IAppUOW uow)
+        public RestaurantsController(UserManager<AppUser> userManager, IAppUOW uow, IAppBLL bll)
         {
             _userManager = userManager;
             _uow = uow;
+            _bll = bll;
         }
 
         // GET: Restaurants
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] RestaurantSearchModel searchModel)
         {
-            var vm = await _uow.RestaurantRepository.AllAsync();
-            return View(vm);
+            var searchResult = await _bll.RestaurantService.SearchRestaurantsAsync(searchModel.RestaurantName,
+                searchModel.City, searchModel.Street, searchModel.StreetNumber);
+            searchModel.SearchResult = searchResult;
+
+            return View(searchModel);
         }
+
 
         // GET: Restaurants/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -63,7 +74,9 @@ namespace WebApp.Areas.Admin.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName", restaurant.AppUserId);
+
+            ViewData["AppUserId"] =
+                new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName", restaurant.AppUserId);
             return View(restaurant);
         }
 
@@ -80,7 +93,21 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName", restaurant.AppUserId);
+
+            var currentUserId = User.GetUserId();
+
+            // Check if the logged-in user is the owner of the restaurant
+            if (!User.IsInRole(RoleNames.Admin))
+            {
+                if (restaurant.AppUserId != currentUserId)
+                {
+                    // If not the owner, deny access
+                    return Forbid();
+                }
+            }
+
+            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(restaurant.AppUserId), "FirstName",
+                restaurant.AppUserId);
             return View(restaurant);
         }
 
@@ -98,6 +125,7 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
+                    restaurant.AppUserId = User.GetUserId();
                     _uow.RestaurantRepository.Update(restaurant);
                     await _uow.SaveChangesAsync();
                 }
@@ -112,9 +140,12 @@ namespace WebApp.Areas.Admin.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppUserId"] = new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName", restaurant.AppUserId);
+
+            ViewData["AppUserId"] =
+                new SelectList(_userManager.Users, nameof(AppUser.Id), "FirstName", restaurant.AppUserId);
             return View(restaurant);
         }
 
@@ -145,14 +176,14 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 _uow.RestaurantRepository.Remove(restaurant);
             }
-            
+
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RestaurantExists(Guid id)
         {
-          return (_uow.RestaurantRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_uow.RestaurantRepository.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
