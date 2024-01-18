@@ -1,11 +1,15 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
 #nullable disable
 #pragma warning disable 1591
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using App.Common;
+using App.Contracts.BLL;
+using App.Contracts.DAL;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +21,15 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IAppUOW _uow;
 
         public IndexModel(
             UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager, IAppUOW uow)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _uow = uow;
         }
 
         /// <summary>
@@ -59,6 +65,12 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            public string RestaurantName { get; set; }
+            public string City { get; set; }
+            public string Street { get; set; }
+            public string StreetNumber { get; set; }
+            public string Website { get; set; }
         }
 
         private async Task LoadAsync(AppUser user)
@@ -66,12 +78,29 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            Username = userName;
-
-            Input = new InputModel
+            if (User.IsInRole(RoleNames.Admin))
             {
-                PhoneNumber = phoneNumber
-            };
+                Input = new InputModel
+                {
+                    PhoneNumber = phoneNumber
+                };
+            }
+            else if (User.IsInRole(RoleNames.Restaurant))
+            {
+                var restaurant = await _uow.RestaurantRepository.FindByUserIdAsync(user.Id);
+
+                Username = userName;
+
+                Input = new InputModel
+                {
+                    PhoneNumber = phoneNumber,
+                    RestaurantName = restaurant.Name,
+                    City = restaurant.City,
+                    Street = restaurant.Street,
+                    StreetNumber = restaurant.StreetNumber,
+                    Website = restaurant.Website
+                };
+            }
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -110,7 +139,22 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-
+            
+            if (User.IsInRole(RoleNames.Restaurant))
+            {
+                var restaurant = await _uow.RestaurantRepository.FindByUserIdAsync(user.Id);
+                if (restaurant != null)
+                {
+                    restaurant.PhoneNumber = Input.PhoneNumber;
+                    restaurant.Name = Input.RestaurantName;
+                    restaurant.City = Input.City;
+                    restaurant.Street = Input.Street;
+                    restaurant.StreetNumber = Input.StreetNumber;
+                    restaurant.Website = Input.Website;
+                    await _uow.SaveChangesAsync();
+                }
+            }
+            
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();

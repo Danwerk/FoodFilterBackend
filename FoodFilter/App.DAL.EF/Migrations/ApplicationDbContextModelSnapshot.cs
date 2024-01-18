@@ -446,10 +446,6 @@ namespace DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uuid");
 

@@ -1,4 +1,5 @@
 ﻿@page
+@using App.Common
 @model IndexModel
 @{
     ViewData["Title"] = "Profile";
@@ -20,6 +21,35 @@
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
+            
+            @if (User.IsInRole(RoleNames.Restaurant))
+            {
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.RestaurantName" class="form-control" placeholder="Please enter your address." />
+                    <label asp-for="Input.RestaurantName" class="form-label"></label>
+                    <span asp-validation-for="Input.RestaurantName" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.City" class="form-control" placeholder="Please enter your address." />
+                    <label asp-for="Input.City" class="form-label"></label>
+                    <span asp-validation-for="Input.City" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Street" class="form-control" placeholder="Please enter your address." />
+                    <label asp-for="Input.Street" class="form-label"></label>
+                    <span asp-validation-for="Input.Street" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.StreetNumber" class="form-control" placeholder="Please enter your address." />
+                    <label asp-for="Input.StreetNumber" class="form-label"></label>
+                    <span asp-validation-for="Input.StreetNumber" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Website" class="form-control" placeholder="Please enter your address." />
+                    <label asp-for="Input.Website" class="form-label"></label>
+                    <span asp-validation-for="Input.Website" class="text-danger"></span>
+                </div>
+            }
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>
     </div>

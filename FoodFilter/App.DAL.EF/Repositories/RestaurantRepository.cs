@@ -60,12 +60,18 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
         var result = await query.ToListAsync();
         return result;
     }
-
-
+    
     public virtual async Task<Restaurant?> FindAsync(Guid id, Guid userId)
     {
         return await RepositoryDbSet
             .Include(c => c.AppUser)
             .FirstOrDefaultAsync(m => m.Id == id && m.AppUserId == userId);
+    }
+    
+    public virtual async Task<Restaurant?> FindByUserIdAsync(Guid userId)
+    {
+        return await RepositoryDbSet
+            .Include(c => c.AppUser)
+            .FirstOrDefaultAsync(m => m.AppUserId == userId);
     }
 }

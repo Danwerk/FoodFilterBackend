@@ -16,9 +16,7 @@ public class Restaurant : DomainEntityId
     public string? ImageUrl { get; set; }
     
     public byte[]? ImageData { get; set; }
-
-    [MaxLength(128)]
-    public string? Address { get; set; }
+    
     [MaxLength(128)]
     public string? City { get; set; }
     [MaxLength(128)]

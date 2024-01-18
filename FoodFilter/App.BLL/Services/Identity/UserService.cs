@@ -83,8 +83,10 @@ public class UserService
             Id = id,
             AppUserId = userId,
             ApprovedById = approverId,
-            Name = "aaaaaa",
-            Address = "Kohila 22"
+            Name = "",
+            City = "",
+            Street = "",
+            StreetNumber = ""
         };
         return _restaurantMapper.Map(Uow.RestaurantRepository.Add(restaurant))!;
     }
