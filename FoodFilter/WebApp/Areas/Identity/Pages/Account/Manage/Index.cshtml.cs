@@ -3,13 +3,11 @@
 
 #nullable disable
 #pragma warning disable 1591
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
+using App.BLL.Services;
 using App.Common;
-using App.Contracts.BLL;
 using App.Contracts.DAL;
+using App.Domain;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +20,18 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IAppUOW _uow;
+        private readonly ImageService _imageService;
 
         public IndexModel(
             UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager, IAppUOW uow)
+            SignInManager<AppUser> signInManager,
+            IAppUOW uow,
+            ImageService imageService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _uow = uow;
+            _imageService = imageService;
         }
 
         /// <summary>
@@ -71,6 +73,7 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             public string Street { get; set; }
             public string StreetNumber { get; set; }
             public string Website { get; set; }
+            public IFormFile ImageFile { get; set; }
         }
 
         private async Task LoadAsync(AppUser user)
@@ -139,22 +142,35 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-            
+
+
             if (User.IsInRole(RoleNames.Restaurant))
             {
                 var restaurant = await _uow.RestaurantRepository.FindByUserIdAsync(user.Id);
                 if (restaurant != null)
                 {
+                    if (Input.ImageFile != null)
+                    {
+                        var result = await _imageService.SaveImageToFileSystemAsync(Input.ImageFile);
+
+                        var image = new Image
+                        {
+                            Url = result
+                        };
+                        restaurant.Images!.Add(image);
+                    }
+
                     restaurant.PhoneNumber = Input.PhoneNumber;
                     restaurant.Name = Input.RestaurantName;
                     restaurant.City = Input.City;
                     restaurant.Street = Input.Street;
                     restaurant.StreetNumber = Input.StreetNumber;
                     restaurant.Website = Input.Website;
+                    
                     await _uow.SaveChangesAsync();
                 }
             }
-            
+
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();

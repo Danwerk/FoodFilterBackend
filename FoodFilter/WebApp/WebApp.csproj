@@ -85,6 +85,7 @@
 
     <ItemGroup>
       <Folder Include="Areas\Admin\Views" />
+      <Folder Include="wwwroot\RestaurantImages" />
     </ItemGroup>
     
     <PropertyGroup>

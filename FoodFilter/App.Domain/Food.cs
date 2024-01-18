@@ -18,11 +18,6 @@ public class Food : DomainEntityId
     public string Description { get; set; } = default!;
     
     public decimal Price { get; set; }
-    
-    [MaxLength(512)] 
-    public string ImageUrl { get; set; } = default!;
-    
-    public byte[]? ImageData { get; set; }
 
     public bool IsActive { get; set; }
     [DataType(DataType.DateTime)] 

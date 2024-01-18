@@ -11,12 +11,7 @@ public class Restaurant : DomainEntityId
     
     [MaxLength(256)]
     public string? Name { get; set; }
-    
-    [MaxLength(512)] 
-    public string? ImageUrl { get; set; }
-    
-    public byte[]? ImageData { get; set; }
-    
+
     [MaxLength(128)]
     public string? City { get; set; }
     [MaxLength(128)]
@@ -40,6 +35,7 @@ public class Restaurant : DomainEntityId
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
     public ICollection<Food>? Foods { get; set; }
+    public ICollection<Image>? Images { get; set; }
     public ICollection<OpenHours>? OpenHours { get; set; }
 
 }

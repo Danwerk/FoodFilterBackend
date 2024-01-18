@@ -3,6 +3,7 @@ using System;
 using DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240118123228_RemoveAddressFieldFromRestaurant")]
+    partial class RemoveAddressFieldFromRestaurant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,6 +82,14 @@ namespace DAL.EF.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
@@ -347,31 +358,6 @@ namespace DAL.EF.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("App.Domain.Image", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("RestaurantId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RestaurantId");
-
-                    b.ToTable("Image");
-                });
-
             modelBuilder.Entity("App.Domain.Ingredient", b =>
                 {
                     b.Property<Guid>("Id")
@@ -475,6 +461,13 @@ namespace DAL.EF.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -780,17 +773,6 @@ namespace DAL.EF.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("App.Domain.Image", b =>
-                {
-                    b.HasOne("App.Domain.Restaurant", "Restaurant")
-                        .WithMany("Images")
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Restaurant");
-                });
-
             modelBuilder.Entity("App.Domain.OpenHours", b =>
                 {
                     b.HasOne("App.Domain.Restaurant", "Restaurant")
@@ -919,8 +901,6 @@ namespace DAL.EF.Migrations
             modelBuilder.Entity("App.Domain.Restaurant", b =>
                 {
                     b.Navigation("Foods");
-
-                    b.Navigation("Images");
 
                     b.Navigation("OpenHours");
                 });
