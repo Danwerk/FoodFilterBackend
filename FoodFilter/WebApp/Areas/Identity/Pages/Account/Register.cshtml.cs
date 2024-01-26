@@ -12,6 +12,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using App.Common;
+using App.Domain;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -107,7 +108,6 @@ namespace WebApp.Areas.Identity.Pages.Account
             [Required(ErrorMessage = "Please select a role")]
             [Display(Name = "Role")]
             public string SelectedRole { get; set; }
-
         }
 
 
@@ -115,7 +115,7 @@ namespace WebApp.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            var roles = new List<string> { RoleNames.Restaurant, RoleNames.Contributor };
+            var roles = new List<string> { RoleNames.Restaurant };
             ViewData["Roles"] =
                 new SelectList(roles);
         }
@@ -128,6 +128,34 @@ namespace WebApp.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                // Check if the selected role is a restaurant
+                if (!string.IsNullOrEmpty(Input.SelectedRole) && Input.SelectedRole == RoleNames.Restaurant)
+                {
+                    // Ensure that the Restaurants property is initialized
+                    if (user.Restaurants == null)
+                    {
+                        user.Restaurants = new List<Restaurant>();
+                    }
+
+                    // Create a new restaurant associated with the user
+                    var id = Guid.NewGuid();
+                    var restaurant = new Restaurant()
+                    {
+                        Id = id,
+                        AppUserId = user.Id,
+                        Name = "",
+                        City = "",
+                        Street = "",
+                        StreetNumber = ""
+                    };
+                    // Add the restaurant to the user's associated restaurants
+                    user.Restaurants.Add(restaurant);
+
+                    
+                }
+                
+                
+                // username is user's email
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
@@ -136,10 +164,17 @@ namespace WebApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+
+
+
+
                     if (!string.IsNullOrEmpty(Input.SelectedRole))
                     {
                         await _userManager.AddToRoleAsync(user, Input.SelectedRole);
                     }
+
+                    await _userManager.UpdateAsync(user);
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     if (!user.IsApproved)

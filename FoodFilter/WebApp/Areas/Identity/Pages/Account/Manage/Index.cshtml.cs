@@ -67,7 +67,6 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-
             public string RestaurantName { get; set; }
             public string City { get; set; }
             public string Street { get; set; }

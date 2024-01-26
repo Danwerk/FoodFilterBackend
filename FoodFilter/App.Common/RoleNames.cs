@@ -4,8 +4,8 @@ public static class RoleNames
 {
     public const string SubAdminOrAdmin = $"{SubAdmin},{Admin}";
         
-    public const string SubAdmin = "SubAdmin";
-    public const string Admin = "Admin";
-    public const string Restaurant = "Restaurant";
-    public const string Contributor = "Contributor";
+    public const string SubAdmin = "subAdmin";
+    public const string Admin = "admin";
+    public const string Restaurant = "restaurant";
+    public const string Contributor = "contributor";
 }

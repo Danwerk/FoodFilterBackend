@@ -77,4 +77,15 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
             .Include(c=> c.Images)
             .FirstOrDefaultAsync(m => m.AppUserId == userId);
     }
+
+    public Restaurant Edit(Restaurant entity)
+    {
+        var existingEntity = RepositoryDbSet.Find(entity.Id);
+
+        if (existingEntity != null)
+        {
+            RepositoryDbContext.Entry(existingEntity).State = EntityState.Detached;
+        }
+        return RepositoryDbSet.Update(entity).Entity;
+    }
 }

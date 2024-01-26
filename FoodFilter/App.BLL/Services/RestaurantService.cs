@@ -15,6 +15,7 @@ public class RestaurantService :
         : base(uow.RestaurantRepository, mapper)
     {
         Uow = uow;
+        
     }
 
     public async Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street,
@@ -22,8 +23,16 @@ public class RestaurantService :
     {
         var restaurants =
             await Uow.RestaurantRepository.SearchRestaurantsAsync(restaurantName, city, street, streetNumber);
-        var restaurantDTOs = restaurants?.Select(r => Mapper.Map(r)).ToList();
+        var restaurantDtos = restaurants?.Select(r => Mapper.Map(r)).ToList();
 
-        return restaurantDTOs;
+        return restaurantDtos;
     }
+    
+
+    public async Task Edit(Restaurant entity)
+    {
+        Uow.RestaurantRepository.Edit(Mapper.Map(entity));
+        
+    }
+    
 }

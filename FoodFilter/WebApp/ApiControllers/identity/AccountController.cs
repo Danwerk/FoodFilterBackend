@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mime;
 using System.Security.Claims;
+using App.Common;
+using App.Domain;
 using App.Domain.Identity;
 using App.Public.DTO.v1;
 using App.Public.DTO.v1.Identity;
@@ -94,6 +96,32 @@ public class AccountController : ControllerBase
             }
         };
         appRefreshToken.AppUser = appUser;
+
+        // when creating user, restaurant is also added to user
+
+        // Check if the selected role is a restaurant)
+
+        // Ensure that the Restaurants property is initialized
+        if (appUser.Restaurants == null)
+        {
+            appUser.Restaurants = new List<App.Domain.Restaurant>();
+        }
+
+        // Create a new restaurant associated with the user
+        
+        var id = Guid.NewGuid();
+        var restaurant = new App.Domain.Restaurant()
+        {
+            Id = id,
+            AppUserId = appUser.Id,
+            Name = "",
+            City = "",
+            Street = "",
+            StreetNumber = ""
+        };
+        // Add the restaurant to the user's associated restaurants
+        appUser.Restaurants.Add(restaurant);
+        
 
         var result = await _userManager.CreateAsync(appUser, registrationData.Password);
 
@@ -243,7 +271,7 @@ public class AccountController : ControllerBase
             AppUserId = appUser.Id
         };
         _context.AppRefreshTokens.Add(refreshToken);
-        
+
 
         // generate jwt
         var jwt = IdentityHelpers.GenerateJwt(

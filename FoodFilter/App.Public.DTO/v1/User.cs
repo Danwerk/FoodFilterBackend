@@ -1,15 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Domain.Base;
 
-namespace App.BLL.DTO.Identity;
+namespace App.Public.DTO.v1;
 
-public class AppUser : DomainEntityId
+public class User 
 {
-    public string Email { get; set; } = default!;
+    public Guid Id { get; set; }
+    
     [MinLength(5)] [MaxLength(128)]
+    public string Email { get; set; } = default!;
+
+    [MinLength(1)] [MaxLength(255)]
     public string UserName { get; set; } = default!;
     
     public bool IsApproved { get; set; }
-    
-    public ICollection<AppUserRole>? AppUserRoles { get; set; }
 }

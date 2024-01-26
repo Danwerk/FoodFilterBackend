@@ -1,4 +1,5 @@
 ﻿using App.BLL.DTO.Identity;
+using App.Common;
 using App.Contracts.DAL.Identity;
 using Base.DAL.EF;
 using Microsoft.EntityFrameworkCore;
@@ -29,5 +30,24 @@ public class UserRepository : EFBaseRepository<AppUser, ApplicationDbContext>, I
             .ThenInclude(e => e.AppRole)
             .Where(e => e.Id == id)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<AppUser>> GetRestaurantUsersAsync()
+    {
+        return await RepositoryDbSet
+            .Include(u => u.AppUserRoles!)
+            .ThenInclude(u => u.AppRole)
+            .Where(u => u.AppUserRoles!.Any(ur=> ur.AppRole!.Name == RoleNames.Restaurant))
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<AppUser>> GetUnapprovedRestaurantUsersAsync()
+    {
+        return await RepositoryDbSet
+            .Where(u=>u.IsApproved == false)
+            .Include(u => u.AppUserRoles!)
+            .ThenInclude(u => u.AppRole)
+            .Where(u => u.AppUserRoles!.Any(ur=> ur.AppRole!.Name == RoleNames.Restaurant))
+            .ToListAsync();
     }
 }
