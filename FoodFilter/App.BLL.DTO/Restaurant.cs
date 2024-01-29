@@ -15,6 +15,10 @@ public class Restaurant : DomainEntityId
     public string? Website { get; set; }
     
     public Guid AppUserId { get; set; }
+
+    public string Email { get; set; } = default!;
+    
+    public bool IsApproved { get; set; }
     
     public List<Image>? Images { get; set; }
 

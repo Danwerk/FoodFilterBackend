@@ -40,6 +40,20 @@ public class UserService
         _userMapper.Map(user);
     }
 
+    public async Task<AppUser?> GetUser(string email)
+    {
+        var user = await Uow.UserRepository.GetUser(email);
+        
+        return _userMapper.Map(user);
+    }
+    
+    public async Task<AppUser?> GetCurrentAuthorizedUser(ClaimsPrincipal userPrincipal)
+    {
+        var user = await _identityBll.UserManager.GetUserAsync(userPrincipal);
+        
+        return _userMapper.Map(user);
+    }
+
     public async Task<string> GetCurrentUserRole(ClaimsPrincipal userPrincipal)
     {
         var user = await _identityBll.UserManager.GetUserAsync(userPrincipal);

@@ -61,7 +61,7 @@ public static class AppDataInit
             string roles)[]
             {
                 ("admin@app.com", "Foo.bar.1", true, "user,admin"),
-                ("restaurant@app.com", "Foo.bar.2", false, "restaurant"),
+                // ("restaurant@app.com", "Foo.bar.2", false, "restaurant"),
                 ("newuser2@itcollege.ee", "Coca.Cola1", true, ""),
             };
 

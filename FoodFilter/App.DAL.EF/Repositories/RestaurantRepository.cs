@@ -88,4 +88,12 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
         }
         return RepositoryDbSet.Update(entity).Entity;
     }
+
+    public async Task<List<Restaurant>?> GetUnapprovedRestaurants()
+    {
+       return await RepositoryDbSet
+            .Include(r => r.AppUser)
+            .Where(r => r.AppUser != null && !r.AppUser.IsApproved)
+            .ToListAsync();
+    }
 }

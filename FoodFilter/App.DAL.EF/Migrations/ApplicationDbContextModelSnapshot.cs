@@ -476,6 +476,9 @@ namespace DAL.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");

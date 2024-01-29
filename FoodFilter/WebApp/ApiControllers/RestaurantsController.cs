@@ -6,6 +6,7 @@ using App.Public.DTO.Mappers;
 using App.Public.DTO.v1;
 using Asp.Versioning;
 using AutoMapper;
+using Base.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Restaurant = App.Public.DTO.v1.Restaurant;
@@ -48,12 +49,66 @@ namespace WebApp.ApiControllers
             return Ok(res);
         }
 
+        
+        /// <summary>
+        /// Get list of unapproved Restaurants
+        /// </summary>
+        /// <returns>List of all unapproved restaurants</returns>
+        // GET: api/Restaurants
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetUnapprovedRestaurants()
+        {
+            var vm = await _bll.RestaurantService.GetUnapprovedRestaurants();
+            var res = vm.Select(e => _mapper.Map(e))
+                .ToList();
+            return Ok(res);
+        }
+        
+        
+        /// <summary>
+        /// Approve Restaurant
+        /// </summary>
+        /// <returns>void</returns>
+        // GET: api/Restaurants
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpPost ("{id}")]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> ApproveRestaurant(Guid id)
+        {
+            var restaurant = await _bll.RestaurantService.ApproveRestaurantAsync(id);
+
+            return Ok(restaurant);
+        }
 
          // GET: api/Restaurants/5
          [HttpGet("{id}")]
          public async Task<ActionResult<Restaurant>> GetRestaurant(Guid id)
          {
              var restaurant = await _bll.RestaurantService.FindAsync(id);
+
+             if (restaurant == null)
+             {
+                 return NotFound();
+             }
+
+             var res = _mapper.Map(restaurant);
+             return Ok(res);
+         }
+         
+         
+         // GET: api/GetRestaurantForCurrentUser
+         [Produces(MediaTypeNames.Application.Json)]
+         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+         [HttpGet]
+         public async Task<ActionResult<Restaurant>> GetRestaurantForCurrentUser()
+         {
+             var userId = User.GetUserId();
+             var restaurant = await _bll.RestaurantService.GetRestaurant(userId);
 
              if (restaurant == null)
              {
@@ -108,21 +163,32 @@ namespace WebApp.ApiControllers
             return NoContent();
         }
 
-        // POST: api/Restaurants
+        /// <summary>
+        /// Create new restaurant with Id and UserId
+        /// </summary>
+        /// <param name="restaurantCreateDto">Restaurant to create</param>
+        /// <returns>Created restaurant object</returns>
+        /// <response code="201">Restaurant was successfully created.</response>
+        /// <response code="401">Not authorized to perform action.</response>
+        [ProducesResponseType(typeof(Task<ActionResult<Restaurant>>), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Produces(MediaTypeNames.Application.Json)]
         [HttpPost]
-        public async Task<ActionResult<Restaurant>> CreateRestaurant(Restaurant restaurant)
+        public async Task<ActionResult<Restaurant>> CreateRestaurant(RestaurantCreate restaurantCreateDto)
         {
             // todo: restaurant should be created for user. Refactor register method, restaurant creation should not be done there.
-            restaurant.Id = Guid.NewGuid();
-            var bllRestaurant = _mapper.Map(restaurant);
-            _bll.RestaurantService.Add(bllRestaurant!);
+            
+            restaurantCreateDto.Id = Guid.NewGuid();
+           
+            var restaurant = _mapper.MapRestaurantCreate(restaurantCreateDto);
+
+            _bll.RestaurantService.Add(restaurant);
             await _bll.SaveChangesAsync();
             
             return CreatedAtAction("GetRestaurant", new { id = restaurant.Id }, restaurant);
         }
     }
 }
-//
 //         // DELETE: api/Restaurants/5
 //         [HttpDelete("{id}")]
 //         public async Task<IActionResult> DeleteRestaurant(Guid id)

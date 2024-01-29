@@ -7,6 +7,9 @@ using App.Public.DTO.Mappers;
 using App.Public.DTO.v1;
 using Asp.Versioning;
 using AutoMapper;
+using Base.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +21,8 @@ namespace WebApp.ApiControllers.identity;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 public class UserManagerController : ControllerBase
 {
     private readonly UserMapper _mapper;
@@ -40,7 +45,43 @@ public class UserManagerController : ControllerBase
         _roleManager = roleManager;
     }
 
+    /// <summary>
+    /// Get user by email
+    /// </summary>
+    /// <returns>User object</returns>
+    // GET: api/getUser
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.User>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<User>>> GetUser(string email)
+    {
+        var user = await _identityBll.UserService.GetUser(email);
+
+        var res = _mapper.Map(user);
+        return Ok(res);
+    }
         
+    
+    /// <summary>
+    /// Get current authorized user
+    /// </summary>
+    /// <returns>User object</returns>
+    // GET: api/getUser
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.User>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<User>>> GetCurrentAuthorizedUser()
+    {
+        var userId = User.GetUserId();
+        var user = await _identityBll.UserService.GetCurrentAuthorizedUser(User);
+
+        var res = _mapper.Map(user);
+        return Ok(res);
+    }
+    
+    
     /// <summary>
     /// Get list of all Restaurant accounts
     /// </summary>
@@ -63,7 +104,7 @@ public class UserManagerController : ControllerBase
     /// Get list of all unapproved Restaurant accounts.
     /// </summary>
     /// <returns>List of all unapproved Restaurants</returns>
-    // GET: api/restaurantAccounts
+    // GET: api/getUnapprovedRestaurantUsers
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.User>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

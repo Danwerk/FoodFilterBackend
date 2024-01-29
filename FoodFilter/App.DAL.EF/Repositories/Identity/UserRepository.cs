@@ -32,6 +32,13 @@ public class UserRepository : EFBaseRepository<AppUser, ApplicationDbContext>, I
             .FirstOrDefaultAsync();
     }
 
+    public async Task<AppUser?> GetUser(string email)
+    {
+        return await RepositoryDbSet
+            .Where(e => e.Email == email)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<IEnumerable<AppUser>> GetRestaurantUsersAsync()
     {
         return await RepositoryDbSet

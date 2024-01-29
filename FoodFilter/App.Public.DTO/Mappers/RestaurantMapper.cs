@@ -27,5 +27,15 @@ public class RestaurantMapper: BaseMapper<App.BLL.DTO.Restaurant, App.Public.DTO
             Website = restaurantEditDto.Website
         };
     }
+    
+    public Restaurant MapRestaurantCreate(RestaurantCreate restaurantCreateDto)
+    {
+        // todo: images and openhours
+        return new Restaurant()
+        {
+            Id = restaurantCreateDto.Id,
+            AppUserId = restaurantCreateDto.AppUserId,
+        };
+    }
 
 }
