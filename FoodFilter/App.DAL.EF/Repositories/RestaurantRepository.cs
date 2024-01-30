@@ -96,4 +96,12 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
             .Where(r => r.AppUser != null && !r.AppUser.IsApproved)
             .ToListAsync();
     }
+
+    public async Task<List<Restaurant>?> GetApprovedRestaurants()
+    {
+        return await RepositoryDbSet
+            .Include(r => r.AppUser)
+            .Where(r => r.AppUser != null && r.AppUser.IsApproved)
+            .ToListAsync();
+    }
 }

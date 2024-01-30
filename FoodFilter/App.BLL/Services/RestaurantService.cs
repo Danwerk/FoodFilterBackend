@@ -49,6 +49,15 @@ public class RestaurantService :
         return unapprovedRestaurantDtos;
     }
 
+    public async Task<List<Restaurant>?> GetApprovedRestaurants()
+    {
+        var approvedRestaurants = await Uow.RestaurantRepository.GetApprovedRestaurants();
+
+        var approvedRestaurantDtos = approvedRestaurants?.Select(r => Mapper.Map(r)).ToList();
+
+        return approvedRestaurantDtos;
+    }
+
     public async Task<Restaurant?> ApproveRestaurantAsync(Guid id)
     {
         var restaurant = await Uow.RestaurantRepository.FindAsync(id);

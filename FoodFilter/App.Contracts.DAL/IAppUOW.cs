@@ -19,5 +19,6 @@ public interface IAppUOW : IBaseUOW
     ISubAdminRepository SubAdminRepository { get; }
     IUnitRepository UnitRepository { get; }
     IUserRepository UserRepository { get; }
+    IImageRepository ImageRepository { get; }
 
 }

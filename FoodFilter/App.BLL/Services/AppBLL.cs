@@ -29,4 +29,7 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     
     private IRestaurantService? _restaurants;
     public IRestaurantService RestaurantService => _restaurants ??= new RestaurantService(Uow, new RestaurantMapper(_mapper));
+    
+    private IFoodService? _foods;
+    public IFoodService FoodService => _foods ??= new FoodService(Uow, new FoodMapper(_mapper), new ImageService());
 }

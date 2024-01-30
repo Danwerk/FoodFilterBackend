@@ -69,6 +69,24 @@ namespace WebApp.ApiControllers
         
         
         /// <summary>
+        /// Get list of unapproved Restaurants
+        /// </summary>
+        /// <returns>List of all unapproved restaurants</returns>
+        // GET: api/Restaurants
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetApprovedRestaurants()
+        {
+            var vm = await _bll.RestaurantService.GetApprovedRestaurants();
+            var res = vm.Select(e => _mapper.Map(e))
+                .ToList();
+            return Ok(res);
+        }
+        
+        
+        /// <summary>
         /// Approve Restaurant
         /// </summary>
         /// <returns>void</returns>

@@ -12,4 +12,7 @@ public interface IRestaurantRepository : IBaseRepository<Restaurant>
     Restaurant Edit(Restaurant entity);
 
     Task<List<Restaurant>?> GetUnapprovedRestaurants();
+    
+    Task<List<Restaurant>?> GetApprovedRestaurants();
+
 }

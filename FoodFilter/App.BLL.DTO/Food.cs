@@ -1,15 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using App.Domain;
 using Domain.Base;
 
-namespace App.Domain;
+namespace App.BLL.DTO;
 
+using System.ComponentModel.DataAnnotations;
 public class Food : DomainEntityId
 {
     public Guid CategoryId { get; set; }
-    public Category? Category { get; set; }
     
     public Guid RestaurantId { get; set; }
-    public Restaurant? Restaurant { get; set; }
     
     [MaxLength(256)]
     public string Name { get; set; } = default!;
@@ -20,16 +19,11 @@ public class Food : DomainEntityId
     public decimal Price { get; set; }
 
     public bool IsActive { get; set; }
-    [DataType(DataType.DateTime)] 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    
-    [DataType(DataType.DateTime)]
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    
+
     public ICollection<FoodNutrient>? FoodNutrients { get; set; }
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }
     public ICollection<FoodAllergen>? FoodAllergens { get; set; }
-    public ICollection<Image>? Images { get; set; }
+    public ICollection<FoodImage>? FoodImages { get; set; }
 
 
 }

@@ -21,6 +21,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid, Id
     public DbSet<OpenHours> OpenHours { get; set; } = default!;
     public DbSet<Restaurant> Restaurants { get; set; } = default!;
     public DbSet<SubAdmin> SubAdmins { get; set; } = default!;
+    public DbSet<Image> Images { get; set; } = default!;
+
     public DbSet<Unit> Units { get; set; } = default!;
     public DbSet<AppRefreshToken> AppRefreshTokens { get; set; } = default!;
     

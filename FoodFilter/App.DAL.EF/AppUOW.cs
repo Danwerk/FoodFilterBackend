@@ -26,6 +26,7 @@ public class AppUOW : EFBaseUOW<ApplicationDbContext>, IAppUOW
     public ISubAdminRepository? _subAdminRepository;
     public IUnitRepository? _unitRepository;
     public IUserRepository? _userRepository;
+    public IImageRepository? _imageRepository;
 
     public IAllergenRepository AllergenRepository => _allergenRepository ??= new AllergenRepository(UowDbContext);
     public ICategoryRepository CategoryRepository => _categoryRepository ??= new CategoryRepository(UowDbContext);
@@ -40,6 +41,7 @@ public class AppUOW : EFBaseUOW<ApplicationDbContext>, IAppUOW
     public ISubAdminRepository SubAdminRepository => _subAdminRepository ??= new SubAdminRepository(UowDbContext);
     public IUnitRepository UnitRepository => _unitRepository ??= new UnitRepository(UowDbContext);
     public IUserRepository UserRepository => _userRepository ??= new UserRepository(UowDbContext);
-    
+    public IImageRepository ImageRepository => _imageRepository ??= new ImageRepository(UowDbContext);
+
 
 }
