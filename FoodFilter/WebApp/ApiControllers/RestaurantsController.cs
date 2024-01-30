@@ -25,6 +25,11 @@ namespace WebApp.ApiControllers
         private readonly IAppBLL _bll;
         private readonly RestaurantMapper _mapper;
 
+        /// <summary>
+        /// Restaurants Constructor
+        /// </summary>
+        /// <param name="bll">Application Business Logic Layer Interface</param>
+        /// <param name="autoMapper">Auto Mapper</param>
         public RestaurantsController(IAppBLL bll, IMapper autoMapper)
         {
             _bll = bll;
@@ -33,10 +38,11 @@ namespace WebApp.ApiControllers
 
 
         /// <summary>
-        /// Get list of Restaurants
+        /// Get list of all Restaurants
         /// </summary>
-        /// <returns>List of all Units</returns>
-        // GET: api/Restaurants
+        /// <returns>Collection of restaurants</returns>
+        /// <response code="200">Restaurants were successfully retrieved.</response>
+        /// <response code="401">Unauthorized - unable to get the data.</response>
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -48,13 +54,14 @@ namespace WebApp.ApiControllers
                 .ToList();
             return Ok(res);
         }
-
+        
         
         /// <summary>
-        /// Get list of unapproved Restaurants
+        /// Get restaurant users that are unapproved by system administrator.
         /// </summary>
-        /// <returns>List of all unapproved restaurants</returns>
-        // GET: api/Restaurants
+        /// <returns>Collection of restaurants</returns>
+        /// <response code="200">Unapproved restaurants were successfully retrieved.</response>
+        /// <response code="401">Unauthorized - unable to get the data.</response>
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -69,10 +76,11 @@ namespace WebApp.ApiControllers
         
         
         /// <summary>
-        /// Get list of unapproved Restaurants
+        /// Get restaurant users that are approved by system administrator.
         /// </summary>
-        /// <returns>List of all unapproved restaurants</returns>
-        // GET: api/Restaurants
+        /// <returns>Collection of restaurants</returns>
+        /// <response code="200">Approved restaurants were successfully retrieved.</response>
+        /// <response code="401">Unauthorized - unable to get the data.</response>
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -87,15 +95,17 @@ namespace WebApp.ApiControllers
         
         
         /// <summary>
-        /// Approve Restaurant
+        /// Approve restaurant, whose profile is overviewed by system administrator.
         /// </summary>
-        /// <returns>void</returns>
-        // GET: api/Restaurants
+        /// <param name="id">Restaurant id</param>
+        /// <returns>Approved restaurant object</returns>
+        /// <response code="200">Restaurant was successfully approved.</response>
+        /// <response code="401">Unauthorized - unable to get the data.</response>
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost ("{id}")]
-        public async Task<ActionResult<IEnumerable<Restaurant>>> ApproveRestaurant(Guid id)
+        public async Task<ActionResult<Restaurant>> ApproveRestaurant(Guid id)
         {
             var restaurant = await _bll.RestaurantService.ApproveRestaurantAsync(id);
 
