@@ -21,21 +21,28 @@ public class FoodsController : ControllerBase
 {
     private readonly IAppBLL _bll;
     private readonly FoodMapper _mapper;
-
+    
+    /// <summary>
+    /// Foods Constructor
+    /// </summary>
+    /// <param name="bll">Application Business Logic Layer Interface</param>
+    /// <param name="autoMapper">Auto Mapper</param>
     public FoodsController(IAppBLL bll, IMapper autoMapper)
     {
         _bll = bll;
         _mapper = new FoodMapper(autoMapper);
     }
 
-
-    /// <summary>
+    
+    /// /// <summary>
     /// Save food with images
     /// </summary>
-    /// <returns></returns>
+    /// <param name="food">Food object</param>
+    /// <param name="images">Images that should be saved</param>
+    /// <returns>Action result</returns>
     // GET: api/Restaurants
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Food>>> CreateFood([FromForm] Food food,
@@ -47,7 +54,6 @@ public class FoodsController : ControllerBase
             await _bll.FoodService.AddFoodWithImagesAsync(foodBll, images);
             return Ok();
         }
-
-        return BadRequest();
+        return BadRequest(); 
     }
 }
