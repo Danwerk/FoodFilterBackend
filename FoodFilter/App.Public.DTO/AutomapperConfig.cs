@@ -11,6 +11,7 @@ public class AutomapperConfig : Profile
         CreateMap<App.BLL.DTO.Restaurant, App.Public.DTO.v1.Restaurant>().ReverseMap();
         CreateMap<App.BLL.DTO.Food, App.Public.DTO.v1.Food>().ReverseMap();
         CreateMap<App.BLL.DTO.Unit, App.Public.DTO.v1.Unit>().ReverseMap();
+        CreateMap<App.BLL.DTO.Category, App.Public.DTO.v1.Category>().ReverseMap();
         CreateMap<App.BLL.DTO.Ingredient, App.Public.DTO.v1.Ingredient>().ReverseMap();
     }
 }

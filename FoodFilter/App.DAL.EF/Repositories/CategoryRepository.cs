@@ -1,6 +1,7 @@
 ﻿using App.Contracts.DAL;
 using App.Domain;
 using Base.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.EF.Repositories;
 
