@@ -18,7 +18,7 @@ namespace WebApp.ApiControllers
     /// Units Controller
     /// </summary>
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]/[action]")]
     [ApiController]
     public class UnitsController : ControllerBase
     {
