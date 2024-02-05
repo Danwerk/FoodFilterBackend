@@ -7,7 +7,6 @@ public interface IAppUOW : IBaseUOW
 {
     // List your repositories here
     IAllergenRepository AllergenRepository { get; }
-    ICategoryRepository CategoryRepository { get; }
     IFoodAllergenRepository FoodAllergenRepository { get; }
     IFoodIngredientRepository FoodIngredientRepository { get; }
     IFoodNutrientRepository FoodNutrientRepository { get; }

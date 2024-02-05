@@ -13,6 +13,10 @@ public interface IRestaurantService: IBaseRepository<App.BLL.DTO.Restaurant>
     Task<List<Restaurant>?> GetUnapprovedRestaurants();
     
     Task<List<Restaurant>?> GetApprovedRestaurants();
+    Task<List<Restaurant>?> GetPendingRestaurants();
 
     Task<Restaurant?> ApproveRestaurantAsync(Guid id);
+    Task<Restaurant?> DisapproveRestaurantAsync(Guid id);
+    Task<Restaurant?> ConfirmRestaurantPaymentAsync(Guid id);
+    
 }

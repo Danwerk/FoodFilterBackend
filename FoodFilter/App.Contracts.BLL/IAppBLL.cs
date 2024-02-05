@@ -10,6 +10,5 @@ public interface IAppBLL : IBaseBLL
     IRestaurantService RestaurantService { get; }
     IFoodService FoodService { get; }
     IIngredientService IngredientService { get; }
-    ICategoryService CategoryService { get; }
     // IUserService UserService { get; }
 }

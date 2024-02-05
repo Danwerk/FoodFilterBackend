@@ -24,7 +24,6 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     private IRestaurantService? _restaurants;
     private IFoodService? _foods;
     private IIngredientService? _ingredients;
-    private ICategoryService? _categories;
     
     // private IUserService? _users;
     // public IUserService UserService => _users ??= new UserService(Uow, new UserMapper(_mapper));
@@ -34,6 +33,5 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     public IRestaurantService RestaurantService => _restaurants ??= new RestaurantService(Uow, new RestaurantMapper(_mapper));
     public IFoodService FoodService => _foods ??= new FoodService(Uow, new FoodMapper(_mapper), new ImageService());
     public IIngredientService IngredientService => _ingredients ??= new IngredientService(Uow, new IngredientMapper(_mapper));
-    public ICategoryService CategoryService => _categories ??= new CategoryService(Uow, new CategoryMapper(_mapper));
     
 }

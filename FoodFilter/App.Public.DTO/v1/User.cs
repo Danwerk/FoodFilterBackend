@@ -14,4 +14,6 @@ public class User
     public string UserName { get; set; } = default!;
     
     public bool IsApproved { get; set; }
+    
+    public bool IsRejected { get; set; }
 }

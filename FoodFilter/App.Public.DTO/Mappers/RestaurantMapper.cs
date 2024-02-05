@@ -24,7 +24,9 @@ public class RestaurantMapper: BaseMapper<App.BLL.DTO.Restaurant, App.Public.DTO
             Street = restaurantEditDto.Street,
             StreetNumber = restaurantEditDto.StreetNumber,
             PhoneNumber = restaurantEditDto.PhoneNumber,
-            Website = restaurantEditDto.Website
+            Website = restaurantEditDto.Website,
+            PaymentStartsAt = restaurantEditDto.PaymentStartsAt,
+            PaymentEndsAt = restaurantEditDto.PaymentEndsAt
         };
     }
     

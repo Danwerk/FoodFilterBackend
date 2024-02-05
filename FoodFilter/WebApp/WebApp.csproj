@@ -81,6 +81,11 @@
       <_ContentIncludedByDefault Remove="Views\CartProducts\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\CartProducts\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\CartProducts\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Categories\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Categories\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Categories\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Categories\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Categories\Index.cshtml" />
     </ItemGroup>
     
     <PropertyGroup>

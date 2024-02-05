@@ -1,4 +1,6 @@
-﻿namespace App.Public.DTO.v1
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace App.Public.DTO.v1
 {
     public class RestaurantInitial
     {
@@ -19,6 +21,15 @@
         public string Email { get; set; } = default!;
         
         public bool IsApproved { get; set; }
+        public bool IsRejected { get; set; }
+        
+        [DataType(DataType.DateTime)]
+        public DateTime? PaymentStartsAt { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime? PaymentEndsAt { get; set; }
+
+        public bool IsSubscriptionExpired { get; set; }
 
         // public List<Image>? Images { get; set; }
     }

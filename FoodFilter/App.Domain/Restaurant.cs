@@ -34,6 +34,20 @@ public class Restaurant : DomainEntityId
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
+    [DataType(DataType.DateTime)]
+    public DateTime? PaymentStartsAt { get; set; }
+
+    [DataType(DataType.DateTime)]
+    public DateTime? PaymentEndsAt { get; set; }
+
+    public bool IsSubscriptionExpired
+    {
+        get
+        {
+            return PaymentEndsAt.HasValue && PaymentEndsAt.Value < DateTime.UtcNow;
+        }
+    }
+    
     public ICollection<Food>? Foods { get; set; }
     public ICollection<Image>? Images { get; set; }
     public ICollection<OpenHours>? OpenHours { get; set; }

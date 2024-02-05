@@ -11,7 +11,6 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid, Id
     IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>
 {
     public DbSet<Allergen> Allergens { get; set; } = default!;
-    public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Food> Foods { get; set; } = default!;
     public DbSet<FoodAllergen> FoodAllergens { get; set; } = default!;
     public DbSet<FoodIngredient> FoodIngredients { get; set; } = default!;

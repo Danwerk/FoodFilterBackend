@@ -16,6 +16,7 @@ public class AppUser :  IdentityUser<Guid>, IDomainEntityId
     // public string LastName { get; set; } = default!;
 
     public bool IsApproved { get; set; }
+    public bool IsRejected { get; set; }
     
     // public int? EarnedPoints { get; set; }
     //

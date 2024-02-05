@@ -58,6 +58,15 @@ public class RestaurantService :
         return approvedRestaurantDtos;
     }
 
+    public async Task<List<Restaurant>?> GetPendingRestaurants()
+    {
+        var pendingRestaurants = await Uow.RestaurantRepository.GetPendingRestaurants();
+
+        var pendingRestaurantDtos = pendingRestaurants?.Select(r => Mapper.Map(r)).ToList();
+
+        return pendingRestaurantDtos;
+    }
+
     public async Task<Restaurant?> ApproveRestaurantAsync(Guid id)
     {
         var restaurant = await Uow.RestaurantRepository.FindAsync(id);
@@ -65,6 +74,42 @@ public class RestaurantService :
         if (restaurant != null && restaurant.AppUser != null)
         {
             restaurant.AppUser.IsApproved = true;
+            restaurant.AppUser.IsRejected = false;
+        }
+
+        var bllRestaurant = Mapper.Map(restaurant);
+        
+        Uow.RestaurantRepository.Update(restaurant);
+        await Uow.SaveChangesAsync();
+        return bllRestaurant;
+    }
+    
+    
+    public async Task<Restaurant?> DisapproveRestaurantAsync(Guid id)
+    {
+        var restaurant = await Uow.RestaurantRepository.FindAsync(id);
+
+        if (restaurant != null && restaurant.AppUser != null)
+        {
+            restaurant.AppUser.IsApproved = false;
+            restaurant.AppUser.IsRejected = true;
+        }
+
+        var bllRestaurant = Mapper.Map(restaurant);
+        
+        Uow.RestaurantRepository.Update(restaurant);
+        await Uow.SaveChangesAsync();
+        return bllRestaurant;
+    }
+    
+    public async Task<Restaurant?> ConfirmRestaurantPaymentAsync(Guid id)
+    {
+        var restaurant = await Uow.RestaurantRepository.FindAsync(id);
+
+        if (restaurant != null)
+        {
+            restaurant.PaymentStartsAt = DateTime.UtcNow;
+            restaurant.PaymentEndsAt = DateTime.UtcNow.AddYears(1);
         }
 
         var bllRestaurant = Mapper.Map(restaurant);

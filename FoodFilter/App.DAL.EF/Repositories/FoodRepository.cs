@@ -15,7 +15,6 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
     {
         return await RepositoryDbSet
             .Include(c=>c.Restaurant)
-            .Include(e => e.Category)
             .ToListAsync();
     }
     
@@ -23,7 +22,6 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
     {
         return await RepositoryDbSet
             .Include(c => c.Restaurant)
-            .Include(e => e.Category)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 }

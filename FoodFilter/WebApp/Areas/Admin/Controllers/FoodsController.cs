@@ -42,8 +42,7 @@ namespace WebApp.Areas.Admin.Controllers
         // GET: Foods/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_uow.CategoryRepository.AllAsync().Result, "Id", "Name");
-            ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Address");
+            ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Id");
             return View();
         }
 
@@ -59,7 +58,6 @@ namespace WebApp.Areas.Admin.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_uow.CategoryRepository.AllAsync().Result, "Id", "Name", food.CategoryId);
             ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Address", food.RestaurantId);
             return View(food);
         }
@@ -77,7 +75,6 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_uow.CategoryRepository.AllAsync().Result, "Id", "Name", food.CategoryId);
             ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Address", food.RestaurantId);
             return View(food);
         }
@@ -112,7 +109,6 @@ namespace WebApp.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_uow.CategoryRepository.AllAsync().Result, "Id", "Name", food.CategoryId);
             ViewData["RestaurantId"] = new SelectList(_uow.RestaurantRepository.AllAsync().Result, "Id", "Address", food.RestaurantId);
             return View(food);
         }

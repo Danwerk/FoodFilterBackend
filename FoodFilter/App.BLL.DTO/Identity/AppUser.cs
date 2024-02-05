@@ -11,5 +11,7 @@ public class AppUser : DomainEntityId
     
     public bool IsApproved { get; set; }
     
+    public bool IsRejected { get; set; }
+    
     public ICollection<AppUserRole>? AppUserRoles { get; set; }
 }

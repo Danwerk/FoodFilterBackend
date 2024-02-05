@@ -93,7 +93,7 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
     {
        return await RepositoryDbSet
             .Include(r => r.AppUser)
-            .Where(r => r.AppUser != null && !r.AppUser.IsApproved)
+            .Where(r => r.AppUser != null && !r.AppUser.IsApproved && r.AppUser.IsRejected)
             .ToListAsync();
     }
 
@@ -101,7 +101,15 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
     {
         return await RepositoryDbSet
             .Include(r => r.AppUser)
-            .Where(r => r.AppUser != null && r.AppUser.IsApproved)
+            .Where(r => r.AppUser != null && r.AppUser.IsApproved && !r.AppUser.IsRejected)
+            .ToListAsync();
+    }
+
+    public async Task<List<Restaurant>?> GetPendingRestaurants()
+    {
+        return await RepositoryDbSet
+            .Include(r => r.AppUser)
+            .Where(r => r.AppUser != null && !r.AppUser.IsApproved && !r.AppUser.IsRejected)
             .ToListAsync();
     }
 }

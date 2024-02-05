@@ -14,5 +14,6 @@ public interface IRestaurantRepository : IBaseRepository<Restaurant>
     Task<List<Restaurant>?> GetUnapprovedRestaurants();
     
     Task<List<Restaurant>?> GetApprovedRestaurants();
+    Task<List<Restaurant>?> GetPendingRestaurants();
 
 }
