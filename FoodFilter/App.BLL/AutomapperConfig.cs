@@ -16,6 +16,7 @@ public class AutomapperConfig : Profile
         CreateMap<BLL.DTO.Image, App.Domain.Image>().ReverseMap();
         CreateMap<App.Domain.Food, App.BLL.DTO.Food>().ReverseMap();
         CreateMap<App.Domain.Ingredient, App.BLL.DTO.Ingredient>().ReverseMap();
+        CreateMap<App.Domain.IngredientNutrient, App.BLL.DTO.IngredientNutrient>().ReverseMap();
         CreateMap<App.Domain.Restaurant, App.BLL.DTO.Restaurant>()
             .ForMember(dest => dest.IsApproved, opt => opt.MapFrom(src => src.AppUser!.IsApproved))
             .ForMember(dest => dest.IsRejected, opt => opt.MapFrom(src => src.AppUser!.IsRejected))
