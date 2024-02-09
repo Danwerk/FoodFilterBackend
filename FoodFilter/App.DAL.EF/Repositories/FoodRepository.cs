@@ -15,6 +15,10 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
     {
         return await RepositoryDbSet
             .Include(c=>c.Restaurant)
+            .Include(f=>f.FoodNutrients)
+            .Include(f=>f.FoodAllergens)
+            .Include(f=>f.FoodIngredients)
+            .ThenInclude(fi=>fi.Ingredient)
             .ToListAsync();
     }
     

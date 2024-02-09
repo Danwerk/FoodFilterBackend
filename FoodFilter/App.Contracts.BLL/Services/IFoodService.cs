@@ -9,4 +9,7 @@ public interface IFoodService : IBaseRepository<Food>
     Task AddFoodWithImagesAsync(Food food, List<IFormFile> images);
     
     Task<Food?> GetFood(Guid foodId);
+    
+    Task<List<Food>?> GetFoods();
+
 }

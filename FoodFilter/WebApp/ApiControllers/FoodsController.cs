@@ -56,4 +56,48 @@ public class FoodsController : ControllerBase
         }
         return BadRequest(); 
     }
+    
+    
+    /// <summary>
+    /// Get Food by id
+    /// </summary>
+    /// <returns>Food object</returns>
+    /// <response code="200">Food object were successfully retrieved.</response>
+    /// <response code="401">Unauthorized - unable to get the data.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Food>> GetFood(Guid id)
+    {
+        var food = await _bll.FoodService.GetFood(id);
+
+        if (food == null)
+        {
+            return NotFound();
+        }
+
+        var res = _mapper.Map(food);
+        return Ok(res);
+    }
+    
+    
+    /// <summary>
+    /// Get list of all Foods
+    /// </summary>
+    /// <returns>Collection of foods</returns>
+    /// <response code="200">Foods were successfully retrieved.</response>
+    /// <response code="401">Unauthorized - unable to get the data.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Food>>> GetFoods()
+    {
+        var vm = await _bll.FoodService.AllAsync();
+        var res = vm.Select(e => _mapper.Map(e))
+            .ToList();
+        return Ok(res);
+    }
+
 }
