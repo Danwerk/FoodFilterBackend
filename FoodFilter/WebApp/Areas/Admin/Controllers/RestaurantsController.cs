@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Areas.Admin.ViewModels;
+#pragma warning disable 1591
 
 namespace WebApp.Areas.Admin.Controllers
 {

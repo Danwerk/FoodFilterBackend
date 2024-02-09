@@ -4,6 +4,7 @@ using DAL.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable 1591
 
 namespace WebApp.Areas.Admin.Controllers
 {
