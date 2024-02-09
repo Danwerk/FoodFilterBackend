@@ -66,6 +66,8 @@ namespace WebApp.Areas_Admin_Controllers
             if (ModelState.IsValid)
             {
                 ingredientNutrient.Id = Guid.NewGuid();
+                ingredientNutrient.CreatedAt = DateTime.SpecifyKind(ingredientNutrient.CreatedAt, DateTimeKind.Utc);
+                ingredientNutrient.UpdatedAt = DateTime.SpecifyKind(ingredientNutrient.UpdatedAt, DateTimeKind.Utc);
                 _context.Add(ingredientNutrient);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

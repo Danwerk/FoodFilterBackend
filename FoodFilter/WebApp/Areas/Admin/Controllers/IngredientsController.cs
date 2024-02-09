@@ -53,6 +53,8 @@ namespace WebApp.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 ingredient.Id = Guid.NewGuid();
+                ingredient.CreatedAt = DateTime.SpecifyKind(ingredient.CreatedAt, DateTimeKind.Utc);
+                ingredient.UpdatedAt = DateTime.SpecifyKind(ingredient.UpdatedAt, DateTimeKind.Utc);
                 _uow.IngredientRepository.Add(ingredient);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
