@@ -11,18 +11,18 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
     public RestaurantRepository(ApplicationDbContext dbContext) : base(dbContext)
     {
     }
-    
+
     public override async Task<IEnumerable<Restaurant>> AllAsync()
     {
         return await RepositoryDbSet
             .Include(e => e.AppUser)
-            .ThenInclude(e=> e!.AppUserRoles)!
-            .ThenInclude(e=> e.AppRole)
+            .ThenInclude(e => e!.AppUserRoles)!
+            .ThenInclude(e => e.AppRole)
             .Where(r => r.AppUser!.AppUserRoles!
-                .Any(ur=> ur.AppRole!.Name == RoleNames.Restaurant))
+                .Any(ur => ur.AppRole!.Name == RoleNames.Restaurant))
             .ToListAsync();
     }
-    
+
     public virtual async Task<IEnumerable<Restaurant>> AllAsync(Guid userId)
     {
         return await RepositoryDbSet
@@ -38,11 +38,12 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async  Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street, string? streetNumber)
+    public async Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street,
+        string? streetNumber)
     {
         // todo: fetch images that are approved
         var query = RepositoryDbSet
-            .Include(r=>r.Images)
+            .Include(r => r.Images)
             .Include(e => e.AppUser)
             .Where(r => r.AppUser!.AppUserRoles!
                 .Any(ur => ur.AppRole!.Name == RoleNames.Restaurant));
@@ -62,19 +63,19 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
         var result = await query.ToListAsync();
         return result;
     }
-    
+
     public virtual async Task<Restaurant?> FindAsync(Guid id, Guid userId)
     {
         return await RepositoryDbSet
             .Include(c => c.AppUser)
             .FirstOrDefaultAsync(m => m.Id == id && m.AppUserId == userId);
     }
-    
+
     public virtual async Task<Restaurant?> FindByUserIdAsync(Guid userId)
     {
         return await RepositoryDbSet
             .Include(c => c.AppUser)
-            .Include(c=> c.Images)
+            .Include(c => c.Images)
             .FirstOrDefaultAsync(m => m.AppUserId == userId);
     }
 
@@ -86,12 +87,13 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
         {
             RepositoryDbContext.Entry(existingEntity).State = EntityState.Detached;
         }
+
         return RepositoryDbSet.Update(entity).Entity;
     }
 
     public async Task<List<Restaurant>?> GetUnapprovedRestaurants()
     {
-       return await RepositoryDbSet
+        return await RepositoryDbSet
             .Include(r => r.AppUser)
             .Where(r => r.AppUser != null && !r.AppUser.IsApproved && r.AppUser.IsRejected)
             .ToListAsync();
@@ -110,6 +112,15 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
         return await RepositoryDbSet
             .Include(r => r.AppUser)
             .Where(r => r.AppUser != null && !r.AppUser.IsApproved && !r.AppUser.IsRejected)
+            .ToListAsync();
+    }
+
+    public async Task<List<Restaurant>?> GetExpiredRestaurants()
+    {
+        return await RepositoryDbSet
+            .Include(r => r.AppUser)
+            .Where(r => r.AppUser != null && !r.AppUser.IsRejected &&
+                        r.PaymentEndsAt.Value.ToUniversalTime() < DateTime.UtcNow)
             .ToListAsync();
     }
 }

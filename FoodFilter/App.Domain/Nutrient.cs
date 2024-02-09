@@ -15,5 +15,7 @@ public class Nutrient : DomainEntityId
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<FoodNutrient>? FoodNutrients { get; set; }
+    public ICollection<IngredientNutrient>? IngredientNutrients { get; set; }
+
 
 }

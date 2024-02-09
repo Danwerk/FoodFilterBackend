@@ -16,5 +16,7 @@ public class Unit : DomainEntityId
 
     public ICollection<FoodNutrient>? FoodNutrients { get; set; }
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }
+    public ICollection<IngredientNutrient>? IngredientNutrients { get; set; }
+
 
 }

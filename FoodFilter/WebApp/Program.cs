@@ -1,12 +1,17 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using App.BLL.DTO;
+using App.BLL.Mappers;
 using App.BLL.Services;
+using App.BLL.Services.BackgroundServices;
 using App.BLL.Services.Identity;
 using App.Contracts.BLL;
+using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
 using App.Domain.Identity;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Base.Contracts;
 using DAL.EF;
 using DAL.EF.Seeding;
 using Microsoft.AspNetCore.Identity;
@@ -34,6 +39,13 @@ builder.Services.AddScoped<IAppBLL, AppBLL>();
 builder.Services.AddScoped<IdentityBLL>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ImageService>();
+builder.Services.AddScoped<RestaurantService>();
+// Mapper registered because of PaymentExpirationBackgroundService
+builder.Services.AddScoped<IMapper<Restaurant, App.Domain.Restaurant>, RestaurantMapper>();
+
+
+builder.Services.AddHostedService<PaymentExpirationBackgroundService>();
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -96,11 +108,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerGen();
 
+
+
 // =======================================================
 var app = builder.Build();
 // =======================================================
 // To allow using timestamps
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", false);
 // Set up all the database stuff and seed initial data
 SetupAppData(app, app.Environment, app.Configuration);
 

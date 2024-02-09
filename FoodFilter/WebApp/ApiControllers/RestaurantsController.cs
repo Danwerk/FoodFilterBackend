@@ -112,6 +112,24 @@ namespace WebApp.ApiControllers
             return Ok(res);
         }
         
+        /// <summary>
+        /// Get restaurant users that are expired, it means that account payment has expired.
+        /// </summary>
+        /// <returns>Collection of restaurants</returns>
+        /// <response code="200">Pending restaurants were successfully retrieved.</response>
+        /// <response code="401">Unauthorized - unable to get the data.</response>
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetExpiredRestaurants()
+        {
+            var vm = await _bll.RestaurantService.GetExpiredRestaurants();
+            var res = vm.Select(e => _mapper.Map(e))
+                .ToList();
+            return Ok(res);
+        }
+        
         
         /// <summary>
         /// Approve restaurant, whose profile is overviewed by system administrator.

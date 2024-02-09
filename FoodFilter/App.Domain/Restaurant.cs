@@ -28,16 +28,14 @@ public class Restaurant : DomainEntityId
     public Guid? ApprovedById { get; set; }
     public AppUser? ApprovedBy { get; set; }
     
-    [DataType(DataType.DateTime)] 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
-    [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
-    [DataType(DataType.DateTime)]
+    
     public DateTime? PaymentStartsAt { get; set; }
 
-    [DataType(DataType.DateTime)]
+    
     public DateTime? PaymentEndsAt { get; set; }
 
     public bool IsSubscriptionExpired

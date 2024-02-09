@@ -11,6 +11,7 @@
       <ProjectReference Include="..\App.Common\App.Common.csproj" />
       <ProjectReference Include="..\App.Contracts.BLL\App.Contracts.BLL.csproj" />
       <ProjectReference Include="..\App.Contracts.DAL\App.Contracts.DAL.csproj" />
+      <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
       <ProjectReference Include="..\App.Domain\App.Domain.csproj" />
       <ProjectReference Include="..\Base.BLL\Base.BLL.csproj" />
       <ProjectReference Include="..\Base.DAL\Base.DAL.csproj" />
@@ -21,6 +22,11 @@
       <Reference Include="Microsoft.AspNetCore.Http.Features">
         <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.2\Microsoft.AspNetCore.Http.Features.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     </ItemGroup>
 
 </Project>

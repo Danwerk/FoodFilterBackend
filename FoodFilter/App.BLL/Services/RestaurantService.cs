@@ -1,5 +1,4 @@
 ﻿using App.BLL.DTO;
-using App.BLL.DTO.Identity;
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
 using Base.BLL;
@@ -67,6 +66,15 @@ public class RestaurantService :
         return pendingRestaurantDtos;
     }
 
+    public async Task<List<Restaurant>?> GetExpiredRestaurants()
+    {
+        var expiredRestaurants = await Uow.RestaurantRepository.GetExpiredRestaurants();
+        
+        var expiredRestaurantDtos = expiredRestaurants?.Select(r => Mapper.Map(r)).ToList();
+
+        return expiredRestaurantDtos;
+    }
+
     public async Task<Restaurant?> ApproveRestaurantAsync(Guid id)
     {
         var restaurant = await Uow.RestaurantRepository.FindAsync(id);
@@ -78,13 +86,14 @@ public class RestaurantService :
         }
 
         var bllRestaurant = Mapper.Map(restaurant);
-        
+
         Uow.RestaurantRepository.Update(restaurant);
         await Uow.SaveChangesAsync();
         return bllRestaurant;
     }
     
-    
+
+    // Disapproving means that admin rejected a restaurant 
     public async Task<Restaurant?> DisapproveRestaurantAsync(Guid id)
     {
         var restaurant = await Uow.RestaurantRepository.FindAsync(id);
@@ -96,12 +105,12 @@ public class RestaurantService :
         }
 
         var bllRestaurant = Mapper.Map(restaurant);
-        
+
         Uow.RestaurantRepository.Update(restaurant);
         await Uow.SaveChangesAsync();
         return bllRestaurant;
     }
-    
+
     public async Task<Restaurant?> ConfirmRestaurantPaymentAsync(Guid id)
     {
         var restaurant = await Uow.RestaurantRepository.FindAsync(id);
@@ -109,11 +118,11 @@ public class RestaurantService :
         if (restaurant != null)
         {
             restaurant.PaymentStartsAt = DateTime.UtcNow;
-            restaurant.PaymentEndsAt = DateTime.UtcNow.AddYears(1);
+            restaurant.PaymentEndsAt = DateTime.UtcNow.AddMinutes(2);
         }
-
+       
         var bllRestaurant = Mapper.Map(restaurant);
-        
+
         Uow.RestaurantRepository.Update(restaurant);
         await Uow.SaveChangesAsync();
         return bllRestaurant;
