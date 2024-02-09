@@ -5,5 +5,6 @@ namespace App.Contracts.DAL;
 
 public interface IFoodRepository : IBaseRepository<Food>
 {
-    
+    Task<Food?> FindAsync(Guid foodId);
+
 }

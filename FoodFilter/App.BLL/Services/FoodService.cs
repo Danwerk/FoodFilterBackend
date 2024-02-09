@@ -49,4 +49,10 @@ public class FoodService : BaseEntityService<App.BLL.DTO.Food, App.Domain.Food, 
 
         await Uow.SaveChangesAsync();
     }
+
+    public async Task<Food?> GetFood(Guid foodId)
+    {
+        var food = await Uow.FoodRepository.FindAsync(foodId);
+        return Mapper.Map(food);
+    }
 }
