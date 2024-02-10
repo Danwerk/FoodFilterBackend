@@ -11,4 +11,7 @@ public class Ingredient: DomainEntityId
     public string Description { get; set; } = default!;
     
     public bool IsConfirmed { get; set; }
+    
+    public ICollection<FoodIngredient>? FoodIngredients { get; set; }
+    public ICollection<IngredientNutrient>? IngredientNutrients { get; set; }
 }

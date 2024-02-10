@@ -12,4 +12,6 @@ public interface IFoodService : IBaseRepository<Food>
     
     Task<List<Food>?> GetFoods();
 
+    Task<FoodNutritionCalculation> CalculateFoodNutrition(Food food);
+
 }

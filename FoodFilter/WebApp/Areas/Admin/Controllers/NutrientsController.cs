@@ -92,6 +92,8 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
+                    nutrient.CreatedAt = DateTime.SpecifyKind(nutrient.CreatedAt, DateTimeKind.Utc);
+                    nutrient.UpdatedAt = DateTime.SpecifyKind(nutrient.UpdatedAt, DateTimeKind.Utc);
                     _uow.NutrientRepository.Update(nutrient);
                     await _uow.SaveChangesAsync();
                 }

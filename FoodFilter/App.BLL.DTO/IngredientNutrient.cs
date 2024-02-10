@@ -10,8 +10,10 @@ public class IngredientNutrient : DomainEntityId
     public Unit? Unit { get; set; }
     
     public Guid IngredientId { get; set; }
+    public Ingredient? Ingredient { get; set; }
     
     public Guid NutrientId { get; set; }
+    public Nutrient? Nutrient { get; set; }
     
     public decimal Amount { get; set; }
     

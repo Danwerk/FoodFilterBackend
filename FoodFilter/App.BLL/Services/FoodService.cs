@@ -1,10 +1,13 @@
-﻿using App.Contracts.BLL.Services;
+﻿using App.BLL.DTO;
+using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
 using App.Domain;
 using Base.BLL;
 using Base.Contracts;
 using Microsoft.AspNetCore.Http;
 using Food = App.BLL.DTO.Food;
+using FoodNutrient = App.BLL.DTO.FoodNutrient;
+using Image = App.Domain.Image;
 
 namespace App.BLL.Services;
 
@@ -30,7 +33,7 @@ public class FoodService : BaseEntityService<App.BLL.DTO.Food, App.Domain.Food, 
         {
             food.Description = "";
         }
-        
+
         var savedFood = Uow.FoodRepository.Add(food);
         await Uow.SaveChangesAsync();
 
@@ -59,9 +62,49 @@ public class FoodService : BaseEntityService<App.BLL.DTO.Food, App.Domain.Food, 
     public async Task<List<Food>?> GetFoods()
     {
         var foods = await Uow.FoodRepository.AllAsync();
-        
+
         var foodDtos = foods?.Select(r => Mapper.Map(r)).ToList();
 
         return foodDtos;
+    }
+
+    public async Task<FoodNutritionCalculation> CalculateFoodNutrition(Food food)
+    {
+        if (food.FoodIngredients == null)
+        {
+            throw new Exception($"Food {food.Name} is missing foodIngredients");
+        }
+
+        if (food.FoodNutrients == null)
+        {
+            throw new Exception($"Food {food.Name} is missing foodNutrients");
+        }
+
+        var foodNutrition = new FoodNutritionCalculation
+        {
+            FoodName = food.Name,
+            FoodNutrients = new List<FoodNutrient>()
+        };
+
+        var nutrientGroups = food.FoodIngredients
+            .SelectMany(f => f.Ingredient!.IngredientNutrients!)
+            .GroupBy(inut => inut.NutrientId)
+            .ToList();
+
+        foreach (var nutrientGroup in nutrientGroups)
+        {
+            var totalAmount = nutrientGroup.Sum(i => i.Amount);
+
+            var calculatedNutrient = new FoodNutrient()
+            {
+                Id = nutrientGroup.Key,
+                Amount = totalAmount,
+                NutrientName = nutrientGroup.First()!.Nutrient!.Name,
+                NutrientId = nutrientGroup.First().Nutrient!.Id,
+            };
+            foodNutrition.FoodNutrients.Add(calculatedNutrient);
+        }
+
+        return foodNutrition;
     }
 }

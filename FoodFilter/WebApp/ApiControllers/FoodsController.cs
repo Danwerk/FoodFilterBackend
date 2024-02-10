@@ -99,5 +99,31 @@ public class FoodsController : ControllerBase
             .ToList();
         return Ok(res);
     }
+    
+    
+    /// <summary>
+    /// Calculate nutrition information for food.
+    /// </summary>
+    /// <returns>DTO of calculated result</returns>
+    /// <response code="200">Food nutrients were successfully calculated.</response>
+    /// <response code="401">Unauthorized - unable to get the data.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    // [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Food>> CalculateFoodNutrition(Guid id)
+    {
+        var food = await _bll.FoodService.GetFood(id);
+        if (food == null)
+        {
+            return NotFound($"Food with id {id} not found");
+        }
+
+        var foodNutrition = await _bll.FoodService.CalculateFoodNutrition(food);
+        food.FoodNutrients = foodNutrition.FoodNutrients;
+        
+        var res = _mapper.Map(food);
+        return Ok(res);
+    }
 
 }
