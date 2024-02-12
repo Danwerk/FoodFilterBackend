@@ -202,6 +202,25 @@ namespace WebApp.ApiControllers
              var res = _mapper.Map(restaurant);
              return Ok(res);
          }
+         
+         
+         // GET: api/GetRestaurantForCurrentUser
+         [Produces(MediaTypeNames.Application.Json)]
+         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+         [HttpGet("{id}")]
+         public async Task<ActionResult<Restaurant>> GetRestaurantByUserId(Guid id)
+         {
+             var restaurant = await _bll.RestaurantService.GetRestaurant(id);
+
+             if (restaurant == null)
+             {
+                 return NotFound();
+             }
+
+             var res = _mapper.Map(restaurant);
+             return Ok(res);
+         }
 
         /// <summary>
         /// Update Restaurant with specified id

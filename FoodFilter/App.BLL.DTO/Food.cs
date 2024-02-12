@@ -6,8 +6,6 @@ namespace App.BLL.DTO;
 using System.ComponentModel.DataAnnotations;
 public class Food : DomainEntityId
 {
-    public Guid CategoryId { get; set; }
-    
     public Guid RestaurantId { get; set; }
     
     [MaxLength(256)]

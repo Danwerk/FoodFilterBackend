@@ -31,7 +31,7 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     
     public IUnitService UnitService => _units ??= new UnitService(Uow, new UnitMapper(_mapper));
     public IRestaurantService RestaurantService => _restaurants ??= new RestaurantService(Uow, new RestaurantMapper(_mapper));
-    public IFoodService FoodService => _foods ??= new FoodService(Uow, new FoodMapper(_mapper), new ImageService());
+    public IFoodService FoodService => _foods ??= new FoodService(Uow, new FoodMapper(_mapper), new ImageService(), new UnitService(Uow, new UnitMapper(_mapper)));
     public IIngredientService IngredientService => _ingredients ??= new IngredientService(Uow, new IngredientMapper(_mapper));
     
 }

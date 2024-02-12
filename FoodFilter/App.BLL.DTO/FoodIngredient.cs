@@ -8,7 +8,7 @@ public class FoodIngredient : DomainEntityId
     public Unit? Unit { get; set; }
     
     public Guid FoodId { get; set; }
-    public Food? Food { get; set; }
+    // public Food? Food { get; set; }
     
     public Guid IngredientId { get; set; }
     public Ingredient? Ingredient { get; set; }

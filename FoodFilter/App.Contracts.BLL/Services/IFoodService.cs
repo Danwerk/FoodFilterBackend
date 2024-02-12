@@ -11,6 +11,8 @@ public interface IFoodService : IBaseRepository<Food>
     Task<Food?> GetFood(Guid foodId);
     
     Task<List<Food>?> GetFoods();
+    
+    // Task<Food> Edit(Food entity);
 
     Task<FoodNutritionCalculation> CalculateFoodNutrition(Food food);
 

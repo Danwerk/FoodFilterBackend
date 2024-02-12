@@ -69,7 +69,7 @@ public class RestaurantService :
     public async Task<List<Restaurant>?> GetExpiredRestaurants()
     {
         var expiredRestaurants = await Uow.RestaurantRepository.GetExpiredRestaurants();
-        
+
         var expiredRestaurantDtos = expiredRestaurants?.Select(r => Mapper.Map(r)).ToList();
 
         return expiredRestaurantDtos;
@@ -91,7 +91,7 @@ public class RestaurantService :
         await Uow.SaveChangesAsync();
         return bllRestaurant;
     }
-    
+
 
     // Disapproving means that admin rejected a restaurant 
     public async Task<Restaurant?> DisapproveRestaurantAsync(Guid id)
@@ -120,7 +120,7 @@ public class RestaurantService :
             restaurant.PaymentStartsAt = DateTime.UtcNow;
             restaurant.PaymentEndsAt = DateTime.UtcNow.AddMinutes(2);
         }
-       
+
         var bllRestaurant = Mapper.Map(restaurant);
 
         Uow.RestaurantRepository.Update(restaurant);

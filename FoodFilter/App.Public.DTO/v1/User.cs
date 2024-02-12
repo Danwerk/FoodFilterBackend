@@ -16,4 +16,6 @@ public class User
     public bool IsApproved { get; set; }
     
     public bool IsRejected { get; set; }
+    
+    public Guid? RestaurantId { get; set; }
 }

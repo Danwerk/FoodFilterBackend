@@ -35,7 +35,13 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid, Id
     {
         base.OnModelCreating(builder);
 
-
+        // disable cascade delete
+        foreach (var foreignKey in builder.Model
+                     .GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+        {
+            foreignKey.DeleteBehavior = DeleteBehavior.Cascade;
+        }
+        
         builder.Entity<AppUser>()
             .HasMany(e => e.AppUserRoles)
             .WithOne(e => e.AppUser)
@@ -49,12 +55,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid, Id
             .IsRequired();
         
         
-        // disable cascade delete
-        foreach (var foreignKey in builder.Model
-                     .GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-        {
-            foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
-        }
+
         
 
     }

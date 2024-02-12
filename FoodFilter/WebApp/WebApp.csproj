@@ -87,6 +87,10 @@
       <_ContentIncludedByDefault Remove="Views\Categories\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Categories\Index.cshtml" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\images" />
+    </ItemGroup>
     
     <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>

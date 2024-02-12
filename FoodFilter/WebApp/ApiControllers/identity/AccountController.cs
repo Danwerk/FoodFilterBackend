@@ -111,7 +111,9 @@ public class AccountController : ControllerBase
             });
         }
 
+        result = await _userManager.AddClaimAsync(appUser, new Claim("userId", appUser.Id.ToString()));
 
+   
         // save into claims also the user full name
         // result = await _userManager.AddClaimsAsync(appUser, new List<Claim>()
         // {
@@ -192,6 +194,7 @@ public class AccountController : ControllerBase
                 Error = "User/Password problem"
             });
         }
+        
 
         // verify username and password
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, loginData.Password, false);
@@ -205,9 +208,13 @@ public class AccountController : ControllerBase
                 Error = "User/Password problem"
             });
         }
+       
 
         // get claims based user
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
+        // added to send with jwt also userId
+        claimsPrincipal.Identities.First().AddClaim(new Claim("userId", appUser.Id.ToString()));
+
         if (claimsPrincipal == null)
         {
             _logger.LogWarning("Could not get ClaimsPrincipal for user {}", loginData.Email);

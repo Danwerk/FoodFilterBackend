@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using App.Contracts.BLL;
+using App.Domain.Identity;
 using App.Public.DTO.Mappers;
 using App.Public.DTO.v1;
 using Asp.Versioning;
@@ -7,6 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
@@ -21,7 +23,7 @@ public class FoodsController : ControllerBase
 {
     private readonly IAppBLL _bll;
     private readonly FoodMapper _mapper;
-    
+
     /// <summary>
     /// Foods Constructor
     /// </summary>
@@ -33,31 +35,34 @@ public class FoodsController : ControllerBase
         _mapper = new FoodMapper(autoMapper);
     }
 
-    
+
     /// /// <summary>
     /// Save food with images
     /// </summary>
     /// <param name="food">Food object</param>
     /// <param name="images">Images that should be saved</param>
     /// <returns>Action result</returns>
-    // GET: api/Restaurants
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Food>>> CreateFood([FromForm] Food food,
+    [HttpPost]
+    public async Task<ActionResult<Food>> CreateFood([FromForm] Food food,
         [FromForm] List<IFormFile> images)
     {
+        food.Id = Guid.NewGuid();
         var foodBll = _mapper.Map(food);
+
         if (foodBll != null)
         {
             await _bll.FoodService.AddFoodWithImagesAsync(foodBll, images);
-            return Ok();
+
+            return CreatedAtAction("GetFood", new { id = food.Id }, food);
         }
-        return BadRequest(); 
+
+        return BadRequest();
     }
-    
-    
+
+
     /// <summary>
     /// Get Food by id
     /// </summary>
@@ -80,8 +85,8 @@ public class FoodsController : ControllerBase
         var res = _mapper.Map(food);
         return Ok(res);
     }
-    
-    
+
+
     /// <summary>
     /// Get list of all Foods
     /// </summary>
@@ -99,8 +104,41 @@ public class FoodsController : ControllerBase
             .ToList();
         return Ok(res);
     }
-    
-    
+
+
+    /// <summary>
+    /// Update Food with specified id
+    /// </summary>
+    /// <param name="id">Food ID</param>
+    /// <param name="food">Edited Food object that need to be updated</param>
+    /// <returns>Action result</returns>
+    [HttpPut("{id}")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ActionResult<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Food>> EditFood(Guid id, Food food)
+    {
+        if (id != food.Id)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            var foodBll = _mapper.Map(food);
+            var editedFood = _bll.FoodService.Update(foodBll!);
+            await _bll.SaveChangesAsync();
+            return Ok(editedFood);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return NotFound();
+        }
+    }
+
+
     /// <summary>
     /// Calculate nutrition information for food.
     /// </summary>
@@ -108,7 +146,7 @@ public class FoodsController : ControllerBase
     /// <response code="200">Food nutrients were successfully calculated.</response>
     /// <response code="401">Unauthorized - unable to get the data.</response>
     [Produces(MediaTypeNames.Application.Json)]
-    // [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("{id}")]
     public async Task<ActionResult<Food>> CalculateFoodNutrition(Guid id)
@@ -119,11 +157,15 @@ public class FoodsController : ControllerBase
             return NotFound($"Food with id {id} not found");
         }
 
+        if (food.FoodIngredients != null && !food.FoodIngredients.Any())
+        {
+            return NotFound($"Food '{food.Name}' has no ingredients");
+        }
+        
         var foodNutrition = await _bll.FoodService.CalculateFoodNutrition(food);
         food.FoodNutrients = foodNutrition.FoodNutrients;
-        
+
         var res = _mapper.Map(food);
         return Ok(res);
     }
-
 }

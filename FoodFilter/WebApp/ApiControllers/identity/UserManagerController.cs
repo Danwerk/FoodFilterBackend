@@ -57,8 +57,9 @@ public class UserManagerController : ControllerBase
     public async Task<ActionResult<IEnumerable<User>>> GetUser(string email)
     {
         var user = await _identityBll.UserService.GetUser(email);
-
+        
         var res = _mapper.Map(user);
+        
         return Ok(res);
     }
         

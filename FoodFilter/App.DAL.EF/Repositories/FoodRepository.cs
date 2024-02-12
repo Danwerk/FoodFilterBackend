@@ -22,16 +22,30 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
             .ThenInclude(i => i!.IngredientNutrients)
             .ToListAsync();
     }
-    
+
+    // public async Task<Food> Edit(Food entity)
+    // {
+    //     var existingEntity = RepositoryDbSet.Find(entity.Id);
+    //
+    //     if (existingEntity != null)
+    //     {
+    //         RepositoryDbContext.Entry(existingEntity).State = EntityState.Detached;
+    //     }
+    //
+    //     return RepositoryDbSet.Update(entity).Entity;
+    // }
+
     public override async Task<Food?> FindAsync(Guid id)
     {
         return await RepositoryDbSet
             .Include(c => c.Restaurant)
-            .Include(f=>f.FoodNutrients)
-            .Include(f=>f.FoodIngredients)!
-            .ThenInclude(fi=>fi.Ingredient)
-            .ThenInclude(i => i!.IngredientNutrients)!
-            .ThenInclude(i=> i.Nutrient)
+            .Include(f => f.FoodNutrients)
+            .Include(f => f.FoodIngredients)!
+            .ThenInclude(fi => fi.Ingredient)
+            .ThenInclude(i => i!.IngredientNutrients)
+            .ThenInclude(inut => inut.Unit)  // Include Unit for IngredientNutrient
+            .ThenInclude(i => i!.IngredientNutrients)  // Redundant
+            .ThenInclude(inut => inut.Nutrient)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 }
