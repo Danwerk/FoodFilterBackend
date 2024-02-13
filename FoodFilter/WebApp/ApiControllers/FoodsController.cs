@@ -189,40 +189,6 @@ public class FoodsController : ControllerBase
 
         return Ok();
     }
-
-
-    /// <summary>
-    /// Calculate nutrition information for food.
-    /// </summary>
-    /// <returns>DTO of calculated result</returns>
-    /// <response code="200">Food nutrients were successfully calculated.</response>
-    /// <response code="401">Unauthorized - unable to get the data.</response>
-    [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Food>> CalculateFoodNutrition(Guid id)
-    {
-        var food = await _bll.FoodService.FindAsync(id);
-        if (food == null)
-        {
-            return NotFound($"Food with id {id} not found");
-        }
-
-        if (food.FoodIngredients != null && !food.FoodIngredients.Any())
-        {
-            return NotFound($"Food '{food.Name}' has no ingredients");
-        }
-        
-        var foodNutrition = await _bll.FoodService.CalculateFoodNutrition(food);
-        food.FoodNutrients = foodNutrition.FoodNutrients;
-        food.ServingInGrams = food.FoodIngredients!.Sum(e => e.Amount);
-
-        var res = _mapper.Map(food);
-        return Ok(res);
-    }
-    
-    
     
     /// <summary>
     /// Calculate nutrition information for food.
