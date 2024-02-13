@@ -71,10 +71,12 @@ namespace WebApp.Areas.Admin.Controllers
             }
 
             var ingredient = await _uow.IngredientRepository.FindAsync(id.Value);
+            
             if (ingredient == null)
             {
                 return NotFound();
             }
+            
             return View(ingredient);
         }
 
@@ -92,6 +94,8 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
+                    ingredient.CreatedAt = DateTime.SpecifyKind(ingredient.CreatedAt, DateTimeKind.Utc);
+                    ingredient.UpdatedAt = DateTime.SpecifyKind(ingredient.UpdatedAt, DateTimeKind.Utc);
                     _uow.IngredientRepository.Update(ingredient);
                     await _uow.SaveChangesAsync();
                 }

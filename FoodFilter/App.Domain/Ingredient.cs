@@ -13,7 +13,7 @@ public class Ingredient : DomainEntityId
     
     public bool IsConfirmed { get; set; }
     
-    public decimal EnergyInKiloCalories { get; set; }
+    public decimal KCaloriesPer100Grams { get; set; }
 
     // Declaring default values for createdAt and updatedAt, if values are not provided
     [DataType(DataType.DateTime)] 

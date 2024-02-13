@@ -119,8 +119,6 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
             var amountPerFoodTotalWeightRounded = Math.Round(amountPerFoodTotalWeight, 1);
             
             var foodTotalWeight = request.FoodIngredients.Sum(i => i.Amount);
-            var amountPer100Grams = amountPerFoodTotalWeight / foodTotalWeight * 100;
-            var amountPer100GramsRounded = Math.Round(amountPer100Grams, 1);
             
             var nutrientName = nutrientGroup.First().NutrientName;
             var unitName = nutrientGroup.First().UnitName;
@@ -129,7 +127,7 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
             {
                 Name = nutrientName,
                 AmountPerFoodTotalWeight = amountPerFoodTotalWeightRounded,
-                AmountPer100Grams = amountPer100GramsRounded,
+                AmountPer100Grams = Math.Round(amountPerFoodTotalWeight / foodTotalWeight * 100, 1),
                 UnitName = unitName
 
             };

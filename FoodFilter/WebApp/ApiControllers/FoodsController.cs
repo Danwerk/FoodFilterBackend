@@ -191,7 +191,7 @@ public class FoodsController : ControllerBase
     }
     
     /// <summary>
-    /// Calculate nutrition information for food.
+    /// Calculate nutrition and energy information for food.
     /// </summary>
     /// <returns>DTO of calculated result</returns>
     /// <response code="200">Food nutrients were successfully calculated.</response>
