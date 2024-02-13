@@ -47,6 +47,14 @@ public class UserService
         return _userMapper.Map(user);
     }
     
+    
+    public async Task<AppUser?> GetUser(Guid id)
+    {
+        var user = await Uow.UserRepository.GetUser(id);
+        
+        return _userMapper.Map(user);
+    }
+    
     public async Task<AppUser?> GetCurrentAuthorizedUser(ClaimsPrincipal userPrincipal)
     {
         var user = await _identityBll.UserManager.GetUserAsync(userPrincipal);

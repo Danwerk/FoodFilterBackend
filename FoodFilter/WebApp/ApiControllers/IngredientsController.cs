@@ -52,6 +52,21 @@ public class IngredientsController : ControllerBase
     
     
     /// <summary>
+    /// Get list of Ingredient names.
+    /// </summary>
+    /// <returns>List of Ingredient names</returns>
+    [HttpPost]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<List<string>>> GetIngredientNames([FromBody] List<Guid> ingredientIds)
+    {
+        var res = await _bll.IngredientService.GetIngredientNamesAsync(ingredientIds);
+        return Ok(res);
+    }
+    
+    
+    /// <summary>
     /// Get Ingredient by ID
     /// </summary>
     /// <param name="id">Ingredient ID</param>

@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using App.Common.NutrientCalculationDtos;
 using App.Contracts.BLL;
 using App.Domain.Identity;
 using App.Public.DTO.Mappers;
@@ -23,16 +24,18 @@ public class FoodsController : ControllerBase
 {
     private readonly IAppBLL _bll;
     private readonly FoodMapper _mapper;
+    // public static IWebHostEnvironment _WebHostEnvironment;
 
     /// <summary>
     /// Foods Constructor
     /// </summary>
     /// <param name="bll">Application Business Logic Layer Interface</param>
     /// <param name="autoMapper">Auto Mapper</param>
-    public FoodsController(IAppBLL bll, IMapper autoMapper)
+    public FoodsController(IAppBLL bll, IMapper autoMapper, IWebHostEnvironment WebHostEnvironment)
     {
         _bll = bll;
         _mapper = new FoodMapper(autoMapper);
+        // _WebHostEnvironment = WebHostEnvironment;
     }
 
 
@@ -75,7 +78,7 @@ public class FoodsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Food>> GetFood(Guid id)
     {
-        var food = await _bll.FoodService.GetFood(id);
+        var food = await _bll.FoodService.FindAsync(id);
 
         if (food == null)
         {
@@ -104,6 +107,28 @@ public class FoodsController : ControllerBase
             .ToList();
         return Ok(res);
     }
+    
+    /// <summary>
+    /// Get list of all Foods for restaurant
+    /// </summary>
+    /// <returns>Collection of foods</returns>
+    /// <response code="200">Foods were successfully retrieved.</response>
+    /// <response code="401">Unauthorized - unable to get the data.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<IEnumerable<Food>>> GetFoodsByRestaurantId(Guid id)
+    {
+        var vm = await _bll.FoodService.AllAsync(id);
+        var res = vm.Select(e => _mapper.Map(e))
+            .ToList();
+        
+        
+        return Ok(res);
+    }
+    
+    
 
 
     /// <summary>
@@ -137,6 +162,33 @@ public class FoodsController : ControllerBase
             return NotFound();
         }
     }
+    
+    
+    /// <summary>
+    /// Update Food with specified id
+    /// </summary>
+    /// <param name="id">Food ID</param>
+    /// <param name="food">Edited Food object that need to be updated</param>
+    /// <returns>Action result</returns>
+    [HttpDelete("{id}")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> DeleteFood(Guid id)
+    {
+        var food = await _bll.FoodService.FirstOrDefaultAsync(id);
+
+        if (food == null)
+        {
+            return NotFound();
+        }
+        await _bll.FoodService.RemoveAsync(food.Id);
+        await _bll.SaveChangesAsync();
+
+        return Ok();
+    }
 
 
     /// <summary>
@@ -151,7 +203,7 @@ public class FoodsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Food>> CalculateFoodNutrition(Guid id)
     {
-        var food = await _bll.FoodService.GetFood(id);
+        var food = await _bll.FoodService.FindAsync(id);
         if (food == null)
         {
             return NotFound($"Food with id {id} not found");
@@ -164,8 +216,27 @@ public class FoodsController : ControllerBase
         
         var foodNutrition = await _bll.FoodService.CalculateFoodNutrition(food);
         food.FoodNutrients = foodNutrition.FoodNutrients;
+        food.ServingInGrams = food.FoodIngredients!.Sum(e => e.Amount);
 
         var res = _mapper.Map(food);
         return Ok(res);
+    }
+    
+    
+    
+    /// <summary>
+    /// Calculate nutrition information for food.
+    /// </summary>
+    /// <returns>DTO of calculated result</returns>
+    /// <response code="200">Food nutrients were successfully calculated.</response>
+    /// <response code="401">Unauthorized - unable to get the data.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost]
+    public async Task<ActionResult<FoodCalculationResultDto>> CalculateNutrition([FromBody] FoodCalculationRequestDto request)
+    {
+        var foodCalculationResult = await _bll.FoodService.CalculateNutrients(request);
+        return Ok(foodCalculationResult);
     }
 }

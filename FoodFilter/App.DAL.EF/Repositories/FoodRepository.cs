@@ -23,6 +23,22 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Food>> AllAsync(Guid restaurantId)
+    {
+        return await RepositoryDbSet
+            .Include(c=> c.Restaurant)
+            .Where(c=>c.RestaurantId == restaurantId)
+            .Select(f => new Food
+            {
+                Id = f.Id,
+                RestaurantId = f.RestaurantId,
+                Name = f.Name,
+                Price = f.Price,
+                Images = f.Images,
+            })
+            .ToListAsync();
+    }
+
     // public async Task<Food> Edit(Food entity)
     // {
     //     var existingEntity = RepositoryDbSet.Find(entity.Id);

@@ -10,6 +10,7 @@ public interface IUserRepository: IBaseRepository<AppUser>
 
     public Task<AppUser?> GetUserWithRolesAsync(Guid id);
     public Task<AppUser?> GetUser(string email);
+    public Task<AppUser?> GetUser(Guid id);
 
     public Task<IEnumerable<AppUser>> GetRestaurantUsersAsync();
     

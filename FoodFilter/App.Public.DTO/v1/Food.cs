@@ -18,9 +18,13 @@ public class Food
 
     public bool? IsActive { get; set; }
     
+    public decimal ServingInGrams { get; set; }
+    
     public ICollection<FoodNutrient>? FoodNutrients { get; set; }
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }
     public ICollection<FoodAllergen>? FoodAllergens { get; set; }
+    public ICollection<Image>? Images { get; set; }
+
     
     
 }

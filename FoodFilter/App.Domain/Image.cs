@@ -8,6 +8,7 @@ namespace App.Domain
     {
         public Restaurant? Restaurant { get; set; }
         
+        public Guid? FoodId { get; set; }
         public Food? Food { get; set; }
         public string? Url { get; set; }
 

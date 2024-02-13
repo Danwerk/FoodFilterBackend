@@ -15,4 +15,11 @@ public class IngredientService: BaseEntityService<App.BLL.DTO.Ingredient, App.Do
     {
         Uow = uow; 
     }
+
+    public async Task<List<string>> GetIngredientNamesAsync(List<Guid> ids)
+    {
+        var ingredients = await Uow.IngredientRepository.GetIngredientsByIdsAsync(ids);
+
+        return ingredients.Select(i => i.Name).ToList();
+    }
 }  

@@ -111,7 +111,7 @@ public class AccountController : ControllerBase
             });
         }
 
-        result = await _userManager.AddClaimAsync(appUser, new Claim("userId", appUser.Id.ToString()));
+        // result = await _userManager.AddClaimAsync(appUser, new Claim("userId", appUser.Id.ToString()));
 
    
         // save into claims also the user full name
@@ -212,8 +212,6 @@ public class AccountController : ControllerBase
 
         // get claims based user
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
-        // added to send with jwt also userId
-        claimsPrincipal.Identities.First().AddClaim(new Claim("userId", appUser.Id.ToString()));
 
         if (claimsPrincipal == null)
         {

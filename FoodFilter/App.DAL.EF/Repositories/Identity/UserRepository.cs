@@ -38,6 +38,13 @@ public class UserRepository : EFBaseRepository<AppUser, ApplicationDbContext>, I
             .Where(e => e.Email == email)
             .FirstOrDefaultAsync();
     }
+    
+    public async Task<AppUser?> GetUser(Guid id)
+    {
+        return await RepositoryDbSet
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync();
+    }
 
     public async Task<IEnumerable<AppUser>> GetRestaurantUsersAsync()
     {

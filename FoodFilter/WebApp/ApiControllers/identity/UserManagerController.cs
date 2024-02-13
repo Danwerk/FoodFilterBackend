@@ -62,6 +62,24 @@ public class UserManagerController : ControllerBase
         
         return Ok(res);
     }
+    
+    
+    /// <summary>
+    /// Get user by id
+    /// </summary>
+    /// <returns>User object</returns>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.User>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<IEnumerable<User>>> GetUserById(Guid id)
+    {
+        var user = await _identityBll.UserService.GetUser(id);
+        
+        var res = _mapper.Map(user);
+        
+        return Ok(res);
+    }
         
     
     /// <summary>
