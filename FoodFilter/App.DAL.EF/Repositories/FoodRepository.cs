@@ -58,9 +58,9 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
             .Include(f => f.FoodNutrients)
             .Include(f => f.FoodIngredients)!
             .ThenInclude(fi => fi.Ingredient)
-            .ThenInclude(i => i!.IngredientNutrients)
+            .ThenInclude(i => i!.IngredientNutrients)!
             .ThenInclude(inut => inut.Unit)  // Include Unit for IngredientNutrient
-            .ThenInclude(i => i!.IngredientNutrients)  // Redundant
+            .ThenInclude(i => i!.IngredientNutrients)!  // Redundant
             .ThenInclude(inut => inut.Nutrient)
             .FirstOrDefaultAsync(m => m.Id == id);
     }

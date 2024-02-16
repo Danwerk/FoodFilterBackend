@@ -15,14 +15,12 @@ public class AllergenRepository : EFBaseRepository<Allergen, ApplicationDbContex
     public override async Task<IEnumerable<Allergen>> AllAsync()
     {
         return await RepositoryDbSet
-            .Include(a => a.Ingredient)
             .ToListAsync();
     }
     
     public override async Task<Allergen?> FindAsync(Guid id)
     {
         return await RepositoryDbSet
-            .Include(c => c.Ingredient)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 }

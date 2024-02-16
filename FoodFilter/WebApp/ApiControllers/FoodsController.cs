@@ -24,18 +24,16 @@ public class FoodsController : ControllerBase
 {
     private readonly IAppBLL _bll;
     private readonly FoodMapper _mapper;
-    // public static IWebHostEnvironment _WebHostEnvironment;
 
     /// <summary>
     /// Foods Constructor
     /// </summary>
     /// <param name="bll">Application Business Logic Layer Interface</param>
     /// <param name="autoMapper">Auto Mapper</param>
-    public FoodsController(IAppBLL bll, IMapper autoMapper, IWebHostEnvironment WebHostEnvironment)
+    public FoodsController(IAppBLL bll, IMapper autoMapper)
     {
         _bll = bll;
         _mapper = new FoodMapper(autoMapper);
-        // _WebHostEnvironment = WebHostEnvironment;
     }
 
 

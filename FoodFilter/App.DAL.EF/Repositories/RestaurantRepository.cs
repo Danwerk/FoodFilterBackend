@@ -119,7 +119,7 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
     {
         return await RepositoryDbSet
             .Include(r => r.AppUser)
-            .Where(r => r.AppUser != null && !r.AppUser.IsRejected &&
+            .Where(r => r.AppUser != null && r.PaymentEndsAt != null && !r.AppUser.IsRejected &&
                         r.PaymentEndsAt.Value.ToUniversalTime() < DateTime.UtcNow)
             .ToListAsync();
     }

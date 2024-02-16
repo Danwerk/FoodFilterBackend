@@ -8,14 +8,12 @@ namespace App.Contracts.BLL.Services;
 public interface IFoodService : IBaseRepository<Food>
 {
     Task AddFoodWithImagesAsync(Food food, List<IFormFile> images);
-    Task<Food?> FindAsync(Guid foodId);
+    new Task<Food?> FindAsync(Guid foodId);
     Task<IEnumerable<Food>> AllAsync(Guid restaurantId);
     Task<List<Food>?> GetFoods();
     
     // Task<Food> Edit(Food entity);
-
-    Task<FoodNutritionCalculation> CalculateFoodNutrition(Food food);
-
+    
     Task<FoodCalculationResultDto> CalculateNutrients(FoodCalculationRequestDto request);
 
 

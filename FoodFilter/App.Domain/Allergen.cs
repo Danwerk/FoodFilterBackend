@@ -5,8 +5,8 @@ namespace App.Domain;
 
 public class Allergen : DomainEntityId
 {
-    public Guid IngredientId { get; set; }
-    public Ingredient? Ingredient { get; set; }
+    [MaxLength(128)]
+    public string Name { get; set; } = default!;
     
     [DataType(DataType.DateTime)] 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

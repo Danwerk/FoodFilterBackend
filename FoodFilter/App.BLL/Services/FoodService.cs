@@ -89,109 +89,95 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
     // }
 
 
-    public Task<FoodCalculationResultDto> CalculateNutrients(FoodCalculationRequestDto request)
+    public async Task<FoodCalculationResultDto> CalculateNutrients(FoodCalculationRequestDto request)
     {
         if (request.FoodIngredients == null)
         {
             throw new Exception($"Missing foodIngredients");
         }
+
         var res = new FoodCalculationResultDto();
-        
+
         // Extract all IngredientIds from FoodIngredients
         var ingredientIds = request.FoodIngredients.Select(fi => fi.IngredientId).ToList();
 
         var ingredientNutrients = Uow.IngredientRepository.GetNutrientsForIngredients(ingredientIds);
-       
-        var ingredientNames = Uow.IngredientRepository.GetIngredientNames(ingredientIds);
-        
+
         var nutrientGroups = ingredientNutrients
             .GroupBy(i => i.NutrientId)
             .ToList();
-        
+
         foreach (var nutrientGroup in nutrientGroups)
         {
             // calculating food nutrient per food weight. Round result two decimal places.
+            var calculatedNutrient = CalculateNutrientForGroup(request.FoodIngredients, nutrientGroup);
 
-            var amountPerFoodTotalWeight = nutrientGroup.Sum(i =>
-                _unitService.ConvertToGrams(i.Amount * request.FoodIngredients
-                    .First(fi => fi.IngredientId == i.IngredientId).Amount, i.UnitName)) / 100;
+            var ingredientNames = Uow.IngredientRepository.GetIngredientNames(ingredientIds);
 
-            var amountPerFoodTotalWeightRounded = Math.Round(amountPerFoodTotalWeight, 1);
-            
-            var foodTotalWeight = request.FoodIngredients.Sum(i => i.Amount);
-            
-            var nutrientName = nutrientGroup.First().NutrientName;
-            var unitName = nutrientGroup.First().UnitName;
-           
-            var calculatedNutrient = new NutrientDto
-            {
-                Name = nutrientName,
-                AmountPerFoodTotalWeight = amountPerFoodTotalWeightRounded,
-                AmountPer100Grams = Math.Round(amountPerFoodTotalWeight / foodTotalWeight * 100, 1),
-                UnitName = unitName
-
-            };
-            
             // food total weight
-            res.ServingInGrams = foodTotalWeight;
+            res.ServingInGrams = request.FoodIngredients.Sum(i => i.Amount);
+
             // set ingredients to result 
             res.Ingredients = ingredientNames.Select(name => new IngredientDto { Name = name }).ToList();
             res.Nutrients.Add(calculatedNutrient);
         }
-        
-        return Task.FromResult(res);
+
+        // Calculate food calories, per 100 grams and per food total weight
+        var foodTotalCaloriesPerFoodTotalWeight = await CalculateTotalCalories(request.FoodIngredients, ingredientIds, ingredientNutrients);
+        var foodTotalCaloriesPer100Grams = Math.Round(foodTotalCaloriesPerFoodTotalWeight / res.ServingInGrams * 100, 1);
+
+        res.KCaloriesPerFoodTotalWeight = foodTotalCaloriesPerFoodTotalWeight;
+        res.KCaloriesPer100Grams = foodTotalCaloriesPer100Grams;
+        return res;
     }
 
-    public Task<FoodNutritionCalculation> CalculateFoodNutrition(Food food)
+    private NutrientDto CalculateNutrientForGroup(List<FoodIngredientDto> foodIngredients,
+        IGrouping<Guid, IngredientNutrientDto> nutrientGroup)
     {
-        if (food.FoodIngredients == null)
-        {
-            throw new Exception($"Food {food.Name} is missing foodIngredients");
-        }
+        // calculating food nutrient per food weight. Round result two decimal places.
+        var amountPerFoodTotalWeight = nutrientGroup.Sum(i =>
+            _unitService.ConvertToGrams(i.Amount * foodIngredients
+                .First(fi => fi.IngredientId == i.IngredientId).Amount, i.UnitName)) / 100;
 
-        if (food.FoodNutrients == null)
-        {
-            throw new Exception($"Food {food.Name} is missing foodNutrients");
-        }
+        var amountPerFoodTotalWeightRounded = Math.Round(amountPerFoodTotalWeight, 1);
 
-        var foodNutrition = new FoodNutritionCalculation
+        var foodTotalWeight = foodIngredients.Sum(i => i.Amount);
+
+        var nutrientName = nutrientGroup.First().NutrientName;
+        var unitName = nutrientGroup.First().UnitName;
+
+        return new NutrientDto
         {
-            FoodName = food.Name,
-            FoodNutrients = new List<FoodNutrient>()
+            Name = nutrientName,
+            AmountPerFoodTotalWeight = amountPerFoodTotalWeightRounded,
+            AmountPer100Grams = Math.Round(amountPerFoodTotalWeight / foodTotalWeight * 100, 1),
+            UnitName = unitName
         };
+    }
 
-        // Grouping nutrients by their types to calculate total.
-        var nutrientGroups = food.FoodIngredients
-            .SelectMany(fi => fi.Ingredient!.IngredientNutrients!)
-            .GroupBy(i => i.NutrientId)
-            .ToList();
 
-        foreach (var nutrientGroup in nutrientGroups)
+    private async Task<decimal> CalculateTotalCalories(List<FoodIngredientDto> foodIngredients, List<Guid> ingredientIds,
+        List<IngredientNutrientDto> ingredientNutrients)
+    {
+        decimal totalCalories = 0;
+        var ingredients = await Uow.IngredientRepository.GetIngredientsByIdsAsync(ingredientIds);
+
+        foreach (var id in ingredientIds)
         {
-            // calculating food nutrient per food weight. Round result two decimal places.
-            var amountPerFoodTotalWeight = nutrientGroup.Sum(i =>
-                _unitService.ConvertToGrams(i.Amount * food.FoodIngredients
-                    .First(fi => fi.IngredientId == i.IngredientId).Amount, i.Unit!.UnitName)) / 100;
-
-            var amountPerFoodTotalWeightRounded = Math.Round(amountPerFoodTotalWeight, 2);
-
-            // calculating food nutrient per 100 grams. Round result two decimal places.
-            var foodTotalWeight = food.FoodIngredients.Sum(i => i.Amount);
-            var amountPer100Grams = amountPerFoodTotalWeight / foodTotalWeight * 100;
-            var amountPer100GramsRounded = Math.Round(amountPer100Grams, 2);
-
-            var calculatedNutrient = new FoodNutrient()
+            var ingredient = foodIngredients.FirstOrDefault(f => f.IngredientId == id);
+            if (ingredient != null)
             {
-                Id = nutrientGroup.Key,
-                AmountPerFoodTotalWeight = amountPerFoodTotalWeightRounded,
-                AmountPer100Grams = amountPer100GramsRounded,
-                NutrientName = nutrientGroup.First()!.Nutrient!.Name,
-                NutrientId = nutrientGroup.First().Nutrient!.Id,
-                UnitName = UnitTypes.G
-            };
-            foodNutrition.FoodNutrients.Add(calculatedNutrient);
+                var ingredientInfo = ingredients.FirstOrDefault(i => i.Id == id);
+
+                if (ingredientInfo != null)
+                {
+                    decimal caloriesPer100Grams = ingredientInfo.KCaloriesPer100Grams;
+                    decimal amount = ingredient.Amount;
+                    totalCalories += (amount * caloriesPer100Grams);
+                }
+            }
         }
 
-        return Task.FromResult(foodNutrition);
+        return Math.Round(totalCalories / 100, 1);
     }
 }

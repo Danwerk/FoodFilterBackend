@@ -24,6 +24,4 @@ public class Ingredient : DomainEntityId
     
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }
     public ICollection<IngredientNutrient>? IngredientNutrients { get; set; }
-    public ICollection<Allergen>? Allergens { get; set; }
-
 }

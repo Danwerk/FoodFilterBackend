@@ -50,18 +50,19 @@ namespace WebApp.Areas.Admin.Controllers
         // POST: Allergens/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IngredientId,CreatedAt,UpdatedAt,Id")] Allergen allergen)
+        public async Task<IActionResult> Create(Allergen allergen)
         {
             if (ModelState.IsValid)
             {
                 allergen.Id = Guid.NewGuid();
+                allergen.CreatedAt = DateTime.SpecifyKind(allergen.CreatedAt, DateTimeKind.Utc);
+                allergen.UpdatedAt = DateTime.SpecifyKind(allergen.UpdatedAt, DateTimeKind.Utc);
                 _uow.AllergenRepository.Add(allergen);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IngredientId"] = new SelectList(await _uow.IngredientRepository.AllAsync(), "Id", "Description",
-                allergen.IngredientId);
+            
             return View(allergen);
         }
 
@@ -79,8 +80,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            ViewData["IngredientId"] = new SelectList(_uow.IngredientRepository.AllAsync().Result, "Id", "Description",
-                allergen.IngredientId);
+            
             return View(allergen);
         }
 
@@ -116,8 +116,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IngredientId"] = new SelectList(_uow.IngredientRepository.AllAsync().Result, "Id", "Description",
-                allergen.IngredientId);
+           
             return View(allergen);
         }
 

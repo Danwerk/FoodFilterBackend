@@ -10,5 +10,6 @@ public interface IIngredientRepository : IBaseRepository<Ingredient>
     List<IngredientNutrientDto> GetNutrientsForIngredients(List<Guid> ingredientIds);
 
     List<string> GetIngredientNames(List<Guid> ingredientIds);
+    
 
 }

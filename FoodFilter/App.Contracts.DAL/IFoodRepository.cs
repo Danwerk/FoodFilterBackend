@@ -5,8 +5,8 @@ namespace App.Contracts.DAL;
 
 public interface IFoodRepository : IBaseRepository<Food>
 {
-    Task<Food?> FindAsync(Guid foodId);
-    Task<IEnumerable<Food>> AllAsync();
+    new Task<Food?> FindAsync(Guid foodId);
+    new Task<IEnumerable<Food>> AllAsync();
     Task<IEnumerable<Food>> AllAsync(Guid restaurantId);
 
     // Task<Food> Edit(Food entity);
