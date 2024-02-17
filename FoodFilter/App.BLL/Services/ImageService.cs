@@ -35,11 +35,7 @@ namespace App.BLL.Services
 
         public async Task<List<string>> SaveImagesToFileSystemAsync(List<IFormFile> imageFiles)
         {
-            if (imageFiles == null || imageFiles.Count == 0)
-            {
-                throw new ArgumentException("Invalid files");
-            }
-
+            
             var imagePaths = new List<string>();
 
             foreach (var imageFile in imageFiles)

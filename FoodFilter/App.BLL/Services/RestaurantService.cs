@@ -24,13 +24,13 @@ public class RestaurantService :
             await Uow.RestaurantRepository.SearchRestaurantsAsync(restaurantName, city, street, streetNumber);
         var restaurantDtos = restaurants?.Select(r => Mapper.Map(r)).ToList();
 
-        return restaurantDtos;
+        return restaurantDtos!;
     }
 
 
     public async Task Edit(Restaurant entity)
     {
-        Uow.RestaurantRepository.Edit(Mapper.Map(entity));
+        Uow.RestaurantRepository.Edit(Mapper.Map(entity)!);
     }
 
     public async Task<Restaurant?> GetRestaurant(Guid userId)
@@ -45,7 +45,7 @@ public class RestaurantService :
 
         var unapprovedRestaurantDtos = unapprovedRestaurants?.Select(r => Mapper.Map(r)).ToList();
 
-        return unapprovedRestaurantDtos;
+        return unapprovedRestaurantDtos!;
     }
 
     public async Task<List<Restaurant>?> GetApprovedRestaurants()
@@ -54,7 +54,7 @@ public class RestaurantService :
 
         var approvedRestaurantDtos = approvedRestaurants?.Select(r => Mapper.Map(r)).ToList();
 
-        return approvedRestaurantDtos;
+        return approvedRestaurantDtos!;
     }
 
     public async Task<List<Restaurant>?> GetPendingRestaurants()
@@ -63,7 +63,7 @@ public class RestaurantService :
 
         var pendingRestaurantDtos = pendingRestaurants?.Select(r => Mapper.Map(r)).ToList();
 
-        return pendingRestaurantDtos;
+        return pendingRestaurantDtos!;
     }
 
     public async Task<List<Restaurant>?> GetExpiredRestaurants()
@@ -72,7 +72,7 @@ public class RestaurantService :
 
         var expiredRestaurantDtos = expiredRestaurants?.Select(r => Mapper.Map(r)).ToList();
 
-        return expiredRestaurantDtos;
+        return expiredRestaurantDtos!;
     }
 
     public async Task<Restaurant?> ApproveRestaurantAsync(Guid id)
@@ -85,11 +85,16 @@ public class RestaurantService :
             restaurant.AppUser.IsRejected = false;
         }
 
-        var bllRestaurant = Mapper.Map(restaurant);
 
-        Uow.RestaurantRepository.Update(restaurant);
-        await Uow.SaveChangesAsync();
-        return bllRestaurant;
+        if (restaurant != null)
+        {
+            var bllRestaurant = Mapper.Map(restaurant);
+            Uow.RestaurantRepository.Update(restaurant);
+            await Uow.SaveChangesAsync();
+            return bllRestaurant;
+        }
+
+        throw new Exception("Missing restaurant for approval");
     }
 
 
@@ -104,11 +109,16 @@ public class RestaurantService :
             restaurant.AppUser.IsRejected = true;
         }
 
-        var bllRestaurant = Mapper.Map(restaurant);
 
-        Uow.RestaurantRepository.Update(restaurant);
-        await Uow.SaveChangesAsync();
-        return bllRestaurant;
+        if (restaurant != null)
+        {
+            var bllRestaurant = Mapper.Map(restaurant);
+            Uow.RestaurantRepository.Update(restaurant);
+            await Uow.SaveChangesAsync();
+            return bllRestaurant;
+        }
+
+        throw new Exception("Missing restaurant for disapproval");
     }
 
     public async Task<Restaurant?> ConfirmRestaurantPaymentAsync(Guid id)
@@ -121,10 +131,15 @@ public class RestaurantService :
             restaurant.PaymentEndsAt = DateTime.UtcNow.AddMinutes(2);
         }
 
-        var bllRestaurant = Mapper.Map(restaurant);
 
-        Uow.RestaurantRepository.Update(restaurant);
-        await Uow.SaveChangesAsync();
-        return bllRestaurant;
+        if (restaurant != null)
+        {
+            var bllRestaurant = Mapper.Map(restaurant);
+            Uow.RestaurantRepository.Update(restaurant);
+            await Uow.SaveChangesAsync();
+            return bllRestaurant;
+        }
+
+        throw new Exception("Missing restaurant for payment approval");
     }
 }

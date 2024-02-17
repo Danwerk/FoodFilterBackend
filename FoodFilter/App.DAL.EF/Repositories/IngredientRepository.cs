@@ -30,7 +30,8 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
                 NutrientId = i.NutrientId,
                 IngredientId = i.IngredientId,
                 Amount = i.Amount,
-                UnitName = i.Unit!.UnitName
+                UnitName = i.Unit!.UnitName,
+                UnitId = i.UnitId
             })
             .ToList();
 

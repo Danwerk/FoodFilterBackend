@@ -6,6 +6,6 @@ public class IngredientNutrientDto
     public Guid NutrientId { get; set; }
     public Guid IngredientId { get; set; }
     public decimal Amount { get; set; }
-
+    public Guid? UnitId { get; set; } = default!;
     public string UnitName { get; set; } = default!;
 }

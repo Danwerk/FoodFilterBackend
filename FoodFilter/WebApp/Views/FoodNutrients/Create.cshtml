@@ -25,9 +25,14 @@
                 <select asp-for="NutrientId" class ="form-control" asp-items="ViewBag.NutrientId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Amount" class="control-label"></label>
-                <input asp-for="Amount" class="form-control" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
+                <label asp-for="AmountPer100Grams" class="control-label"></label>
+                <input asp-for="AmountPer100Grams" class="form-control" />
+                <span asp-validation-for="AmountPer100Grams" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AmountPerFoodTotalWeight" class="control-label"></label>
+                <input asp-for="AmountPerFoodTotalWeight" class="form-control" />
+                <span asp-validation-for="AmountPerFoodTotalWeight" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CreatedAt" class="control-label"></label>

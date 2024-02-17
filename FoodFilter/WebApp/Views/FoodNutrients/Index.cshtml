@@ -11,30 +11,34 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Unit)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Food)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nutrient)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Amount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Unit)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Food)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nutrient)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AmountPer100Grams)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AmountPerFoodTotalWeight)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UpdatedAt)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Unit!.UnitName)
@@ -46,7 +50,10 @@
                 @Html.DisplayFor(modelItem => item.Nutrient!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Amount)
+                @Html.DisplayFor(modelItem => item.AmountPer100Grams)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AmountPerFoodTotalWeight)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)
@@ -60,6 +67,6 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

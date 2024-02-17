@@ -25,6 +25,7 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     private IFoodService? _foods;
     private IIngredientService? _ingredients;
     private IAllergenService? _allergens;
+    private INutrientService? _nutrients;
     
     // private IUserService? _users;
     // public IUserService UserService => _users ??= new UserService(Uow, new UserMapper(_mapper));
@@ -35,5 +36,6 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     public IFoodService FoodService => _foods ??= new FoodService(Uow, new FoodMapper(_mapper), new ImageService(), new UnitService(Uow, new UnitMapper(_mapper)));
     public IIngredientService IngredientService => _ingredients ??= new IngredientService(Uow, new IngredientMapper(_mapper));
     public IAllergenService AllergenService => _allergens ??= new AllergenService(Uow, new AllergenMapper(_mapper));
+    public INutrientService NutrientService => _nutrients ??= new NutrientService(Uow, new NutrientMapper(_mapper));
     
 }

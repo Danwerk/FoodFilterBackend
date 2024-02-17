@@ -31,8 +31,18 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
 
     public async Task AddFoodWithImagesAsync(Food foodBll, List<IFormFile> images)
     {
+        if (images.Count == 0)
+        {
+            await SaveFoodAsync(foodBll, new List<string>());
+            return;
+        }
+        
         List<string> imagePaths = await _imageService.SaveImagesToFileSystemAsync(images);
+        await SaveFoodAsync(foodBll, imagePaths);
+    }
 
+    private async Task SaveFoodAsync(Food foodBll, List<string> imagePaths)
+    {
         var food = Mapper.Map(foodBll);
         if (food != null)
         {
@@ -151,7 +161,9 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
             Name = nutrientName,
             AmountPerFoodTotalWeight = amountPerFoodTotalWeightRounded,
             AmountPer100Grams = Math.Round(amountPerFoodTotalWeight / foodTotalWeight * 100, 1),
-            UnitName = unitName
+            UnitName = unitName,
+            NutrientId = nutrientGroup.Key,
+            UnitId = nutrientGroup.First().UnitId
         };
     }
 

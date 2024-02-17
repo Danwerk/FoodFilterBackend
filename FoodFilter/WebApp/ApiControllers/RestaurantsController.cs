@@ -54,8 +54,8 @@ namespace WebApp.ApiControllers
                 .ToList();
             return Ok(res);
         }
-        
-        
+
+
         /// <summary>
         /// Get restaurant users that are unapproved by system administrator.
         /// </summary>
@@ -69,12 +69,17 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetUnapprovedRestaurants()
         {
             var vm = await _bll.RestaurantService.GetUnapprovedRestaurants();
-            var res = vm.Select(e => _mapper.Map(e))
-                .ToList();
-            return Ok(res);
+            if (vm != null)
+            {
+                var res = vm.Select(e => _mapper.Map(e))
+                    .ToList();
+                return Ok(res);
+            }
+
+            return NotFound();
         }
-        
-        
+
+
         /// <summary>
         /// Get restaurant users that are approved by system administrator.
         /// </summary>
@@ -88,12 +93,19 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetApprovedRestaurants()
         {
             var vm = await _bll.RestaurantService.GetApprovedRestaurants();
-            var res = vm.Select(e => _mapper.Map(e))
-                .ToList();
-            return Ok(res);
+
+
+            if (vm != null)
+            {
+                var res = vm.Select(e => _mapper.Map(e))
+                    .ToList();
+                return Ok(res);
+            }
+
+            return NotFound();
         }
-        
-        
+
+
         /// <summary>
         /// Get restaurant users that are in pending state and waiting for approval by system administrator.
         /// </summary>
@@ -107,11 +119,16 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetPendingRestaurants()
         {
             var vm = await _bll.RestaurantService.GetPendingRestaurants();
-            var res = vm.Select(e => _mapper.Map(e))
-                .ToList();
-            return Ok(res);
+            if (vm != null)
+            {
+                var res = vm.Select(e => _mapper.Map(e))
+                    .ToList();
+                return Ok(res);
+            }
+
+            return NotFound();
         }
-        
+
         /// <summary>
         /// Get restaurant users that are expired, it means that account payment has expired.
         /// </summary>
@@ -129,8 +146,8 @@ namespace WebApp.ApiControllers
                 .ToList();
             return Ok(res);
         }
-        
-        
+
+
         /// <summary>
         /// Approve restaurant, whose profile is overviewed by system administrator.
         /// </summary>
@@ -141,15 +158,15 @@ namespace WebApp.ApiControllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpPost ("{id}")]
+        [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> ApproveRestaurant(Guid id)
         {
             var restaurant = await _bll.RestaurantService.ApproveRestaurantAsync(id);
 
             return Ok(restaurant);
         }
-        
-        
+
+
         /// <summary>
         /// Disapprove restaurant, whose profile does not meet the requirements.
         /// </summary>
@@ -160,67 +177,76 @@ namespace WebApp.ApiControllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpPost ("{id}")]
+        [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> DisapproveRestaurant(Guid id)
         {
             var restaurant = await _bll.RestaurantService.DisapproveRestaurantAsync(id);
 
             return Ok(restaurant);
         }
-        
-        
-         [HttpGet("{id}")]
-         public async Task<ActionResult<Restaurant>> GetRestaurant(Guid id)
-         {
-             var restaurant = await _bll.RestaurantService.FindAsync(id);
 
-             if (restaurant == null)
-             {
-                 return NotFound();
-             }
+        /// <summary>
+        /// Get Restaurant by Restaurant ID
+        /// </summary>
+        /// <param name="id">Restaurant ID</param>
+        /// <returns>Restaurant object</returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Restaurant>> GetRestaurant(Guid id)
+        {
+            var restaurant = await _bll.RestaurantService.FindAsync(id);
 
-             var res = _mapper.Map(restaurant);
-             return Ok(res);
-         }
-         
-         
-         // GET: api/GetRestaurantForCurrentUser
-         [Produces(MediaTypeNames.Application.Json)]
-         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
-         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-         [HttpGet]
-         public async Task<ActionResult<Restaurant>> GetRestaurantForCurrentUser()
-         {
-             var userId = User.GetUserId();
-             var restaurant = await _bll.RestaurantService.GetRestaurant(userId);
+            if (restaurant == null)
+            {
+                return NotFound();
+            }
 
-             if (restaurant == null)
-             {
-                 return NotFound();
-             }
+            var res = _mapper.Map(restaurant);
+            return Ok(res);
+        }
 
-             var res = _mapper.Map(restaurant);
-             return Ok(res);
-         }
-         
-         
-         // GET: api/GetRestaurantForCurrentUser
-         [Produces(MediaTypeNames.Application.Json)]
-         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
-         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-         [HttpGet("{id}")]
-         public async Task<ActionResult<Restaurant>> GetRestaurantByUserId(Guid id)
-         {
-             var restaurant = await _bll.RestaurantService.GetRestaurant(id);
 
-             if (restaurant == null)
-             {
-                 return NotFound();
-             }
+        // GET: api/GetRestaurantForCurrentUser
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpGet]
+        public async Task<ActionResult<Restaurant>> GetRestaurantForCurrentUser()
+        {
+            var userId = User.GetUserId();
+            var restaurant = await _bll.RestaurantService.GetRestaurant(userId);
 
-             var res = _mapper.Map(restaurant);
-             return Ok(res);
-         }
+            if (restaurant == null)
+            {
+                return NotFound();
+            }
+
+            var res = _mapper.Map(restaurant);
+            return Ok(res);
+        }
+
+
+        // GET: api/GetRestaurantForCurrentUser
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Restaurant>> GetRestaurantByUserId(Guid id)
+        {
+            var restaurant = await _bll.RestaurantService.GetRestaurant(id);
+
+            if (restaurant == null)
+            {
+                return NotFound();
+            }
+
+            var res = _mapper.Map(restaurant);
+            return Ok(res);
+        }
 
         /// <summary>
         /// Update Restaurant with specified id
@@ -241,7 +267,7 @@ namespace WebApp.ApiControllers
             {
                 return BadRequest();
             }
-            
+
             var restaurant = await _bll.RestaurantService.FirstOrDefaultAsync(id);
             if (restaurant == null)
             {
@@ -251,7 +277,7 @@ namespace WebApp.ApiControllers
             var userId = restaurant.AppUserId;
             restaurantEditDto.PaymentStartsAt = restaurant.PaymentStartsAt;
             restaurantEditDto.PaymentEndsAt = restaurant.PaymentEndsAt;
-            
+
             restaurant = _mapper.MapRestaurantEdit(restaurantEditDto);
             restaurant.AppUserId = userId;
 
@@ -282,19 +308,18 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<Restaurant>> CreateRestaurant(RestaurantCreate restaurantCreateDto)
         {
             // todo: restaurant should be created for user. Refactor register method, restaurant creation should not be done there.
-            
+
             restaurantCreateDto.Id = Guid.NewGuid();
-           
+
             var restaurant = _mapper.MapRestaurantCreate(restaurantCreateDto);
 
             _bll.RestaurantService.Add(restaurant);
             await _bll.SaveChangesAsync();
-            
+
             return CreatedAtAction("GetRestaurant", new { id = restaurant.Id }, restaurant);
         }
-        
-        
-        
+
+
         /// <summary>
         /// Confirm restaurant payment.
         /// </summary>
@@ -305,7 +330,7 @@ namespace WebApp.ApiControllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpPost ("{id}")]
+        [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> ConfirmRestaurantPayment(Guid id)
         {
             var restaurant = await _bll.RestaurantService.ConfirmRestaurantPaymentAsync(id);
@@ -313,8 +338,6 @@ namespace WebApp.ApiControllers
             return Ok(restaurant);
         }
     }
-    
-    
 }
 //         // DELETE: api/Restaurants/5
 //         [HttpDelete("{id}")]

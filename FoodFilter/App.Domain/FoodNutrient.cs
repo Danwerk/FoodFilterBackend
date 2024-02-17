@@ -14,7 +14,8 @@ public class FoodNutrient : DomainEntityId
     public Guid NutrientId { get; set; }
     public Nutrient? Nutrient { get; set; }
     
-    public decimal Amount { get; set; }
+    public decimal? AmountPer100Grams { get; set; }
+    public decimal? AmountPerFoodTotalWeight { get; set; }
     
     [DataType(DataType.DateTime)] 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
