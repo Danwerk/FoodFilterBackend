@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
@@ -156,5 +157,38 @@ public class IngredientsController : ControllerBase
         await _bll.SaveChangesAsync();
 
         return Ok();
+    }
+    
+    
+    /// <summary>
+    /// Update Ingredient with specified id
+    /// </summary>
+    /// <param name="id">Ingredient ID</param>
+    /// <param name="ingredient">Edited Ingredient object that need to be updated</param>
+    /// <returns>Action result</returns>
+    [HttpPut("{id}")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ActionResult<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Ingredient>> EditIngredient(Guid id, Ingredient ingredient)
+    {
+        if (id != ingredient.Id)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            var ingredientBll = _mapper.Map(ingredient);
+            var editedIngredient = _bll.IngredientService.Update(ingredientBll!);
+            await _bll.SaveChangesAsync();
+            return Ok(editedIngredient);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return NotFound();
+        }
     }
 }
