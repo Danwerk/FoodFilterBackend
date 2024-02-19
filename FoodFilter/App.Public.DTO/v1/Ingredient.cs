@@ -11,5 +11,7 @@ public class Ingredient
     [MaxLength(512)]
     public string Description { get; set; } = default!;
     
+    public decimal KCaloriesPer100Grams { get; set; }
+
     public bool IsConfirmed { get; set; }
 }

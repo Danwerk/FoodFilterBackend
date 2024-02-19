@@ -12,6 +12,8 @@ public class Ingredient: DomainEntityId
     
     public bool IsConfirmed { get; set; }
     
+    public decimal KCaloriesPer100Grams { get; set; }
+
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }
     public ICollection<IngredientNutrient>? IngredientNutrients { get; set; }
 }

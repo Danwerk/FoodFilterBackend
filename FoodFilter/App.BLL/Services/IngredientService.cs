@@ -6,14 +6,15 @@ using Base.Contracts;
 
 namespace App.BLL.Services;
 
-public class IngredientService: BaseEntityService<App.BLL.DTO.Ingredient, App.Domain.Ingredient, IIngredientRepository >, IIngredientService
+public class IngredientService :
+    BaseEntityService<App.BLL.DTO.Ingredient, App.Domain.Ingredient, IIngredientRepository>, IIngredientService
 {
     protected IAppUOW Uow;
 
-    public IngredientService(IAppUOW uow, IMapper<Ingredient, Domain.Ingredient> mapper) 
+    public IngredientService(IAppUOW uow, IMapper<Ingredient, Domain.Ingredient> mapper)
         : base(uow.IngredientRepository, mapper)
     {
-        Uow = uow; 
+        Uow = uow;
     }
 
     public async Task<List<string>> GetIngredientNamesAsync(List<Guid> ids)
@@ -22,4 +23,14 @@ public class IngredientService: BaseEntityService<App.BLL.DTO.Ingredient, App.Do
 
         return ingredients.Select(i => i.Name).ToList();
     }
-}  
+
+    public IEnumerable<Ingredient> GetAll(int limit, string? search)
+    {
+        var ingredients = Uow.IngredientRepository.GetAll(limit, search);
+        
+        var ingredientDtos = ingredients.Select(r => Mapper.Map(r)).ToList();
+
+        return ingredientDtos!;
+        
+    }
+}

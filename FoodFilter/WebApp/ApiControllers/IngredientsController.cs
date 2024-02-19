@@ -21,7 +21,7 @@ public class IngredientsController : ControllerBase
 {
     private readonly IAppBLL _bll;
     private readonly IngredientMapper _mapper;
-    
+
     /// <summary>
     /// Ingredients Constructor
     /// </summary>
@@ -32,8 +32,8 @@ public class IngredientsController : ControllerBase
         _bll = bll;
         _mapper = new IngredientMapper(autoMapper);
     }
-    
-    
+
+
     /// <summary>
     /// Get list of Ingredients
     /// </summary>
@@ -49,8 +49,32 @@ public class IngredientsController : ControllerBase
             .ToList();
         return Ok(res);
     }
-    
-    
+
+    /// <summary>
+    /// Get ingredients ordered descending based on time created
+    /// </summary>
+    /// <param name="limit">Number of records returned</param>
+    /// <param name="search">
+    /// Phrase which ingredient name or description must contain.
+    /// If left blank, all ingredients will be returned.
+    /// </param>
+    /// <returns>Collection of features</returns>
+    /// <response code="200">Collection of ingredients was successfully retrieved.</response>
+    /// <response code="401">Not authorized to see the data.</response>
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [HttpGet("{limit}/{search?}")]
+    public async Task<ActionResult<IEnumerable<Ingredient>>> GetAllIngredients(int limit, string? search)
+    {
+        var vm = _bll.IngredientService.GetAll(limit, search);
+        var res = vm.Select(e => _mapper.Map(e))
+            .ToList();
+
+        return Ok(res);
+    }
+
+
     /// <summary>
     /// Get list of Ingredient names.
     /// </summary>
@@ -64,8 +88,8 @@ public class IngredientsController : ControllerBase
         var res = await _bll.IngredientService.GetIngredientNamesAsync(ingredientIds);
         return Ok(res);
     }
-    
-    
+
+
     /// <summary>
     /// Get Ingredient by ID
     /// </summary>
@@ -87,5 +111,50 @@ public class IngredientsController : ControllerBase
 
         var res = _mapper.Map(ingredient);
         return Ok(res);
+    }
+
+
+    /// <summary>
+    /// Create new Ingredient
+    /// </summary>
+    /// <param name="ingredient">New Ingredient object</param>
+    /// <returns>Created Ingredient object</returns>
+    [HttpPost]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<App.Public.DTO.v1.Ingredient>> CreateIngredient(Ingredient ingredient)
+    {
+        var bllIngredient = _mapper.Map(ingredient);
+        _bll.IngredientService.Add(bllIngredient!);
+        await _bll.SaveChangesAsync();
+
+        return CreatedAtAction("GetIngredient", new { id = ingredient.Id }, ingredient);
+    }
+    
+    
+    /// <summary>
+    /// Delete Food with specified id
+    /// </summary>
+    /// <param name="id">Food ID</param>
+    /// <returns>Action result</returns>
+    [HttpDelete("{id}")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> DeleteIngredient(Guid id)
+    {
+        var ingredient = await _bll.IngredientService.FirstOrDefaultAsync(id);
+
+        if (ingredient == null)
+        {
+            return NotFound();
+        }
+        await _bll.IngredientService.RemoveAsync(ingredient.Id);
+        await _bll.SaveChangesAsync();
+
+        return Ok();
     }
 }

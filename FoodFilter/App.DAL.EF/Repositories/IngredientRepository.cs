@@ -34,10 +34,6 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
                 UnitId = i.UnitId
             })
             .ToList();
-
-
-
-
     }
 
     public List<string> GetIngredientNames(List<Guid> ingredientIds)
@@ -47,4 +43,32 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
             .Select(i => i.Name)
             .ToList();
     }
+
+    public IEnumerable<Ingredient> GetAll(int limit, string? search)
+    {
+        var query = RepositoryDbSet
+            .OrderByDescending(i => i.CreatedAt)
+            .Take(limit)
+            .AsNoTracking()
+            .AsQueryable();
+
+        var newQuery = query
+            .AsEnumerable()
+            .Where(f => ContainsSearch(f, search));
+
+        return newQuery;
+    }
+    
+    private bool ContainsSearch(Ingredient ingredient, string? search)
+    {
+        if (string.IsNullOrEmpty(search))
+        {
+            return true;
+        }
+        search = search.ToLower();
+        return ingredient.Name.ToLower().Contains(search) || 
+               ingredient.Description == null || 
+               ingredient.Description.ToLower().Contains(search);
+    }
+
 }
