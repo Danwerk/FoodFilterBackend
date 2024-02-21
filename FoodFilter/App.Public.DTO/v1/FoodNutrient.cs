@@ -6,8 +6,8 @@ public class FoodNutrient
     public Guid FoodId { get; set; }
     public Guid NutrientId { get; set; }
     public Guid UnitId { get; set; }
-    // public string NutrientName { get; set; } = default!;
-    //public decimal Amount { get; set; }
+    public string? NutrientName { get; set; }
+    
     public decimal AmountPer100Grams { get; set; }
     public decimal AmountPerFoodTotalWeight { get; set; }
     //public string UnitName { get; set; } = default!;

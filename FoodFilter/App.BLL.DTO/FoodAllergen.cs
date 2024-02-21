@@ -6,4 +6,5 @@ public class FoodAllergen : DomainEntityId
 {
     public Guid FoodId { get; set; }
     public Guid AllergenId { get; set; }
+    public Allergen? Allergen { get; set; }
 }

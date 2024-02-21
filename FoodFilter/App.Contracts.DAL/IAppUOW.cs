@@ -12,6 +12,7 @@ public interface IAppUOW : IBaseUOW
     IFoodNutrientRepository FoodNutrientRepository { get; }
     IFoodRepository FoodRepository { get; }
     IIngredientRepository IngredientRepository { get; }
+    IIngredientNutrientRepository IngredientNutrientRepository { get; }
     INutrientRepository NutrientRepository { get; }
     IOpenHoursRepository OpenHoursRepository { get; }
     IRestaurantRepository RestaurantRepository { get; }

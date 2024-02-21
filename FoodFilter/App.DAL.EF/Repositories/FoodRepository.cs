@@ -11,6 +11,7 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
     {
     }
     
+
     public override async Task<IEnumerable<Food>> AllAsync()
     {
         return await RepositoryDbSet
@@ -35,6 +36,7 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
                 Name = f.Name,
                 Price = f.Price,
                 Images = f.Images,
+                
             })
             .ToListAsync();
     }
@@ -55,6 +57,8 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
     {
         return await RepositoryDbSet
             .Include(c => c.Restaurant)
+            .Include(f=>f.FoodAllergens)!
+            .ThenInclude(fa=> fa.Allergen)
             .Include(f => f.FoodNutrients)
             .Include(f => f.FoodIngredients)!
             .ThenInclude(fi => fi.Ingredient)

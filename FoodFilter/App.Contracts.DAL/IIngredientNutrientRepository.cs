@@ -1,0 +1,10 @@
+﻿using App.Domain;
+using Base.Contracts.DAL;
+
+namespace App.Contracts.DAL;
+
+public interface IIngredientNutrientRepository: IBaseRepository<IngredientNutrient>
+{
+    IEnumerable<IngredientNutrient> GetAll(int limit, string? search);
+
+}

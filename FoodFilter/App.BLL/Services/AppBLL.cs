@@ -1,8 +1,6 @@
 ﻿using App.BLL.Mappers;
-using App.BLL.Services.Identity;
 using App.Contracts.BLL;
 using App.Contracts.BLL.Services;
-using App.Contracts.BLL.Services.Identity;
 using App.Contracts.DAL;
 using AutoMapper;
 using Base.BLL;
@@ -26,6 +24,7 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     private IIngredientService? _ingredients;
     private IAllergenService? _allergens;
     private INutrientService? _nutrients;
+    private IIngredientNutrientService? _ingredientNutrients;
     
     // private IUserService? _users;
     // public IUserService UserService => _users ??= new UserService(Uow, new UserMapper(_mapper));
@@ -37,5 +36,6 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     public IIngredientService IngredientService => _ingredients ??= new IngredientService(Uow, new IngredientMapper(_mapper));
     public IAllergenService AllergenService => _allergens ??= new AllergenService(Uow, new AllergenMapper(_mapper));
     public INutrientService NutrientService => _nutrients ??= new NutrientService(Uow, new NutrientMapper(_mapper));
+    public IIngredientNutrientService IngredientNutrientService => _ingredientNutrients ??= new IngredientNutrientService(Uow, new IngredientNutrientMapper(_mapper));
     
 }
