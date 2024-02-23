@@ -55,6 +55,24 @@ namespace WebApp.ApiControllers
             return Ok(res);
         }
 
+        
+        /// <summary>
+        /// Get list of all Restaurants for regular user based on search
+        /// </summary>
+        /// <returns>Collection of restaurants</returns>
+        /// <response code="200">Restaurants were successfully retrieved.</response>
+        /// <response code="401">Unauthorized - unable to get the data.</response>
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [HttpGet("{limit}/{search?}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetAllRestaurants(int limit, string? search)
+        {
+            var vm = _bll.RestaurantService.GetAll(limit, search);
+            var res = vm.Select(e => _mapper.Map(e))
+                .ToList();
+            return Ok(res);
+        }
 
         /// <summary>
         /// Get restaurant users that are unapproved by system administrator.
@@ -66,6 +84,7 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
+        
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetUnapprovedRestaurants()
         {
             var vm = await _bll.RestaurantService.GetUnapprovedRestaurants();

@@ -126,6 +126,7 @@ public class IngredientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<App.Public.DTO.v1.Ingredient>> CreateIngredient(Ingredient ingredient)
     {
+        ingredient.Id = Guid.NewGuid();
         var bllIngredient = _mapper.Map(ingredient);
         _bll.IngredientService.Add(bllIngredient!);
         await _bll.SaveChangesAsync();

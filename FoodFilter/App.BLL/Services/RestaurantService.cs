@@ -39,6 +39,15 @@ public class RestaurantService :
         return Mapper.Map(restaurant);
     }
 
+    public IEnumerable<Restaurant> GetAll(int limit, string? search)
+    {
+        var restaurants = Uow.RestaurantRepository.GetAll(limit, search);
+        
+        var restaurantDtos = restaurants.Select(r => Mapper.Map(r)).ToList();
+
+        return restaurantDtos!;
+    }
+
     public async Task<List<Restaurant>?> GetUnapprovedRestaurants()
     {
         var unapprovedRestaurants = await Uow.RestaurantRepository.GetUnapprovedRestaurants();

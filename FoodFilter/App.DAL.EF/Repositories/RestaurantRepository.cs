@@ -91,6 +91,36 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
         return RepositoryDbSet.Update(entity).Entity;
     }
 
+    public IEnumerable<Restaurant> GetAll(int limit, string? search)
+    {
+        
+        var query = RepositoryDbSet
+            .Include(c => c.AppUser)
+            .OrderByDescending(i => i.CreatedAt)
+            .Take(limit)
+            .AsNoTracking()
+            .AsQueryable();
+
+        var newQuery = query
+            .AsEnumerable()
+            .Where(f => f.AppUser!.IsApproved && !f.AppUser.IsRejected  && ContainsSearch(f, search));
+
+        return newQuery;
+    }
+    
+    private bool ContainsSearch(Restaurant restaurant, string? search)
+    {
+        if (string.IsNullOrEmpty(search))
+        {
+            return true;
+        }
+        search = search.ToLower();
+        return restaurant.Name!.ToLower().Contains(search) || 
+               restaurant.City!.ToLower().Contains(search) ||
+               restaurant.Street!.ToLower().Contains(search) ||
+               restaurant.StreetNumber!.ToLower().Contains(search);
+    }
+
     public async Task<List<Restaurant>?> GetUnapprovedRestaurants()
     {
         return await RepositoryDbSet

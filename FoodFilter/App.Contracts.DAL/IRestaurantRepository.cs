@@ -10,6 +10,7 @@ public interface IRestaurantRepository : IBaseRepository<Restaurant>
     Task<Restaurant?> FindByUserIdAsync(Guid userId);
 
     Restaurant Edit(Restaurant entity);
+    IEnumerable<Restaurant> GetAll(int limit, string? search);
 
     Task<List<Restaurant>?> GetUnapprovedRestaurants();
     

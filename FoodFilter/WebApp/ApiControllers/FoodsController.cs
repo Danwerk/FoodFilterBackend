@@ -1,7 +1,6 @@
 ﻿using System.Net.Mime;
 using App.Common.NutrientCalculationDtos;
 using App.Contracts.BLL;
-using App.Domain.Identity;
 using App.Public.DTO.Mappers;
 using App.Public.DTO.v1;
 using Asp.Versioning;
@@ -85,31 +84,6 @@ public class FoodsController : ControllerBase
         var res = _mapper.Map(food);
         return Ok(res);
     }
-    
-    
-    // /// <summary>
-    // /// Get Food for details by id
-    // /// </summary>
-    // /// <returns>Food object</returns>
-    // /// <response code="200">Food object were successfully retrieved.</response>
-    // /// <response code="401">Unauthorized - unable to get the data.</response>
-    // [Produces(MediaTypeNames.Application.Json)]
-    // [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
-    // [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    // [HttpGet("{id}")]
-    // public async Task<ActionResult<Food>> GetFoodForDetails(Guid id)
-    // {
-    //     var food = await _bll.FoodService.FindAsync(id);
-    //
-    //     if (food == null)
-    //     {
-    //         return NotFound();
-    //     }
-    //
-    //     var res = _mapper.Map(food);
-    //     return Ok(res);
-    // }
-
 
     /// <summary>
     /// Get list of all Foods

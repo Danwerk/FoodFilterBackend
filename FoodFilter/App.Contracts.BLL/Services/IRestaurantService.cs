@@ -9,6 +9,7 @@ public interface IRestaurantService: IBaseRepository<App.BLL.DTO.Restaurant>
     Task Edit(Restaurant entity);
 
     Task<Restaurant?> GetRestaurant(Guid userId);
+    IEnumerable<Restaurant> GetAll(int limit, string? search);
 
     Task<List<Restaurant>?> GetUnapprovedRestaurants();
     

@@ -183,9 +183,10 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
 
                 if (ingredientInfo != null)
                 {
-                    decimal caloriesPer100Grams = ingredientInfo.KCaloriesPer100Grams;
+                    decimal? caloriesPer100Grams = ingredientInfo.KCaloriesPer100Grams;
                     decimal amount = ingredient.Amount;
-                    totalCalories += (amount * caloriesPer100Grams);
+                    
+                    totalCalories += (amount * (caloriesPer100Grams ?? 0));
                 }
             }
         }

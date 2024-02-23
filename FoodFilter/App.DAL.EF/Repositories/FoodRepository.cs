@@ -59,7 +59,8 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
             .Include(c => c.Restaurant)
             .Include(f=>f.FoodAllergens)!
             .ThenInclude(fa=> fa.Allergen)
-            .Include(f => f.FoodNutrients)
+            .Include(f => f.FoodNutrients)!
+            .ThenInclude(f=>f.Nutrient)
             .Include(f => f.FoodIngredients)!
             .ThenInclude(fi => fi.Ingredient)
             .ThenInclude(i => i!.IngredientNutrients)!
