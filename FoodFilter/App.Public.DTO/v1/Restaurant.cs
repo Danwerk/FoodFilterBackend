@@ -9,16 +9,16 @@ namespace App.Public.DTO.v1
     }
     public class Restaurant : RestaurantInitial
     { 
-        public string Name { get; set; } = default!;
-        public string PhoneNumber { get; set; } = default!;
+        public string? Name { get; set; } = default!;
+        public string? PhoneNumber { get; set; } = default!;
         // public string OpenHours { get; set; } = default!;
         public string? Website { get; set; }
         
-        public string City { get; set; } = default!;
-        public string Street { get; set; } = default!;
-        public string StreetNumber { get; set; } = default!;
+        public string? City { get; set; } = default!;
+        public string? Street { get; set; } = default!;
+        public string? StreetNumber { get; set; } = default!;
 
-        public string Email { get; set; } = default!;
+        public string? Email { get; set; } = default!;
         
         public bool IsApproved { get; set; }
         public bool IsRejected { get; set; }
@@ -30,8 +30,9 @@ namespace App.Public.DTO.v1
         public DateTime? PaymentEndsAt { get; set; }
 
         public bool IsSubscriptionExpired { get; set; }
-
-        // public List<Image>? Images { get; set; }
+        
+        public ICollection<Image>? Images { get; set; }
+       
     }
 
     public class RestaurantEdit : Restaurant

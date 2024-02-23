@@ -55,7 +55,7 @@ namespace WebApp.ApiControllers
             return Ok(res);
         }
 
-        
+
         /// <summary>
         /// Get list of all Restaurants for regular user based on search
         /// </summary>
@@ -84,7 +84,6 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
-        
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetUnapprovedRestaurants()
         {
             var vm = await _bll.RestaurantService.GetUnapprovedRestaurants();
@@ -358,29 +357,3 @@ namespace WebApp.ApiControllers
         }
     }
 }
-//         // DELETE: api/Restaurants/5
-//         [HttpDelete("{id}")]
-//         public async Task<IActionResult> DeleteRestaurant(Guid id)
-//         {
-//             if (_context.Restaurants == null)
-//             {
-//                 return NotFound();
-//             }
-//             var restaurant = await _context.Restaurants.FindAsync(id);
-//             if (restaurant == null)
-//             {
-//                 return NotFound();
-//             }
-//
-//             _context.Restaurants.Remove(restaurant);
-//             await _context.SaveChangesAsync();
-//
-//             return NoContent();
-//         }
-//
-//         private bool RestaurantExists(Guid id)
-//         {
-//             return (_context.Restaurants?.Any(e => e.Id == id)).GetValueOrDefault();
-//         }
-//     }
-// }

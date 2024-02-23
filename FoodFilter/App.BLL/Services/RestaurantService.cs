@@ -117,8 +117,7 @@ public class RestaurantService :
             restaurant.AppUser.IsApproved = false;
             restaurant.AppUser.IsRejected = true;
         }
-
-
+        
         if (restaurant != null)
         {
             var bllRestaurant = Mapper.Map(restaurant);
@@ -126,7 +125,6 @@ public class RestaurantService :
             await Uow.SaveChangesAsync();
             return bllRestaurant;
         }
-
         throw new Exception("Missing restaurant for disapproval");
     }
 
@@ -137,7 +135,7 @@ public class RestaurantService :
         if (restaurant != null)
         {
             restaurant.PaymentStartsAt = DateTime.UtcNow;
-            restaurant.PaymentEndsAt = DateTime.UtcNow.AddMinutes(2);
+            restaurant.PaymentEndsAt = DateTime.UtcNow.AddYears(1);
         }
 
 

@@ -16,7 +16,7 @@ public class PaymentExpirationBackgroundService : TimedBackgroundService
 
     public PaymentExpirationBackgroundService(ILogger<PaymentExpirationBackgroundService> logger,
         IServiceProvider services, IMapper mapper)
-        : base(logger, services, TimeSpan.FromMinutes(10))
+        : base(logger, services, TimeSpan.FromHours(1))
     {
         _services = services;
         _mapper = new RestaurantMapper(mapper);

@@ -67,6 +67,7 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
             .ThenInclude(inut => inut.Unit)  // Include Unit for IngredientNutrient
             .ThenInclude(i => i!.IngredientNutrients)!  // Redundant
             .ThenInclude(inut => inut.Nutrient)
+            .Include(f=>f.Images)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 }

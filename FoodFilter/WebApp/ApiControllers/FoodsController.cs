@@ -72,6 +72,8 @@ public class FoodsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("{id}")]
+    [AllowAnonymous]
+
     public async Task<ActionResult<Food>> GetFood(Guid id)
     {
         var food = await _bll.FoodService.FindAsync(id);
@@ -103,6 +105,7 @@ public class FoodsController : ControllerBase
         return Ok(res);
     }
     
+    
     /// <summary>
     /// Get list of all Foods for restaurant
     /// </summary>
@@ -113,6 +116,7 @@ public class FoodsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Food>>> GetFoodsByRestaurantId(Guid id)
     {
         var vm = await _bll.FoodService.AllAsync(id);
