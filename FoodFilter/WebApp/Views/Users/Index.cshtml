@@ -32,7 +32,7 @@
                 @user.UserName
             </td>
             <td>
-                @string.Join(", ", user.AppUserRoles.Select(ur => ur.AppRole!.Name))
+                @string.Join(", ", user.AppUserRoles!.Select(ur => ur.AppRole!.Name))
             </td>
             <td>
                 @user.IsApproved

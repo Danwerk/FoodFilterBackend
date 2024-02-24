@@ -31,7 +31,14 @@ public class UserManagerController : ControllerBase
     private readonly ILogger<AccountController> _logger;
     private readonly RoleManager<AppRole> _roleManager;
     
-        
+    /// <summary>
+    /// UserManager Constructor
+    /// </summary>
+    /// <param name="identityBll">Identity Business Logic Layer</param>
+    /// <param name="userManager">Application user manager</param>
+    /// <param name="roleManager">Application role manager</param>
+    /// <param name="autoMapper">Auto Mapper</param>
+    /// <param name="logger">Logger interface</param>
     public UserManagerController(UserManager<AppUser> userManager, 
         IMapper autoMapper, 
         IdentityBLL identityBll,
@@ -51,7 +58,7 @@ public class UserManagerController : ControllerBase
     /// <returns>User object</returns>
     // GET: api/getUser
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.User>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<User>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetUser(string email)
@@ -141,7 +148,7 @@ public class UserManagerController : ControllerBase
     /// <summary>
     /// Add role to user
     /// </summary>
-    /// <param name="userRoleDTO">User and role data</param>
+    /// <param name="userRoleDto">User and role data</param>
     /// <returns>Action result</returns>
     /// <response code="200">Role was successfully added to user.</response>
     /// <response code="403">Not authorized to perform action.</response>
