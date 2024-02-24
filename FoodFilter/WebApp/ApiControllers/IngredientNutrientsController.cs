@@ -44,16 +44,16 @@ public class IngredientNutrientsController : ControllerBase
     /// <returns>Collection of ingredient nutrients</returns>
     /// <response code="200">Collection of ingredient nutrients was successfully retrieved.</response>
     /// <response code="401">Not authorized to see the data.</response>
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.IngredientNutrient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<IngredientNutrient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces(MediaTypeNames.Application.Json)]
     [HttpGet("{limit}/{search?}")]
-    public async Task<ActionResult<IEnumerable<IngredientNutrient>>> GetIngredientNutrients(int limit, string? search)
+    public Task<ActionResult<IEnumerable<IngredientNutrient>>> GetIngredientNutrients(int limit, string? search)
     {
         var vm = _bll.IngredientNutrientService.GetAll(limit, search);
         var res = vm.Select(e => _mapper.Map(e))
             .ToList();
 
-        return Ok(res);
+        return Task.FromResult<ActionResult<IEnumerable<IngredientNutrient>>>(Ok(res));
     }
 }
