@@ -24,7 +24,7 @@ public class NutrientsController : ControllerBase
     private readonly NutrientMapper _mapper;
     
     /// <summary>
-    /// Ingredients Constructor
+    /// Nutrients Constructor
     /// </summary>
     /// <param name="bll">Application Business Logic Layer Interface</param>
     /// <param name="autoMapper">Auto Mapper</param>
@@ -41,9 +41,9 @@ public class NutrientsController : ControllerBase
     /// <returns>List of all Nutrients</returns>
     [HttpGet]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Nutrient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Nutrient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<IEnumerable<App.Public.DTO.v1.Nutrient>>> GetNutrients()
+    public async Task<ActionResult<IEnumerable<Nutrient>>> GetNutrients()
     {
         var vm = await _bll.NutrientService.AllAsync();
         var res = vm.Select(e => _mapper.Map(e))
@@ -58,10 +58,10 @@ public class NutrientsController : ControllerBase
     /// <returns>Nutrient object</returns>
     [HttpGet("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Nutrient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Nutrient), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<App.Public.DTO.v1.Nutrient>> GetNutrient(Guid id)
+    public async Task<ActionResult<Nutrient>> GetNutrient(Guid id)
     {
         var nutrient = await _bll.NutrientService.FindAsync(id);
 
@@ -81,9 +81,9 @@ public class NutrientsController : ControllerBase
     /// <returns>Created Nutrient object</returns>
     [HttpPost]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Nutrient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Nutrient), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<App.Public.DTO.v1.Nutrient>> CreateNutrient(Nutrient nutrient)
+    public async Task<ActionResult<Nutrient>> CreateNutrient(Nutrient nutrient)
     {
         var bllNutrient = _mapper.Map(nutrient);
         _bll.NutrientService.Add(bllNutrient!);
@@ -126,7 +126,7 @@ public class NutrientsController : ControllerBase
     /// <returns>Action result</returns>
     [HttpPut("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(ActionResult<App.Public.DTO.v1.Nutrient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Nutrient), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
@@ -139,6 +139,12 @@ public class NutrientsController : ControllerBase
 
         try
         {
+            var existingNutrient = await _bll.NutrientService.FindAsync(id);
+            if (existingNutrient == null)
+            {
+                return NotFound();
+            }
+            
             var nutrientBll = _mapper.Map(nutrient);
             var editedNutrient = _bll.NutrientService.Update(nutrientBll!);
             await _bll.SaveChangesAsync();
