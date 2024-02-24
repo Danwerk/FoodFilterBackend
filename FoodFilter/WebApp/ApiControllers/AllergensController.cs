@@ -43,7 +43,7 @@ public class AllergensController : ControllerBase
     /// <response code="200">Allergens were successfully retrieved.</response>
     /// <response code="401">Unauthorized - unable to get the data.</response>
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Allergen>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Allergen>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Food>>> GetAllergens()
@@ -62,10 +62,10 @@ public class AllergensController : ControllerBase
     /// <returns>Allergen object</returns>
     [HttpGet("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Allergen>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Allergen), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<App.Public.DTO.v1.Allergen>> GetAllergen(Guid id)
+    public async Task<ActionResult<Allergen>> GetAllergen(Guid id)
     {
         var allergen = await _bll.AllergenService.FindAsync(id);
 
@@ -87,7 +87,7 @@ public class AllergensController : ControllerBase
     /// <returns>Action result</returns>
     [HttpPut("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(ActionResult<App.Public.DTO.v1.Allergen>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ActionResult<Allergen>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
@@ -118,9 +118,9 @@ public class AllergensController : ControllerBase
     /// <returns>Created Allergen object</returns>
     [HttpPost]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Allergen>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Allergen), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<App.Public.DTO.v1.Allergen>> CreateAllergen(Allergen allergen)
+    public async Task<ActionResult<Allergen>> CreateAllergen(Allergen allergen)
     {
         var bllAllergen = _mapper.Map(allergen);
         _bll.AllergenService.Add(bllAllergen!);
