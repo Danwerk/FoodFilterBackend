@@ -43,7 +43,7 @@ public class FoodsController : ControllerBase
     /// <param name="images">Images that should be saved</param>
     /// <returns>Action result</returns>
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<Food>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Food), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost]
     public async Task<ActionResult<Food>> CreateFood([FromForm] Food food,
@@ -69,7 +69,7 @@ public class FoodsController : ControllerBase
     /// <response code="200">Food object were successfully retrieved.</response>
     /// <response code="401">Unauthorized - unable to get the data.</response>
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Food), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("{id}")]
     [AllowAnonymous]
@@ -193,7 +193,7 @@ public class FoodsController : ControllerBase
     /// <response code="200">Food nutrients were successfully calculated.</response>
     /// <response code="401">Unauthorized - unable to get the data.</response>
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(FoodCalculationResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost]
     public async Task<ActionResult<FoodCalculationResultDto>> CalculateNutrition([FromBody] FoodCalculationRequestDto request)
