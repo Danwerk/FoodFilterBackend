@@ -44,7 +44,7 @@ namespace WebApp.ApiControllers
         /// <response code="200">Restaurants were successfully retrieved.</response>
         /// <response code="401">Unauthorized - unable to get the data.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetRestaurants()
@@ -63,25 +63,27 @@ namespace WebApp.ApiControllers
         /// <response code="200">Restaurants were successfully retrieved.</response>
         /// <response code="401">Unauthorized - unable to get the data.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Restaurant>), StatusCodes.Status200OK)]
         [HttpGet("{limit}/{search?}")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<Restaurant>>> GetAllRestaurants(int limit, string? search)
+        public Task<ActionResult<IEnumerable<Restaurant>>> GetAllRestaurants(int limit, string? search)
         {
             var vm = _bll.RestaurantService.GetAll(limit, search);
             var res = vm.Select(e => _mapper.Map(e))
                 .ToList();
-            return Ok(res);
+            return Task.FromResult<ActionResult<IEnumerable<Restaurant>>>(Ok(res));
         }
 
         /// <summary>
-        /// Get restaurant users that are unapproved by system administrator.
+        /// Get restaurants that are unapproved by system administrator.
         /// </summary>
         /// <returns>Collection of restaurants</returns>
         /// <response code="200">Unapproved restaurants were successfully retrieved.</response>
         /// <response code="401">Unauthorized - unable to get the data.</response>
+        /// <response code="404">Not found data.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetUnapprovedRestaurants()
@@ -99,13 +101,15 @@ namespace WebApp.ApiControllers
 
 
         /// <summary>
-        /// Get restaurant users that are approved by system administrator.
+        /// Get restaurants that are approved by system administrator.
         /// </summary>
         /// <returns>Collection of restaurants</returns>
         /// <response code="200">Approved restaurants were successfully retrieved.</response>
         /// <response code="401">Unauthorized - unable to get the data.</response>
+        /// <response code="404">Not found data.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetApprovedRestaurants()
@@ -125,13 +129,15 @@ namespace WebApp.ApiControllers
 
 
         /// <summary>
-        /// Get restaurant users that are in pending state and waiting for approval by system administrator.
+        /// Get restaurants that are in pending state and waiting for approval by system administrator.
         /// </summary>
         /// <returns>Collection of restaurants</returns>
         /// <response code="200">Pending restaurants were successfully retrieved.</response>
         /// <response code="401">Unauthorized - unable to get the data.</response>
+        /// <response code="404">Not found data.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetPendingRestaurants()
@@ -153,28 +159,34 @@ namespace WebApp.ApiControllers
         /// <returns>Collection of restaurants</returns>
         /// <response code="200">Pending restaurants were successfully retrieved.</response>
         /// <response code="401">Unauthorized - unable to get the data.</response>
+        /// <response code="404">Not found data.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetExpiredRestaurants()
         {
             var vm = await _bll.RestaurantService.GetExpiredRestaurants();
-            var res = vm.Select(e => _mapper.Map(e))
-                .ToList();
-            return Ok(res);
+            if (vm != null)
+            {
+                var res = vm.Select(e => _mapper.Map(e))
+                    .ToList();
+                return Ok(res);
+            }
+
+            return NotFound();
         }
-
-
+        
         /// <summary>
         /// Approve restaurant, whose profile is overviewed by system administrator.
         /// </summary>
         /// <param name="id">Restaurant id</param>
         /// <returns>Approved restaurant object</returns>
         /// <response code="200">Restaurant was successfully approved.</response>
-        /// <response code="401">Unauthorized - unable to get the data.</response>
+        /// <response code="401">Unauthorized - unable to perform this action.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> ApproveRestaurant(Guid id)
@@ -191,9 +203,9 @@ namespace WebApp.ApiControllers
         /// <param name="id">Restaurant id</param>
         /// <returns>Disapproved restaurant object</returns>
         /// <response code="200">Restaurant was successfully disapproved.</response>
-        /// <response code="401">Unauthorized - unable to get the data.</response>
+        /// <response code="401">Unauthorized - unable to perform this action.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> DisapproveRestaurant(Guid id)
@@ -210,9 +222,9 @@ namespace WebApp.ApiControllers
         /// <returns>Restaurant object</returns>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("{id}")]
         public async Task<ActionResult<Restaurant>> GetRestaurant(Guid id)
         {
@@ -228,9 +240,16 @@ namespace WebApp.ApiControllers
         }
 
 
-        // GET: api/GetRestaurantForCurrentUser
+        /// <summary>
+        /// Get Restaurant for currently logged in user
+        /// </summary>
+        /// <returns>Restaurant object</returns>
+        /// <response code="200">Restaurant was successfully retrieved.</response>
+        /// <response code="401">Unauthorized - unable to perform this action.</response>
+        /// <response code="404">Not found</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet]
         public async Task<ActionResult<Restaurant>> GetRestaurantForCurrentUser()
@@ -248,10 +267,18 @@ namespace WebApp.ApiControllers
         }
 
 
-        // GET: api/GetRestaurantForCurrentUser
+        /// <summary>
+        /// Get Restaurant by user id
+        /// </summary>
+        /// <param name="id">User ID</param>
+        /// <returns>Restaurant object</returns>
+        /// <response code="200">Restaurant was successfully retrieved.</response>
+        /// <response code="401">Unauthorized - unable to perform this action.</response>
+        /// <response code="404">Not found</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
         public async Task<ActionResult<Restaurant>> GetRestaurantByUserId(Guid id)
         {
@@ -272,10 +299,9 @@ namespace WebApp.ApiControllers
         /// <param name="id">Restaurant ID</param>
         /// <param name="restaurantEditDto">Edited Restaurant object that need to be updated</param>
         /// <returns>Action result</returns>
-        // PUT: api/Restaurants/5
         [HttpPut("{id}")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
@@ -346,7 +372,7 @@ namespace WebApp.ApiControllers
         /// <response code="200">Restaurant payment was successfully confirmed.</response>
         /// <response code="401">Unauthorized - unable to get the data.</response>
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Restaurant>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> ConfirmRestaurantPayment(Guid id)
