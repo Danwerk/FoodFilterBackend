@@ -74,6 +74,45 @@ public class IngredientsController : ControllerBase
 
         return Ok(res);
     }
+    
+    /// <summary>
+    /// Get unconfirmed ingredients ordered ascending based on time created
+    /// </summary>
+    /// <returns>Collection of unconfirmed ingredients</returns>
+    /// <response code="200">Collection of ingredients was successfully retrieved.</response>
+    /// <response code="401">Not authorized to see the data.</response>
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Ingredient>>> GetUnconfirmedIngredients()
+    {
+        var vm = await _bll.IngredientService.GetUnconfirmedIngredients();
+        var res = vm.Select(e => _mapper.Map(e))
+            .ToList();
+
+        return Ok(res);
+    }
+    
+    
+    /// <summary>
+    /// Get confirmed ingredients ordered ascending based on time created
+    /// </summary>
+    /// <returns>Collection of confirmed ingredients</returns>
+    /// <response code="200">Collection of ingredients was successfully retrieved.</response>
+    /// <response code="401">Not authorized to see the data.</response>
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Ingredient>>> GetConfirmedIngredients()
+    {
+        var vm = await _bll.IngredientService.GetConfirmedIngredients();
+        var res = vm.Select(e => _mapper.Map(e))
+            .ToList();
+
+        return Ok(res);
+    }
 
 
     /// <summary>

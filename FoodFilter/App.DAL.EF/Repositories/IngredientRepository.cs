@@ -58,7 +58,23 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
 
         return newQuery;
     }
+
+    public async Task<List<Ingredient>> GetUnconfirmedIngredients()
+    {
+        return await RepositoryDbSet
+            .OrderBy(i=>i.CreatedAt)
+            .Where(i => !i.IsConfirmed)
+            .ToListAsync();
+    }
     
+    public async Task<List<Ingredient>> GetConfirmedIngredients()
+    {
+        return await RepositoryDbSet
+            .OrderByDescending(i=>i.CreatedAt)
+            .Where(i => i.IsConfirmed)
+            .ToListAsync();
+    }
+
     private bool ContainsSearch(Ingredient ingredient, string? search)
     {
         if (string.IsNullOrEmpty(search))

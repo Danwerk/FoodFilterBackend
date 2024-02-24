@@ -24,7 +24,7 @@ public class AllergensController : ControllerBase
     private readonly AllergenMapper _mapper;
     
     /// <summary>
-    /// Foods Constructor
+    /// Allergens Constructor
     /// </summary>
     /// <param name="bll">Application Business Logic Layer Interface</param>
     /// <param name="autoMapper">Auto Mapper</param>
@@ -111,7 +111,6 @@ public class AllergensController : ControllerBase
         }
     }
     
-    
     /// <summary>
     /// Create new Allergen
     /// </summary>
@@ -119,7 +118,7 @@ public class AllergensController : ControllerBase
     /// <returns>Created Allergen object</returns>
     [HttpPost]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Allergen>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Allergen>), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<App.Public.DTO.v1.Allergen>> CreateAllergen(Allergen allergen)
     {

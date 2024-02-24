@@ -33,4 +33,22 @@ public class IngredientService :
         return ingredientDtos!;
         
     }
+
+    public async Task<List<Ingredient>> GetUnconfirmedIngredients()
+    {
+        var ingredients = await Uow.IngredientRepository.GetUnconfirmedIngredients();
+        
+        var ingredientDtos = ingredients.Select(r => Mapper.Map(r)).ToList();
+
+        return ingredientDtos!;
+    }
+    
+    public async Task<List<Ingredient>> GetConfirmedIngredients()
+    {
+        var ingredients = await Uow.IngredientRepository.GetConfirmedIngredients();
+        
+        var ingredientDtos = ingredients.Select(r => Mapper.Map(r)).ToList();
+
+        return ingredientDtos!;
+    }
 }

@@ -43,7 +43,7 @@ public class FoodsController : ControllerBase
     /// <param name="images">Images that should be saved</param>
     /// <returns>Action result</returns>
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(IEnumerable<Food>), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost]
     public async Task<ActionResult<Food>> CreateFood([FromForm] Food food,
@@ -69,7 +69,7 @@ public class FoodsController : ControllerBase
     /// <response code="200">Food object were successfully retrieved.</response>
     /// <response code="401">Unauthorized - unable to get the data.</response>
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Food>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("{id}")]
     [AllowAnonymous]
@@ -94,7 +94,7 @@ public class FoodsController : ControllerBase
     /// <response code="200">Foods were successfully retrieved.</response>
     /// <response code="401">Unauthorized - unable to get the data.</response>
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Food>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Food>>> GetFoods()
@@ -105,15 +105,15 @@ public class FoodsController : ControllerBase
         return Ok(res);
     }
     
-    
     /// <summary>
-    /// Get list of all Foods for restaurant
+    /// Get list of all Foods by restaurant id
     /// </summary>
+    /// <param name="id">Restaurant id</param>
     /// <returns>Collection of foods</returns>
     /// <response code="200">Foods were successfully retrieved.</response>
     /// <response code="401">Unauthorized - unable to get the data.</response>
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Food>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("{id}")]
     [AllowAnonymous]
@@ -136,7 +136,7 @@ public class FoodsController : ControllerBase
     /// <returns>Action result</returns>
     [HttpPut("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(ActionResult<App.Public.DTO.v1.Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ActionResult<Food>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
@@ -162,10 +162,9 @@ public class FoodsController : ControllerBase
     
     
     /// <summary>
-    /// Update Food with specified id
+    /// Delete Food with specified id
     /// </summary>
     /// <param name="id">Food ID</param>
-    /// <param name="food">Edited Food object that need to be updated</param>
     /// <returns>Action result</returns>
     [HttpDelete("{id}")]
     [Produces(MediaTypeNames.Application.Json)]

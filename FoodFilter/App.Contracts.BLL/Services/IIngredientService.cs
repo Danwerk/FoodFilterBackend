@@ -8,4 +8,7 @@ public interface IIngredientService: IBaseRepository<App.BLL.DTO.Ingredient>
     Task<List<string>> GetIngredientNamesAsync(List<Guid> ids);
 
     IEnumerable<Ingredient> GetAll(int limit, string? search);
+    Task<List<Ingredient>> GetUnconfirmedIngredients();
+    Task<List<Ingredient>> GetConfirmedIngredients();
+
 }
