@@ -121,7 +121,7 @@ public class IngredientsController : ControllerBase
     /// <returns>Ingredient object</returns>
     [HttpGet("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Ingredient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Ingredient>> GetIngredient(Guid id)
