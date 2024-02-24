@@ -33,24 +33,8 @@ public class IngredientsController : ControllerBase
         _bll = bll;
         _mapper = new IngredientMapper(autoMapper);
     }
-
-
-    /// <summary>
-    /// Get list of Ingredients
-    /// </summary>
-    /// <returns>List of all Ingredients</returns>
-    [HttpGet]
-    [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<IEnumerable<App.Public.DTO.v1.Ingredient>>> GetIngredients()
-    {
-        var vm = await _bll.IngredientService.AllAsync();
-        var res = vm.Select(e => _mapper.Map(e))
-            .ToList();
-        return Ok(res);
-    }
-
+    
+    
     /// <summary>
     /// Get ingredients ordered descending based on time created
     /// </summary>
@@ -62,17 +46,17 @@ public class IngredientsController : ControllerBase
     /// <returns>Collection of features</returns>
     /// <response code="200">Collection of ingredients was successfully retrieved.</response>
     /// <response code="401">Not authorized to see the data.</response>
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Ingredient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces(MediaTypeNames.Application.Json)]
     [HttpGet("{limit}/{search?}")]
-    public async Task<ActionResult<IEnumerable<Ingredient>>> GetAllIngredients(int limit, string? search)
+    public Task<ActionResult<IEnumerable<Ingredient>>> GetAllIngredients(int limit, string? search)
     {
-        var vm = _bll.IngredientService.GetAll(limit, search);
+        var vm =  _bll.IngredientService.GetAll(limit, search);
         var res = vm.Select(e => _mapper.Map(e))
             .ToList();
 
-        return Ok(res);
+        return Task.FromResult<ActionResult<IEnumerable<Ingredient>>>(Ok(res));
     }
     
     /// <summary>
@@ -101,7 +85,7 @@ public class IngredientsController : ControllerBase
     /// <returns>Collection of confirmed ingredients</returns>
     /// <response code="200">Collection of ingredients was successfully retrieved.</response>
     /// <response code="401">Not authorized to see the data.</response>
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Ingredient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces(MediaTypeNames.Application.Json)]
     [HttpGet]
@@ -140,7 +124,7 @@ public class IngredientsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<App.Public.DTO.v1.Ingredient>> GetIngredient(Guid id)
+    public async Task<ActionResult<Ingredient>> GetIngredient(Guid id)
     {
         var ingredient = await _bll.IngredientService.FindAsync(id);
 
@@ -161,9 +145,9 @@ public class IngredientsController : ControllerBase
     /// <returns>Created Ingredient object</returns>
     [HttpPost]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Ingredient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<App.Public.DTO.v1.Ingredient>> CreateIngredient(Ingredient ingredient)
+    public async Task<ActionResult<Ingredient>> CreateIngredient(Ingredient ingredient)
     {
         ingredient.Id = Guid.NewGuid();
         var bllIngredient = _mapper.Map(ingredient);
@@ -175,9 +159,9 @@ public class IngredientsController : ControllerBase
     
     
     /// <summary>
-    /// Delete Food with specified id
+    /// Delete Ingredient with specified id
     /// </summary>
-    /// <param name="id">Food ID</param>
+    /// <param name="id">Ingredient ID</param>
     /// <returns>Action result</returns>
     [HttpDelete("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
@@ -208,7 +192,7 @@ public class IngredientsController : ControllerBase
     /// <returns>Action result</returns>
     [HttpPut("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(ActionResult<App.Public.DTO.v1.Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ActionResult<Ingredient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
