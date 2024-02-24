@@ -1,13 +1,10 @@
 using System.Net.Mime;
 using App.Contracts.BLL;
-using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using App.Public.DTO.Mappers;
 using App.Public.DTO.v1;
 using Asp.Versioning;
 using AutoMapper;
-using DAL.EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Unit = App.Domain.Unit;
@@ -158,11 +155,6 @@ namespace WebApp.ApiControllers
             await _bll.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool UnitExists(Guid id)
-        {
-            return (_bll.UnitService.AllAsync().Result?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

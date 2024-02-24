@@ -126,7 +126,7 @@ public class NutrientsController : ControllerBase
     /// <returns>Action result</returns>
     [HttpPut("{id}")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(Nutrient), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ActionResult<Nutrient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
