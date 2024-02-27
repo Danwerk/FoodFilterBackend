@@ -36,7 +36,7 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
             await SaveFoodAsync(foodBll, new List<string>());
             return;
         }
-        
+
         List<string> imagePaths = await _imageService.SaveImagesToFileSystemAsync(images);
         await SaveFoodAsync(foodBll, imagePaths);
     }
@@ -61,6 +61,7 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
                 IsApproved = false,
                 IsMain = false,
                 Url = imagePath,
+                CreatedAt = DateTime.UtcNow
             };
             Uow.ImageRepository.Add(foodImage);
         }
@@ -83,6 +84,15 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
         return foodDtos!;
     }
 
+    public async Task<IEnumerable<Food>> PublishedAllAsync(Guid restaurantId)
+    {
+        var foods = await Uow.FoodRepository.PublishedAllAsync(restaurantId);
+
+        var foodDtos = foods.Select(r => Mapper.Map(r)).ToList();
+
+        return foodDtos!;
+    }
+
     public async Task<List<Food>?> GetFoods()
     {
         var foods = await Uow.FoodRepository.AllAsync();
@@ -90,6 +100,47 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
         var foodDtos = foods.Select(r => Mapper.Map(r)).ToList();
 
         return foodDtos!;
+    }
+
+
+    public async Task<Food?> PublishFoodAsync(Guid id)
+    {
+        var food = await Uow.FoodRepository.FindAsync(id);
+        if (food != null)
+        {
+            if (!food.Restaurant!.IsSubscriptionExpired)
+            {
+                food.IsPublished = true;
+
+                var bllFood = Mapper.Map(food);
+                Uow.FoodRepository.Update(food);
+                await Uow.SaveChangesAsync();
+                return bllFood;
+            }
+
+            throw new Exception("Unapproved restaurant");
+        }
+
+
+        throw new Exception("Missing restaurant for approval");
+    }
+
+    public async Task<Food?> UnpublishFoodAsync(Guid id)
+    {
+        var food = await Uow.FoodRepository.FindAsync(id);
+
+        if (food != null)
+        {
+            food.IsPublished = false;
+
+            var bllFood = Mapper.Map(food);
+            Uow.FoodRepository.Update(food);
+            await Uow.SaveChangesAsync();
+            return bllFood;
+        }
+
+
+        throw new Exception("Missing restaurant for approval");
     }
 
     // public async Task<Food> Edit(Food entity)
@@ -133,8 +184,10 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
         }
 
         // Calculate food calories, per 100 grams and per food total weight
-        var foodTotalCaloriesPerFoodTotalWeight = await CalculateTotalCalories(request.FoodIngredients, ingredientIds, ingredientNutrients);
-        var foodTotalCaloriesPer100Grams = Math.Round(foodTotalCaloriesPerFoodTotalWeight / res.ServingInGrams * 100, 1);
+        var foodTotalCaloriesPerFoodTotalWeight =
+            await CalculateTotalCalories(request.FoodIngredients, ingredientIds, ingredientNutrients);
+        var foodTotalCaloriesPer100Grams =
+            Math.Round(foodTotalCaloriesPerFoodTotalWeight / res.ServingInGrams * 100, 1);
 
         res.KCaloriesPerFoodTotalWeight = foodTotalCaloriesPerFoodTotalWeight;
         res.KCaloriesPer100Grams = foodTotalCaloriesPer100Grams;
@@ -168,7 +221,8 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
     }
 
 
-    private async Task<decimal> CalculateTotalCalories(List<FoodIngredientDto> foodIngredients, List<Guid> ingredientIds,
+    private async Task<decimal> CalculateTotalCalories(List<FoodIngredientDto> foodIngredients,
+        List<Guid> ingredientIds,
         List<IngredientNutrientDto> ingredientNutrients)
     {
         decimal totalCalories = 0;
@@ -185,7 +239,7 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
                 {
                     decimal? caloriesPer100Grams = ingredientInfo.KCaloriesPer100Grams;
                     decimal amount = ingredient.Amount;
-                    
+
                     totalCalories += (amount * (caloriesPer100Grams ?? 0));
                 }
             }

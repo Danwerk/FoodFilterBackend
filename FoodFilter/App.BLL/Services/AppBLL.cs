@@ -25,17 +25,21 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     private IAllergenService? _allergens;
     private INutrientService? _nutrients;
     private IIngredientNutrientService? _ingredientNutrients;
+    private IImageService? _images;
+    private IOpenHoursService? _openHours;
     
     // private IUserService? _users;
     // public IUserService UserService => _users ??= new UserService(Uow, new UserMapper(_mapper));
     
     
     public IUnitService UnitService => _units ??= new UnitService(Uow, new UnitMapper(_mapper));
-    public IRestaurantService RestaurantService => _restaurants ??= new RestaurantService(Uow, new RestaurantMapper(_mapper));
+    public IRestaurantService RestaurantService => _restaurants ??= new RestaurantService(Uow, new RestaurantMapper(_mapper), new ImageService());
     public IFoodService FoodService => _foods ??= new FoodService(Uow, new FoodMapper(_mapper), new ImageService(), new UnitService(Uow, new UnitMapper(_mapper)));
     public IIngredientService IngredientService => _ingredients ??= new IngredientService(Uow, new IngredientMapper(_mapper));
     public IAllergenService AllergenService => _allergens ??= new AllergenService(Uow, new AllergenMapper(_mapper));
     public INutrientService NutrientService => _nutrients ??= new NutrientService(Uow, new NutrientMapper(_mapper));
     public IIngredientNutrientService IngredientNutrientService => _ingredientNutrients ??= new IngredientNutrientService(Uow, new IngredientNutrientMapper(_mapper));
+    public IImageService ImageService => _images ??= new ImageService();
+    public IOpenHoursService OpenHoursService => _openHours ??= new OpenHoursService(Uow, new OpenHoursMapper(_mapper));
     
 }

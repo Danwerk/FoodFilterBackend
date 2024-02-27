@@ -129,6 +129,29 @@ public class FoodsController : ControllerBase
     
     
     /// <summary>
+    /// Get list of all published Foods by restaurant id
+    /// </summary>
+    /// <param name="id">Restaurant id</param>
+    /// <returns>Collection of foods</returns>
+    /// <response code="200">Foods were successfully retrieved.</response>
+    /// <response code="401">Unauthorized - unable to get the data.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("{id}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<Food>>> GetPublishedFoods(Guid id)
+    {
+        var vm = await _bll.FoodService.PublishedAllAsync(id);
+        var res = vm.Select(e => _mapper.Map(e))
+            .ToList();
+        
+        
+        return Ok(res);
+    }
+    
+    
+    /// <summary>
     /// Update Food with specified id
     /// </summary>
     /// <param name="id">Food ID</param>
@@ -200,5 +223,44 @@ public class FoodsController : ControllerBase
     {
         var foodCalculationResult = await _bll.FoodService.CalculateNutrients(request);
         return Ok(foodCalculationResult);
+    }
+    
+    
+    /// <summary>
+    /// Publish restaurant food, whose profile is overviewed, approved and subscription is active.
+    /// </summary>
+    /// <param name="id">Food id</param>
+    /// <returns>Published food object</returns>
+    /// <response code="200">Food was successfully published.</response>
+    /// <response code="401">Unauthorized - unable to perform this action.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("{id}")]
+    public async Task<ActionResult<Food>> PublishFood(Guid id)
+    {
+        // todo: check that restaurant is approved and not expired
+        var food = await _bll.FoodService.PublishFoodAsync(id);
+
+        return Ok(food);
+    }
+    
+    
+    /// <summary>
+    /// Unpublish restaurant food, whose profile is overviewed, approved and subscription is active.
+    /// </summary>
+    /// <param name="id">Food id</param>
+    /// <returns>Unpublished food object</returns>
+    /// <response code="200">Food was successfully unpublished.</response>
+    /// <response code="401">Unauthorized - unable to perform this action.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("{id}")]
+    public async Task<ActionResult<Food>> UnpublishFood(Guid id)
+    {
+        var food = await _bll.FoodService.UnpublishFoodAsync(id);
+
+        return Ok(food);
     }
 }

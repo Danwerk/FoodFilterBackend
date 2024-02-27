@@ -153,7 +153,7 @@ public class IdentityIntegrationTests : IClassFixture<CustomWebAppFactory<Progra
         const string password = "Foo.bar1";
         const int expiresInSeconds = 3;
 
-        const string URL = "/api/v1/carts";
+        const string URL = "/api/v1/restaurants";
 
         // Arrange
         var jwt = await RegisterNewUser(email, password, firstname, lastname, expiresInSeconds);

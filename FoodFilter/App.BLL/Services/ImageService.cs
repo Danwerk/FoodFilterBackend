@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using App.Domain;
 
 namespace App.BLL.Services
 {
@@ -46,5 +47,7 @@ namespace App.BLL.Services
 
             return imagePaths;
         }
+
+        
     }
 }

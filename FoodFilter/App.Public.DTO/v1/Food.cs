@@ -16,9 +16,13 @@ public class Food
     
     public decimal? Price { get; set; }
 
-    public bool? IsActive { get; set; }
+    public bool? IsPublished { get; set; }
     
     public decimal ServingInGrams { get; set; }
+    
+    public decimal? KCaloriesPerFoodTotalWeight { get; set; }
+    
+    public decimal? KCaloriesPer100Grams { get; set; }
     
     public ICollection<FoodNutrient>? FoodNutrients { get; set; }
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }

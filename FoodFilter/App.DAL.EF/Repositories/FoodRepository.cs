@@ -36,7 +36,25 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
                 Name = f.Name,
                 Price = f.Price,
                 Images = f.Images,
+                IsPublished = f.IsPublished
                 
+            })
+            .ToListAsync();
+    }
+    
+    public async Task<IEnumerable<Food>> PublishedAllAsync(Guid restaurantId)
+    {
+        return await RepositoryDbSet
+            .Include(c=> c.Restaurant)
+            .Where(c=>c.RestaurantId == restaurantId && c.IsPublished == true)
+            .Select(f => new Food
+            {
+                Id = f.Id,
+                RestaurantId = f.RestaurantId,
+                Name = f.Name,
+                Price = f.Price,
+                Images = f.Images,
+                IsPublished = f.IsPublished
             })
             .ToListAsync();
     }

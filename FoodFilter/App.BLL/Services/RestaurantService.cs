@@ -1,8 +1,12 @@
-﻿using App.BLL.DTO;
-using App.Contracts.BLL.Services;
+﻿using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
+using App.Domain;
 using Base.BLL;
 using Base.Contracts;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Image = App.BLL.DTO.Image;
+using Restaurant = App.BLL.DTO.Restaurant;
 
 namespace App.BLL.Services;
 
@@ -10,11 +14,14 @@ public class RestaurantService :
     BaseEntityService<App.BLL.DTO.Restaurant, App.Domain.Restaurant, IRestaurantRepository>, IRestaurantService
 {
     protected IAppUOW Uow;
+    private readonly IImageService _imageService;
 
-    public RestaurantService(IAppUOW uow, IMapper<Restaurant, Domain.Restaurant> mapper)
+
+    public RestaurantService(IAppUOW uow, IMapper<Restaurant, Domain.Restaurant> mapper, IImageService imageService)
         : base(uow.RestaurantRepository, mapper)
     {
         Uow = uow;
+        _imageService = imageService;
     }
 
     public async Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street,
@@ -42,7 +49,7 @@ public class RestaurantService :
     public IEnumerable<Restaurant> GetAll(int limit, string? search)
     {
         var restaurants = Uow.RestaurantRepository.GetAll(limit, search);
-        
+
         var restaurantDtos = restaurants.Select(r => Mapper.Map(r)).ToList();
 
         return restaurantDtos!;
@@ -117,7 +124,7 @@ public class RestaurantService :
             restaurant.AppUser.IsApproved = false;
             restaurant.AppUser.IsRejected = true;
         }
-        
+
         if (restaurant != null)
         {
             var bllRestaurant = Mapper.Map(restaurant);
@@ -125,6 +132,7 @@ public class RestaurantService :
             await Uow.SaveChangesAsync();
             return bllRestaurant;
         }
+
         throw new Exception("Missing restaurant for disapproval");
     }
 
@@ -148,5 +156,25 @@ public class RestaurantService :
         }
 
         throw new Exception("Missing restaurant for payment approval");
+    }
+
+    public async Task UpdateRestaurantWithImagesAsync(Restaurant restaurant, IFormFile image)
+    {
+        string imagePath =  await _imageService.SaveImageToFileSystemAsync(image);
+        
+        var existingRestaurant = await Uow.RestaurantRepository.FirstOrDefaultAsync(restaurant.Id);
+        
+        var restaurantImage = new App.Domain.Image()
+        {
+            EntityType = EntityType.Restaurant,
+            Restaurant = existingRestaurant,
+            IsApproved = false,
+            IsMain = false,
+            Url = imagePath,
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        Uow.ImageRepository.Add(restaurantImage);
+        await Uow.SaveChangesAsync();
     }
 }

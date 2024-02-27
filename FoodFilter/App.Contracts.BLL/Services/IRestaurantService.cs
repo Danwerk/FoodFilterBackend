@@ -1,5 +1,6 @@
 ﻿using App.BLL.DTO;
 using Base.Contracts.DAL;
+using Microsoft.AspNetCore.Http;
 
 namespace App.Contracts.BLL.Services;
 
@@ -20,5 +21,6 @@ public interface IRestaurantService: IBaseRepository<App.BLL.DTO.Restaurant>
     Task<Restaurant?> ApproveRestaurantAsync(Guid id);
     Task<Restaurant?> DisapproveRestaurantAsync(Guid id);
     Task<Restaurant?> ConfirmRestaurantPaymentAsync(Guid id);
+    Task UpdateRestaurantWithImagesAsync(Restaurant restaurant, IFormFile image);
     
 }

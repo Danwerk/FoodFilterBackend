@@ -1,5 +1,6 @@
 using System.Net.Mime;
 using App.Contracts.BLL;
+using App.Contracts.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Public.DTO.Mappers;
@@ -30,7 +31,7 @@ namespace WebApp.ApiControllers
         /// </summary>
         /// <param name="bll">Application Business Logic Layer Interface</param>
         /// <param name="autoMapper">Auto Mapper</param>
-        public RestaurantsController(IAppBLL bll, IMapper autoMapper)
+        public RestaurantsController(IAppBLL bll, IMapper autoMapper, IImageService imageService)
         {
             _bll = bll;
             _mapper = new RestaurantMapper(autoMapper);
@@ -305,7 +306,7 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> EditRestaurant(Guid id, RestaurantEdit restaurantEditDto)
+        public async Task<IActionResult> EditRestaurant(Guid id, [FromForm]RestaurantEdit restaurantEditDto, [FromForm] IFormFile image)
         {
             if (id != restaurantEditDto.Id)
             {
@@ -325,6 +326,8 @@ namespace WebApp.ApiControllers
             restaurant = _mapper.MapRestaurantEdit(restaurantEditDto);
             restaurant.AppUserId = userId;
 
+            await _bll.RestaurantService.UpdateRestaurantWithImagesAsync(restaurant, image);
+            
             try
             {
                 await _bll.RestaurantService.Edit(restaurant);

@@ -16,7 +16,12 @@ public class Food : DomainEntityId
     
     public decimal Price { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool IsPublished { get; set; }
+    
+    public decimal? KCaloriesPerFoodTotalWeight { get; set; }
+    
+    public decimal? KCaloriesPer100Grams { get; set; }
+    
     [DataType(DataType.DateTime)] 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     

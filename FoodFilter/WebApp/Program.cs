@@ -38,7 +38,7 @@ builder.Services.AddScoped<IAppBLL, AppBLL>();
 // todo: create separate static class and move services registering services there
 builder.Services.AddScoped<IdentityBLL>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<ImageService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<RestaurantService>();
 // Mapper registered because of PaymentExpirationBackgroundService
 builder.Services.AddScoped<IMapper<Restaurant, App.Domain.Restaurant>, RestaurantMapper>();

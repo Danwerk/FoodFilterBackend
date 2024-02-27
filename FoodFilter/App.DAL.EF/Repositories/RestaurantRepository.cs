@@ -96,6 +96,7 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
         
         var query = RepositoryDbSet
             .Include(c => c.AppUser)
+            .Include(c=>c.Images)
             .OrderByDescending(i => i.CreatedAt)
             .Take(limit)
             .AsNoTracking()

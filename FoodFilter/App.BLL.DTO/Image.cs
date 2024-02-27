@@ -11,4 +11,6 @@ public class Image : DomainEntityId
     public bool IsMain { get; set; }
     
     public bool IsApproved { get; set; }
+    
+    public DateTime CreatedAt { get; set; }
 }

@@ -17,6 +17,8 @@ namespace App.Domain
         public bool IsApproved { get; set; }
 
         public EntityType EntityType { get; set; }
+        
+        public DateTime CreatedAt { get; set; }
     }
 
     public enum EntityType

@@ -8,6 +8,8 @@ public interface IFoodRepository : IBaseRepository<Food>
     new Task<Food?> FindAsync(Guid foodId);
     new Task<IEnumerable<Food>> AllAsync();
     Task<IEnumerable<Food>> AllAsync(Guid restaurantId);
+    Task<IEnumerable<Food>> PublishedAllAsync(Guid restaurantId);
+
 
     // Task<Food> Edit(Food entity);
 }
