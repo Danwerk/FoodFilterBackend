@@ -9,8 +9,6 @@ public class Restaurant : DomainEntityId
     public string? City { get; set; }
     public string? Street { get; set; }
     public string? StreetNumber { get; set; }
-    
-    public string OpenHours { get; set; } = default!;
     public string PhoneNumber { get; set; } = default!;
     public string? Website { get; set; }
     
@@ -30,5 +28,6 @@ public class Restaurant : DomainEntityId
     public bool IsSubscriptionExpired { get; set; }
 
     public List<Image>? Images { get; set; }
+    public List<OpenHours>? OpenHours { get; set; }
 
 }

@@ -31,6 +31,7 @@ namespace App.Public.DTO.v1
 
         public bool IsSubscriptionExpired { get; set; }
         
+        public List<OpenHours>? OpenHours { get; set; }
         public Image? Image { get; set; }
        
     }
