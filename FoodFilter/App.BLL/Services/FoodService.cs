@@ -186,8 +186,17 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
         // Calculate food calories, per 100 grams and per food total weight
         var foodTotalCaloriesPerFoodTotalWeight =
             await CalculateTotalCalories(request.FoodIngredients, ingredientIds, ingredientNutrients);
-        var foodTotalCaloriesPer100Grams =
-            Math.Round(foodTotalCaloriesPerFoodTotalWeight / res.ServingInGrams * 100, 1);
+        decimal foodTotalCaloriesPer100Grams;
+        // avoid division by 0
+        if (res.ServingInGrams == 0)
+        {
+            foodTotalCaloriesPer100Grams = 0;
+        }
+        else
+        {
+            foodTotalCaloriesPer100Grams =
+                Math.Round(foodTotalCaloriesPerFoodTotalWeight / res.ServingInGrams * 100, 1);
+        }
 
         res.KCaloriesPerFoodTotalWeight = foodTotalCaloriesPerFoodTotalWeight;
         res.KCaloriesPer100Grams = foodTotalCaloriesPer100Grams;
