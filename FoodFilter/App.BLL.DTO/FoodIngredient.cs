@@ -11,7 +11,7 @@ public class FoodIngredient : DomainEntityId
     // public Food? Food { get; set; }
     
     public Guid IngredientId { get; set; }
-    public Ingredient? Ingredient { get; set; }
+    // public Ingredient? Ingredient { get; set; }
     
     public decimal Amount { get; set; }
 }

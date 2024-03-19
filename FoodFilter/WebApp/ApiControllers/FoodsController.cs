@@ -241,7 +241,7 @@ public class FoodsController : ControllerBase
     {
         // todo: check that restaurant is approved and not expired
         var food = await _bll.FoodService.PublishFoodAsync(id);
-
+        
         return Ok(food);
     }
     

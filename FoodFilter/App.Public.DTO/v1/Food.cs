@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace App.Public.DTO.v1;
 
@@ -25,6 +26,7 @@ public class Food
     public decimal? KCaloriesPer100Grams { get; set; }
     
     public ICollection<FoodNutrient>? FoodNutrients { get; set; }
+
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }
     public ICollection<FoodAllergen>? FoodAllergens { get; set; }
     public ICollection<Image>? Images { get; set; }

@@ -33,4 +33,13 @@ public class OpenHoursService : BaseEntityService<App.BLL.DTO.OpenHours, App.Dom
             throw new Exception("An error occured while saving OpenHours", e);
         }
     }
+
+    public async Task<List<OpenHours>?> GetOpeningHoursForRestaurant(Guid id)
+    {
+        var openHours = await Uow.OpenHoursRepository.GetOpeningHoursForRestaurant(id);
+        
+        var openHoursDtos = openHours!.Select(r => Mapper.Map(r)).ToList();
+
+        return openHoursDtos!;
+    }
 }

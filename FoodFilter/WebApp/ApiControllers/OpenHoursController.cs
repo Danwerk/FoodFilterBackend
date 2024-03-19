@@ -35,13 +35,37 @@ public class OpenHoursController : ControllerBase
         _mapper = new OpenHoursMapper(autoMapper);
     }
 
+    /// <summary>
+    /// Get list of OpenHours for restaurant
+    /// </summary>
+    /// <param name="restaurantId">Restaurant id for which to get open hours.</param>
+    /// <returns>OpenHours objects</returns>
+    /// <response code="200">OpenHours was successfully retrieved.</response>
+    /// <response code="401">Not authorized to perform action.</response>
+    [ProducesResponseType(typeof(Task<ActionResult<Restaurant>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [HttpGet("{restaurantId}")]
+    public async Task<ActionResult<List<OpenHoursDTO>>> GetOpeningHours(Guid restaurantId)
+    {
+        var vm = await _bll.OpenHoursService.GetOpeningHoursForRestaurant(restaurantId);
+
+        var res = vm.Select(e => new OpenHoursDTO
+        {
+            Day = e.Day,
+            Open = e.Open.ToString("hh\\:mm"),
+            Close = e.Close.ToString("hh\\:mm")
+        }).ToList();
+        
+        return Ok(res);
+    }
 
     /// <summary>
     /// Save new OpenHours for restaurant
     /// </summary>
-    /// <param name="restaurantCreateDto">Restaurant to create</param>
-    /// <returns>Created restaurant object</returns>
-    /// <response code="201">Restaurant was successfully created.</response>
+    /// <param name="request">OpenHours request dto</param>
+    /// <returns>Created OpenHours object</returns>
+    /// <response code="201">OpenHours was successfully created.</response>
     /// <response code="401">Not authorized to perform action.</response>
     [ProducesResponseType(typeof(Task<ActionResult<Restaurant>>), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
