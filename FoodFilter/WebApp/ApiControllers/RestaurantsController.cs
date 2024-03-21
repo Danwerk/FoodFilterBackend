@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using App.Common;
 using App.Contracts.BLL;
 using App.Contracts.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -140,6 +141,7 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(IEnumerable<Restaurant>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetPendingRestaurants()
         {
@@ -189,6 +191,7 @@ namespace WebApp.ApiControllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> ApproveRestaurant(Guid id)
         {
@@ -208,6 +211,7 @@ namespace WebApp.ApiControllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> DisapproveRestaurant(Guid id)
         {
@@ -377,6 +381,7 @@ namespace WebApp.ApiControllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpPost("{id}")]
         public async Task<ActionResult<Restaurant>> ConfirmRestaurantPayment(Guid id)
         {

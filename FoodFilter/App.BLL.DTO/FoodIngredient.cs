@@ -13,5 +13,7 @@ public class FoodIngredient : DomainEntityId
     public Guid IngredientId { get; set; }
     // public Ingredient? Ingredient { get; set; }
     
+    public string IngredientName { get; set; } = default!;
+    
     public decimal Amount { get; set; }
 }

@@ -177,23 +177,27 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
 
             // food total weight
             res.ServingInGrams = request.FoodIngredients.Sum(i => i.Amount);
-
+            
             // set ingredients to result 
             res.Ingredients = ingredientNames.Select(name => new IngredientDto { Name = name }).ToList();
             res.Nutrients.Add(calculatedNutrient);
         }
 
-        // Calculate food calories, per 100 grams and per food total weight
-        var foodTotalCaloriesPerFoodTotalWeight =
-            await CalculateTotalCalories(request.FoodIngredients, ingredientIds, ingredientNutrients);
+        
+        
         decimal foodTotalCaloriesPer100Grams;
+        decimal foodTotalCaloriesPerFoodTotalWeight;
         // avoid division by 0
         if (res.ServingInGrams == 0)
         {
+            foodTotalCaloriesPerFoodTotalWeight = 0;
             foodTotalCaloriesPer100Grams = 0;
         }
         else
         {
+            // Calculate food calories, per 100 grams and per food total weight
+             foodTotalCaloriesPerFoodTotalWeight =
+                await CalculateTotalCalories(request.FoodIngredients, ingredientIds, ingredientNutrients);
             foodTotalCaloriesPer100Grams =
                 Math.Round(foodTotalCaloriesPerFoodTotalWeight / res.ServingInGrams * 100, 1);
         }

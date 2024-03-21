@@ -344,7 +344,7 @@ public class AccountController : ControllerBase
                 Error = $"User with email {userEmail} not found"
             });
         }
-
+        var tokens = await _context.AppRefreshTokens.Where(rt => rt.AppUserId == appUser.Id).ToListAsync();
         // load and compare refresh tokens
         await _context.Entry(appUser).Collection(u => u.AppRefreshTokens!)
             .Query()
