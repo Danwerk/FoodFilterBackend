@@ -82,7 +82,7 @@ public static class AppDataInit
                 var identityResult = userManager.CreateAsync(user, userInfo.password).Result;
                 // identityResult =  userManager.AddClaimAsync(user, new Claim("aspnet.firstname",user.FirstName)).Result;
                 // identityResult =  userManager.AddClaimAsync(user, new Claim("aspnet.lastname",user.LastName)).Result;
-                //
+
                 if (!identityResult.Succeeded)
                 {
                     throw new ApplicationException("Cannot create user!");

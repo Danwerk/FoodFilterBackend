@@ -24,6 +24,42 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
             .ToListAsync();
     }
 
+    public IEnumerable<Food> GetAll(Guid id, int limit, string? search)
+    {
+        var query = RepositoryDbSet
+            .Include(c=>c.Restaurant)
+            .Include(c=>c.Images)
+            .Where(f=>f.RestaurantId == id)
+            .OrderByDescending(i => i.CreatedAt)
+            .Take(limit)
+            .AsNoTracking()
+            .AsQueryable();
+
+        var newQuery = query
+            .AsEnumerable()
+            .Where(f => ContainsSearch(f, search));
+
+        return newQuery.Select(f=> new Food
+        {
+            Id = f.Id,
+            RestaurantId = f.RestaurantId,
+            Name = f.Name,
+            Price = f.Price,
+            Images = f.Images,
+            IsPublished = f.IsPublished
+        });
+    }
+    
+    private bool ContainsSearch(Food food, string? search)
+    {
+        if (string.IsNullOrEmpty(search))
+        {
+            return true;
+        }
+        search = search.ToLower();
+        return food.Name.ToLower().Contains(search);
+    }
+
     public async Task<IEnumerable<Food>> AllAsync(Guid restaurantId)
     {
         return await RepositoryDbSet

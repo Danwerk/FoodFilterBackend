@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Food = App.BLL.DTO.Food;
 using FoodNutrient = App.BLL.DTO.FoodNutrient;
 using Image = App.Domain.Image;
+using Ingredient = App.BLL.DTO.Ingredient;
 
 namespace App.BLL.Services;
 
@@ -79,6 +80,15 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
     {
         var foods = await Uow.FoodRepository.AllAsync(restaurantId);
 
+        var foodDtos = foods.Select(r => Mapper.Map(r)).ToList();
+
+        return foodDtos!;
+    }
+
+    public IEnumerable<Food> GetAll(Guid id, int limit, string? search)
+    {
+        var foods = Uow.FoodRepository.GetAll(id, limit, search);
+        
         var foodDtos = foods.Select(r => Mapper.Map(r)).ToList();
 
         return foodDtos!;
@@ -173,13 +183,13 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
             // calculating food nutrient per food weight. Round result two decimal places.
             var calculatedNutrient = CalculateNutrientForGroup(request.FoodIngredients, nutrientGroup);
 
-            var ingredientNames = Uow.IngredientRepository.GetIngredientNames(ingredientIds);
-
+            var ingredients = await Uow.IngredientRepository.GetIngredientsByIdsAsync(ingredientIds);
+            
             // food total weight
             res.ServingInGrams = request.FoodIngredients.Sum(i => i.Amount);
             
             // set ingredients to result 
-            res.Ingredients = ingredientNames.Select(name => new IngredientDto { Name = name }).ToList();
+            res.Ingredients = ingredients.Select(ing => new IngredientDto { Id = ing.Id, Name = ing.Name }).ToList();
             res.Nutrients.Add(calculatedNutrient);
         }
 

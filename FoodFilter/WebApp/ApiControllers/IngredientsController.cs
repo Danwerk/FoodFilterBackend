@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using App.Common;
 using App.Contracts.BLL;
 using App.Public.DTO.Mappers;
 using App.Public.DTO.v1;
@@ -33,8 +34,8 @@ public class IngredientsController : ControllerBase
         _bll = bll;
         _mapper = new IngredientMapper(autoMapper);
     }
-    
-    
+
+
     /// <summary>
     /// Get ingredients ordered descending based on time created
     /// </summary>
@@ -52,13 +53,13 @@ public class IngredientsController : ControllerBase
     [HttpGet("{limit}/{search?}")]
     public Task<ActionResult<IEnumerable<Ingredient>>> GetAllIngredients(int limit, string? search)
     {
-        var vm =  _bll.IngredientService.GetAll(limit, search);
+        var vm = _bll.IngredientService.GetAll(limit, search);
         var res = vm.Select(e => _mapper.Map(e))
             .ToList();
 
         return Task.FromResult<ActionResult<IEnumerable<Ingredient>>>(Ok(res));
     }
-    
+
     /// <summary>
     /// Get unconfirmed ingredients ordered ascending based on time created
     /// </summary>
@@ -77,8 +78,8 @@ public class IngredientsController : ControllerBase
 
         return Ok(res);
     }
-    
-    
+
+
     /// <summary>
     /// Get confirmed ingredients ordered ascending based on time created
     /// </summary>
@@ -156,8 +157,8 @@ public class IngredientsController : ControllerBase
 
         return CreatedAtAction("GetIngredient", new { id = ingredient.Id }, ingredient);
     }
-    
-    
+
+
     /// <summary>
     /// Delete Ingredient with specified id
     /// </summary>
@@ -177,13 +178,34 @@ public class IngredientsController : ControllerBase
         {
             return NotFound();
         }
-        await _bll.IngredientService.RemoveAsync(ingredient.Id);
-        await _bll.SaveChangesAsync();
+
+        if (User.IsInRole(RoleNames.Admin))
+        {
+            await _bll.IngredientService.RemoveAsync(ingredient.Id);
+            await _bll.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        
+        if (User.IsInRole(RoleNames.Restaurant))
+        {
+            // maybe should return something
+            if (ingredient.IsConfirmed)
+            {
+                
+            }
+            else
+            {
+                await _bll.IngredientService.RemoveAsync(ingredient.Id);
+                await _bll.SaveChangesAsync();
+            }
+        }
 
         return Ok();
     }
-    
-    
+
+
     /// <summary>
     /// Update Ingredient with specified id
     /// </summary>

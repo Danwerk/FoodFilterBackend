@@ -119,12 +119,40 @@ public class FoodsController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Food>>> GetFoodsByRestaurantId(Guid id)
     {
+        
+        
         var vm = await _bll.FoodService.AllAsync(id);
         var res = vm.Select(e => _mapper.Map(e))
             .ToList();
         
         
         return Ok(res);
+    }
+    
+    
+    /// <summary>
+    /// Get list of all Foods by restaurant id, this method is used with search and limit params.
+    /// </summary>
+    /// <param name="id">Restaurant id</param>
+    /// <param name="limit">Number of records returned</param>
+    /// <param name="search">
+    /// Phrase which food must contain.
+    /// If left blank, all foods for restaurant will be returned.
+    /// </param>
+    /// <returns>Collection of foods</returns>
+    /// <response code="200">Foods were successfully retrieved.</response>
+    /// <response code="401">Unauthorized - unable to get the data.</response>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<Food>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("{id}/{limit}/{search?}")]
+    public Task<ActionResult<IEnumerable<Food>>> GetAllFoods(Guid id, int limit, string? search)
+    {
+        var vm = _bll.FoodService.GetAll(id, limit, search);
+        var res = vm.Select(e => _mapper.Map(e))
+            .ToList();
+
+        return Task.FromResult<ActionResult<IEnumerable<Food>>>(Ok(res));
     }
     
     
