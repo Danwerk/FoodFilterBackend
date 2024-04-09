@@ -1,5 +1,7 @@
 ﻿using System.Net.Mime;
+using App.Common;
 using App.Contracts.BLL;
+using App.Common.IngredientNutrientDtos;
 using App.Public.DTO.Mappers;
 using App.Public.DTO.v1;
 using Asp.Versioning;
@@ -21,7 +23,7 @@ public class IngredientNutrientsController : ControllerBase
 {
     private readonly IAppBLL _bll;
     private readonly IngredientNutrientMapper _mapper;
-    
+
     /// <summary>
     /// IngredientNutrients Constructor
     /// </summary>
@@ -32,7 +34,7 @@ public class IngredientNutrientsController : ControllerBase
         _bll = bll;
         _mapper = new IngredientNutrientMapper(autoMapper);
     }
-    
+
     /// <summary>
     /// Get ingredientNutrients
     /// </summary>
@@ -51,9 +53,50 @@ public class IngredientNutrientsController : ControllerBase
     public Task<ActionResult<IEnumerable<IngredientNutrient>>> GetIngredientNutrients(int limit, string? search)
     {
         var vm = _bll.IngredientNutrientService.GetAll(limit, search);
-        var res = vm.Select(e => _mapper.Map(e))
-            .ToList();
 
-        return Task.FromResult<ActionResult<IEnumerable<IngredientNutrient>>>(Ok(res));
+        var groupedByIngredient = vm.GroupBy(n => n.IngredientId);
+
+        var responseList = new List<IngredientNutrient>();
+        foreach (var group in groupedByIngredient)
+        {
+            var ingredient = group.First().Ingredient;
+            var ingredientNutrient = new IngredientNutrient
+            {
+                Ingredient = new Ingredient()
+                {
+                    Name = ingredient!.Name,
+                    KCaloriesPer100Grams = ingredient.KCaloriesPer100Grams,
+                    Description = ingredient.Description,
+                    Id = ingredient.Id
+                },
+                Nutrients = group.ToDictionary(n => n.Nutrient!.Name, n => n.Amount)
+            };
+            responseList.Add(ingredientNutrient);
+        }
+
+        return Task.FromResult<ActionResult<IEnumerable<IngredientNutrient>>>(Ok(responseList));
+    }
+
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateIngredientNutrients(IngredientNutrientUpdateDto dto)
+    {
+        if (User.IsInRole(RoleNames.Admin))
+        {
+            try
+            {
+                await _bll.IngredientNutrientService.UpdateIngredientNutrientsAsync(dto.IngredientId, dto.Nutrients);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it appropriately
+                return BadRequest("Failed to update ingredient nutrients.");
+            }
+        }
+        return NotFound();
     }
 }

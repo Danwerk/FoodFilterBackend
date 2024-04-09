@@ -6,7 +6,7 @@ namespace App.BLL.DTO;
 
 public class IngredientNutrient : DomainEntityId
 {
-    public Guid UnitId { get; set; }
+    public Guid? UnitId { get; set; }
     public Unit? Unit { get; set; }
     
     public Guid IngredientId { get; set; }

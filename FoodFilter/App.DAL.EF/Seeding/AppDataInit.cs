@@ -97,60 +97,11 @@ public static class AppDataInit
             }
         }
     }
-
-
-    // public static void SeedIdentity(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
-    // {
-    //     // Seed single admin
-    //     (Guid id, string email, string password) adminData = (adminId, "admin@app.com", "Foo.bar.1");
-    //     var adminUser = userManager.FindByEmailAsync(adminData.email).Result;
-    //
-    //     if (adminUser == null)
-    //     {
-    //         adminUser = new AppUser()
-    //         {
-    //             Id = adminData.id,
-    //             Email = adminData.email,
-    //             UserName = adminData.email,
-    //             FirstName = "Admin",
-    //             LastName = "App",
-    //             EmailConfirmed = true,
-    //         };
-    //         var result = userManager.CreateAsync(adminUser, adminData.password).Result;
-    //         if (!result.Succeeded)
-    //         {
-    //             throw new ApplicationException("Cannot seed admin users");
-    //         }
-    //     }
-    //     
-    //     // Seed single user
-    //     (Guid id, string email, string password) userData = (userId, "user@app.com", "Foo.bar.2");
-    //     var user = userManager.FindByEmailAsync(userData.email).Result;
-    //
-    //     if (user == null)
-    //     {
-    //         user = new AppUser()
-    //         {
-    //             Id = userData.id,
-    //             Email = userData.email,
-    //             FirstName = "Appuser",
-    //             LastName = "User",
-    //             UserName = userData.email,
-    //             EmailConfirmed = true,
-    //         };
-    //         var result = userManager.CreateAsync(user, userData.password).Result;
-    //         if (!result.Succeeded)
-    //         {
-    //             throw new ApplicationException("Cannot seed users");
-    //         }
-    //     }
-    //     
-    // }
-    //
+    
     public static void SeedData(ApplicationDbContext context)
     {
         SeedDataUnits(context);
-
+        SeedDataNutrients(context);
 
         context.SaveChanges();
     }
@@ -170,34 +121,47 @@ public static class AppDataInit
             }
         );
     }
+    
+    
+    public static void SeedDataNutrients(ApplicationDbContext context)
+    {
+        if (context.Nutrients.Any()) return;
 
-
-    // public static void SeedProducts(ApplicationDbContext context)
-    // {
-    //     if (context.Products.Any()) return;
-    //
-    //     context.Products.Add(new Product()
-    //         {
-    //             Image = "img url",
-    //             Name = "Maasikas",
-    //             Description = "Kreeka",
-    //         }
-    //     );
-    // }
-
-    // public static void SeedDataProducts(ApplicationDbContext context)
-    // {
-    //     if (context.Products.Any()) return;
-    //
-    //     context.Products.Add(new Product()
-    //     {
-    //         Image =
-    //             "https://thumbs.dreamstime.com/z/kg-fresh-strawberries-plastic-box-gray-wooden-background-178246910.jpg",
-    //         Name = "Strawberry",
-    //         Description = "Greece",
-    //         Quantity = 30,
-    //         Unit = unit,
-    //
-    //     });
-    // }
+        context.Nutrients.Add(new Nutrient()
+            {
+                Name = "carbohydrates"
+            }
+        );
+        context.Nutrients.Add(new Nutrient()
+            {
+                Name = "fat"
+            }
+        );
+        context.Nutrients.Add(new Nutrient()
+            {
+                Name = "saturatedFattyAcids"
+            }
+        );
+        context.Nutrients.Add(new Nutrient()
+            {
+                Name = "protein"
+            }
+        );
+        context.Nutrients.Add(new Nutrient()
+            {
+                Name = "sugar"
+            }
+        );
+        context.Nutrients.Add(new Nutrient()
+            {
+                Name = "fiber"
+            }
+        );
+        context.Nutrients.Add(new Nutrient()
+            {
+                Name = "salt"
+            }
+        );
+    }
+    
 }

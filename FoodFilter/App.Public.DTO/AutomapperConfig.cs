@@ -36,9 +36,9 @@ public class AutomapperConfig : Profile
         CreateMap<App.BLL.DTO.Unit, App.Public.DTO.v1.Unit>().ReverseMap();
         CreateMap<App.BLL.DTO.Ingredient, App.Public.DTO.v1.Ingredient>().ReverseMap();
         CreateMap<App.BLL.DTO.IngredientNutrient, App.Public.DTO.v1.IngredientNutrient>()
-            .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient!.Name))
-            .ForMember(dest => dest.NutrientName, opt => opt.MapFrom(src => src.Nutrient!.Name))
-            .ForMember(dest => dest.UnitName, opt => opt.MapFrom(src => src.Unit!.UnitName))
+            // .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient!.Name))
+            // .ForMember(dest => dest.NutrientName, opt => opt.MapFrom(src => src.Nutrient!.Name))
+            // .ForMember(dest => dest.UnitName, opt => opt.MapFrom(src => src.Unit!.UnitName))
             .ReverseMap();
     }
 }

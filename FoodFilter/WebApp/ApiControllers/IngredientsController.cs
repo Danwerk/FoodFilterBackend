@@ -153,7 +153,13 @@ public class IngredientsController : ControllerBase
         ingredient.Id = Guid.NewGuid();
         var bllIngredient = _mapper.Map(ingredient);
         _bll.IngredientService.Add(bllIngredient!);
+
         await _bll.SaveChangesAsync();
+
+        if (User.IsInRole(RoleNames.Admin))
+        {
+            await _bll.IngredientNutrientService.AddIngredientNutrientsForIngredient(bllIngredient!);
+        }
 
         return CreatedAtAction("GetIngredient", new { id = ingredient.Id }, ingredient);
     }
@@ -187,13 +193,12 @@ public class IngredientsController : ControllerBase
             return Ok();
         }
 
-        
+
         if (User.IsInRole(RoleNames.Restaurant))
         {
             // maybe should return something
             if (ingredient.IsConfirmed)
             {
-                
             }
             else
             {

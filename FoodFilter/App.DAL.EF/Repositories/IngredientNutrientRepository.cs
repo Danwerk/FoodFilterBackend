@@ -30,6 +30,15 @@ public class IngredientNutrientRepository : EFBaseRepository<IngredientNutrient,
         return newQuery;
     }
 
+    public async Task<IEnumerable<IngredientNutrient>> GetAllByIngredientIdAsync(Guid ingredientId)
+    {
+        return await RepositoryDbSet.Include(i => i.Ingredient)
+            .Include(i => i.Unit)
+            .Include(i => i.Nutrient)
+            .Where(i => i.IngredientId == ingredientId)
+            .ToListAsync();
+    }
+
     private bool ContainsSearch(IngredientNutrient ingredientNutrient, string? search)
     {
         if (string.IsNullOrEmpty(search))
