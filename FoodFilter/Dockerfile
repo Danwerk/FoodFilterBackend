@@ -21,6 +21,7 @@ COPY Base.Helpers/*.csproj ./Base.Helpers/
 # App
 COPY App.Contracts.BLL/*.csproj ./App.Contracts.BLL/
 COPY App.Contracts.DAL/*.csproj ./App.Contracts.DAL/
+COPY App.Common/*.csproj ./App.Common/
 COPY App.BLL/*.csproj ./App.BLL/
 COPY App.BLL.DTO/*.csproj ./App.BLL.DTO/
 COPY App.DAL.EF/*.csproj ./App.DAL.EF/
@@ -47,6 +48,7 @@ COPY Base.Helpers/. ./Base.Helpers/
 # App
 COPY App.Contracts.BLL/. ./App.Contracts.BLL/
 COPY App.Contracts.DAL/. ./App.Contracts.DAL/
+COPY App.Common/. ./App.Common/
 COPY App.BLL/. ./App.BLL/
 COPY App.BLL.DTO/. ./App.BLL.DTO/
 COPY App.DAL.EF/. ./App.DAL.EF/

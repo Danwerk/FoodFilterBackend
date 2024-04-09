@@ -1,5 +1,4 @@
-﻿using App.Common;
-using App.Public.DTO.v1;
+﻿using App.Public.DTO.v1;
 using AutoMapper;
 using Base.DAL;
 using Restaurant = App.BLL.DTO.Restaurant;
@@ -18,12 +17,12 @@ public class RestaurantMapper: BaseMapper<App.BLL.DTO.Restaurant, App.Public.DTO
         return new Restaurant()
         {
             Id = restaurantEditDto.Id,
-            Name = restaurantEditDto.Name,
+            Name = restaurantEditDto.Name!,
             AppUserId = restaurantEditDto.AppUserId,
             City = restaurantEditDto.City,
             Street = restaurantEditDto.Street,
             StreetNumber = restaurantEditDto.StreetNumber,
-            PhoneNumber = restaurantEditDto.PhoneNumber,
+            PhoneNumber = restaurantEditDto.PhoneNumber!,
             Website = restaurantEditDto.Website,
             PaymentStartsAt = restaurantEditDto.PaymentStartsAt,
             PaymentEndsAt = restaurantEditDto.PaymentEndsAt
