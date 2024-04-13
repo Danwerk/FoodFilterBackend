@@ -20,8 +20,8 @@ namespace App.Public.DTO.v1
 
         public string? Email { get; set; } = default!;
         
-        public bool IsApproved { get; set; }
-        public bool IsRejected { get; set; }
+        public bool? IsApproved { get; set; }
+        public bool? IsRejected { get; set; }
         
         [DataType(DataType.DateTime)]
         public DateTime? PaymentStartsAt { get; set; }
@@ -29,10 +29,11 @@ namespace App.Public.DTO.v1
         [DataType(DataType.DateTime)]
         public DateTime? PaymentEndsAt { get; set; }
 
-        public bool IsSubscriptionExpired { get; set; }
+        public bool? IsSubscriptionExpired { get; set; }
         
         public List<OpenHours>? OpenHours { get; set; }
-        public Image? Image { get; set; }
+        public List<Image>? Images { get; set; }
+
        
     }
 

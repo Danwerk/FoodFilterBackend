@@ -26,6 +26,10 @@ namespace WebApp.ApiControllers
     {
         private readonly IAppBLL _bll;
         private readonly RestaurantMapper _mapper;
+        
+        private const int MaxImageUploadCount = 5; // Maximum number of images allowed per upload
+        private const long MaxImageSize = 10 * 1024 * 1024; // Maximum allowed size for each image (10 MB)
+
 
         /// <summary>
         /// Restaurants Constructor
@@ -180,7 +184,7 @@ namespace WebApp.ApiControllers
 
             return NotFound();
         }
-        
+
         /// <summary>
         /// Approve restaurant, whose profile is overviewed by system administrator.
         /// </summary>
@@ -306,11 +310,12 @@ namespace WebApp.ApiControllers
         /// <returns>Action result</returns>
         [HttpPut("{id}")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> EditRestaurant(Guid id, [FromForm]RestaurantEdit restaurantEditDto, [FromForm] IFormFile image)
+        public async Task<IActionResult> EditRestaurant(Guid id, [FromForm] RestaurantEdit restaurantEditDto,
+            [FromForm] IFormFile? image)
         {
             if (id != restaurantEditDto.Id)
             {
@@ -330,8 +335,11 @@ namespace WebApp.ApiControllers
             restaurant = _mapper.MapRestaurantEdit(restaurantEditDto);
             restaurant.AppUserId = userId;
 
-            await _bll.RestaurantService.UpdateRestaurantWithImagesAsync(restaurant, image);
-            
+            if (image != null)
+            {
+                await _bll.RestaurantService.UpdateRestaurantWithImagesAsync(restaurant, image);
+            }
+
             try
             {
                 await _bll.RestaurantService.Edit(restaurant);
@@ -389,5 +397,114 @@ namespace WebApp.ApiControllers
 
             return Ok(restaurant);
         }
+        
+        
+        /// <summary>
+        /// Upload images.
+        /// </summary>
+        /// <param name="id">Restaurant id</param>
+        /// <param name="images">Restaurant images</param>
+        /// <returns></returns>
+        /// <response code="204">Restaurant image was successfully uploaded.</response>
+        /// <response code="401">Unauthorized - unable to do this action.</response>
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = RoleNames.Restaurant)]
+        [HttpPost("{id}")]
+        public async Task<ActionResult> UploadImages(Guid id, [FromForm] List<IFormFile> images)
+        {
+            
+            if (id == Guid.Empty)
+            {
+                return BadRequest("Invalid restaurant ID");
+            }
+            
+            var restaurant = await _bll.RestaurantService.FindAsync(id);
+            if (restaurant == null)
+            {
+                return BadRequest("Missing restaurant with such id, " + id);
+            }
+            
+            if (images == null || images.Count == 0)
+            {
+                return BadRequest("No images provided");
+            }
+            
+            if (images.Count + restaurant.Images!.Count > MaxImageUploadCount)
+            {
+                return BadRequest($"Exceeded maximum allowed number of images ({MaxImageUploadCount})");
+            }
+            
+            foreach (var image in images)
+            {
+                if (image.Length == 0)
+                {
+                    return BadRequest("Empty image file(s) provided");
+                }
+
+                if (image.Length > MaxImageSize)
+                {
+                    return BadRequest($"Image file size exceeds the maximum allowed size ({MaxImageSize} bytes)");
+                }
+            }
+            
+            try
+            {
+                await _bll.RestaurantService.UploadRestaurantImagesAsync(id, images);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to upload images.");
+            }
+        }
+        
+        
+         /// <summary>
+        /// Upload images.
+        /// </summary>
+        /// <param name="id">Image id</param>
+        /// <returns></returns>
+        /// <response code="200">Image was successfully deleted.</response>
+        /// <response code="401">Unauthorized - unable to delete the data.</response>
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(Restaurant), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = RoleNames.Restaurant)]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteImage(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest("Invalid image ID");
+            }
+            
+
+            // if (restaurant == null)
+            // {
+            //     return BadRequest("Unable to do this action!");
+            // }
+            var image = _bll.ImageService.GetImage(id);
+
+            if (image == null)
+            {
+                return BadRequest("No image with such id for deletion, " + id);
+            }
+           
+            try
+            {
+                //await _bll.RestaurantService.UploadRestaurantImagesAsync(id, images);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to upload images.");
+            }
+        }
+    
     }
+    
 }

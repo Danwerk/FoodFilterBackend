@@ -1,4 +1,9 @@
-Author: Danyil Kurbatov,
+# Running and configuration
+### If using docker
+Copy in root directory appsettings.json and modify "DefaultConnection" connection string with your hosting db settings.
+Create Image...
+Host it...
+
 # ERD SCHEMA
 ```
 will be here
@@ -10,7 +15,7 @@ dotnet tool update --global dotnet-ef
 ```
 
 
-## EF Core commands
+## EF Core commands during development
 ```
 dotnet ef migrations add Initial --project App.DAL.EF --startup-project WebApp --context ApplicationDbContext 
 

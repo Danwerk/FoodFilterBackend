@@ -22,5 +22,6 @@ public interface IRestaurantService: IBaseRepository<App.BLL.DTO.Restaurant>
     Task<Restaurant?> DisapproveRestaurantAsync(Guid id);
     Task<Restaurant?> ConfirmRestaurantPaymentAsync(Guid id);
     Task UpdateRestaurantWithImagesAsync(Restaurant restaurant, IFormFile image);
+    Task UploadRestaurantImagesAsync(Guid restaurantId, List<IFormFile> images);
     
 }

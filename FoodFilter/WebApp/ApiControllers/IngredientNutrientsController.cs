@@ -91,7 +91,7 @@ public class IngredientNutrientsController : ControllerBase
                 await _bll.IngredientNutrientService.UpdateIngredientNutrientsAsync(dto.IngredientId, dto.Nutrients);
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception or handle it appropriately
                 return BadRequest("Failed to update ingredient nutrients.");

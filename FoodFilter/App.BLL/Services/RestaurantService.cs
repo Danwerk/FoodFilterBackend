@@ -161,9 +161,8 @@ public class RestaurantService :
     public async Task UpdateRestaurantWithImagesAsync(Restaurant restaurant, IFormFile image)
     {
         string imagePath =  await _imageService.SaveImageToFileSystemAsync(image);
-        
-        var existingRestaurant = await Uow.RestaurantRepository.FirstOrDefaultAsync(restaurant.Id);
-        
+        var existingRestaurant = await Uow.RestaurantRepository.FindAsync(restaurant.Id);
+
         var restaurantImage = new App.Domain.Image()
         {
             EntityType = EntityType.Restaurant,
@@ -175,6 +174,30 @@ public class RestaurantService :
         };
         
         Uow.ImageRepository.Add(restaurantImage);
+        await Uow.SaveChangesAsync();
+    }
+    
+    
+    public async Task UploadRestaurantImagesAsync(Guid restaurantId, List<IFormFile> images)
+    {
+        List<string> imagePaths =  await _imageService.SaveImagesToFileSystemAsync(images);
+        var existingRestaurant = await Uow.RestaurantRepository.FindAsync(restaurantId);
+
+        foreach (var imagePath in imagePaths)
+        {
+            var restaurantImage = new App.Domain.Image()
+            {
+                EntityType = EntityType.Restaurant,
+                Restaurant = existingRestaurant,
+                IsApproved = false,
+                IsMain = false,
+                Url = imagePath,
+                CreatedAt = DateTime.UtcNow
+            };
+        
+            Uow.ImageRepository.Add(restaurantImage);
+        }
+        
         await Uow.SaveChangesAsync();
     }
 }

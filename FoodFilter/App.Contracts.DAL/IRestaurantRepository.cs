@@ -7,6 +7,7 @@ public interface IRestaurantRepository : IBaseRepository<Restaurant>
 {
     Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street, string? streetNumber);
 
+    Task<Restaurant?> FindAsync(Guid id);
     Task<Restaurant?> FindByUserIdAsync(Guid userId);
 
     Restaurant Edit(Restaurant entity);

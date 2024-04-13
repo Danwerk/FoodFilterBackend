@@ -1,8 +1,5 @@
 ﻿using App.Contracts.BLL.Services;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using App.Domain;
 
 namespace App.BLL.Services
@@ -48,6 +45,9 @@ namespace App.BLL.Services
             return imagePaths;
         }
 
-        
+        public Task<Image> GetImage(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

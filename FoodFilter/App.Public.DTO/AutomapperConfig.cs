@@ -9,9 +9,7 @@ public class AutomapperConfig : Profile
     public AutomapperConfig()
     {
         CreateMap<App.BLL.DTO.Identity.AppUser, App.Public.DTO.v1.User>().ReverseMap();
-        CreateMap<App.BLL.DTO.Restaurant, App.Public.DTO.v1.Restaurant>()
-            .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Images!.OrderByDescending(img => img.CreatedAt).FirstOrDefault()))
-            .ReverseMap();
+        CreateMap<App.BLL.DTO.Restaurant, App.Public.DTO.v1.Restaurant>().ReverseMap();
         CreateMap<App.BLL.DTO.Food, App.Public.DTO.v1.Food>().ReverseMap();
         CreateMap<App.BLL.DTO.OpenHours, App.Public.DTO.v1.OpenHours>().ReverseMap();
         CreateMap<App.BLL.DTO.Allergen, App.Public.DTO.v1.Allergen>().ReverseMap();

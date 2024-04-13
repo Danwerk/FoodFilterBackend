@@ -7,5 +7,6 @@ public interface IImageService
 {
      Task<string> SaveImageToFileSystemAsync(IFormFile imageFile);
      Task<List<string>> SaveImagesToFileSystemAsync(List<IFormFile> imageFiles);
+     Task<Image> GetImage(Guid id);
 
 }
