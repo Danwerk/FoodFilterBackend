@@ -56,7 +56,7 @@ public class OpenHoursController : ControllerBase
             Open = e.Open.ToString("hh\\:mm"),
             Close = e.Close.ToString("hh\\:mm")
         }).ToList();
-        
+
         return Ok(res);
     }
 
@@ -71,37 +71,61 @@ public class OpenHoursController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces(MediaTypeNames.Application.Json)]
     [HttpPost]
-    public async Task<ActionResult<List<OpenHours>>> SaveOpeningHours([FromBody] OpenHoursRequestDTO request)
+    public async Task<ActionResult<List<OpenHours>>> SaveOpeningHours(OpenHours openHours)
     {
         var openHoursEntities = new List<OpenHours>();
-        if (request.OpenHours != null)
+        if (openHours != null)
         {
-            foreach (var dayOpenHours in request.OpenHours)
-            {
-                var open = TimeSpan.ParseExact(dayOpenHours.Open, "hh\\:mm", CultureInfo.InvariantCulture);
-                var close = TimeSpan.ParseExact(dayOpenHours.Close, "hh\\:mm", CultureInfo.InvariantCulture);
+            // var open = TimeSpan.ParseExact(request.Open, "hh\\:mm", CultureInfo.InvariantCulture);
+            // var close = TimeSpan.ParseExact(request.Close, "hh\\:mm", CultureInfo.InvariantCulture);
+            var open = openHours.Open;
+            var close = openHours.Close;
 
-                var openHoursEntity = new OpenHours()
-                {
-                    RestaurantId = request.RestaurantId,
-                    Day = dayOpenHours.Day,
-                    Open = open,
-                    Close = close
-                };
-                
-                openHoursEntities.Add(openHoursEntity);
-            }
-            
+            var openHoursEntity = new OpenHours()
+            {
+                RestaurantId = openHours.RestaurantId,
+                Day = openHours.Day,
+                Open = open,
+                Close = close
+            };
+
+            openHoursEntities.Add(openHoursEntity);
+
+
             var openHoursBllEntities = openHoursEntities.Select(r => _mapper.Map(r)).ToList();
 
             await _bll.OpenHoursService.SaveOpenHours(openHoursBllEntities);
 
             return Ok(openHoursEntities);
-
         }
 
-        return BadRequest();
+        return BadRequest("No opening hours provided.");
+    }
 
 
+    /// <summary>
+    /// Delete Nutrient with specified id
+    /// </summary>
+    /// <param name="id">Nutrient ID</param>
+    /// <returns>Action result</returns>
+    [HttpDelete("{id}")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> DeleteOpenHours(Guid id)
+    {
+        var openHours = await _bll.OpenHoursService.FirstOrDefaultAsync(id);
+
+        if (openHours == null)
+        {
+            return NotFound();
+        }
+
+        await _bll.OpenHoursService.RemoveAsync(openHours.Id);
+        await _bll.SaveChangesAsync();
+
+        return Ok();
     }
 }

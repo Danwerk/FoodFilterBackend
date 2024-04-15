@@ -20,18 +20,18 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IAppUOW _uow;
-        private readonly ImageService _imageService;
+        private readonly FileService _fileService;
 
         public IndexModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             IAppUOW uow,
-            ImageService imageService)
+            FileService fileService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _uow = uow;
-            _imageService = imageService;
+            _fileService = fileService;
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
                 {
                     if (Input.ImageFile != null)
                     {
-                        var result = await _imageService.SaveImageToFileSystemAsync(Input.ImageFile);
+                        var result = await _fileService.SaveImageToFileSystemAsync(Input.ImageFile);
 
                         var image = new Image
                         {

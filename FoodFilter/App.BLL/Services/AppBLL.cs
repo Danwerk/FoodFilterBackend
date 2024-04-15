@@ -25,6 +25,7 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     private IAllergenService? _allergens;
     private INutrientService? _nutrients;
     private IIngredientNutrientService? _ingredientNutrients;
+    private IFileService? _files;
     private IImageService? _images;
     private IOpenHoursService? _openHours;
     
@@ -33,13 +34,14 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     
     
     public IUnitService UnitService => _units ??= new UnitService(Uow, new UnitMapper(_mapper));
-    public IRestaurantService RestaurantService => _restaurants ??= new RestaurantService(Uow, new RestaurantMapper(_mapper), new ImageService());
-    public IFoodService FoodService => _foods ??= new FoodService(Uow, new FoodMapper(_mapper), new ImageService(), new UnitService(Uow, new UnitMapper(_mapper)));
+    public IRestaurantService RestaurantService => _restaurants ??= new RestaurantService(Uow, new RestaurantMapper(_mapper), new FileService());
+    public IFoodService FoodService => _foods ??= new FoodService(Uow, new FoodMapper(_mapper), new FileService(), new UnitService(Uow, new UnitMapper(_mapper)));
     public IIngredientService IngredientService => _ingredients ??= new IngredientService(Uow, new IngredientMapper(_mapper));
     public IAllergenService AllergenService => _allergens ??= new AllergenService(Uow, new AllergenMapper(_mapper));
     public INutrientService NutrientService => _nutrients ??= new NutrientService(Uow, new NutrientMapper(_mapper));
     public IIngredientNutrientService IngredientNutrientService => _ingredientNutrients ??= new IngredientNutrientService(Uow, new IngredientNutrientMapper(_mapper));
-    public IImageService ImageService => _images ??= new ImageService();
+    public IFileService FileService => _files ??= new FileService();
+    public IImageService ImageService => _images ??= new ImageService(Uow, new ImageMapper(_mapper));
     public IOpenHoursService OpenHoursService => _openHours ??= new OpenHoursService(Uow, new OpenHoursMapper(_mapper));
     
 }

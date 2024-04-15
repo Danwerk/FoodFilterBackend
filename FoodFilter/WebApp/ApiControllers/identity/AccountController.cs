@@ -100,7 +100,6 @@ public class AccountController : ControllerBase
         
         var result = await _userManager.CreateAsync(appUser, registrationData.Password);
 
-        await _userManager.AddToRoleAsync(appUser, RoleNames.Restaurant);
         
         if (!result.Succeeded)
         {
@@ -110,6 +109,7 @@ public class AccountController : ControllerBase
                 Error = result.Errors.First().Description
             });
         }
+        await _userManager.AddToRoleAsync(appUser, RoleNames.Restaurant);
 
         // result = await _userManager.AddClaimAsync(appUser, new Claim("userId", appUser.Id.ToString()));
 

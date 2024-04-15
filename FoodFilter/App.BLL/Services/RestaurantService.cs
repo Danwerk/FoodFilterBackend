@@ -14,14 +14,14 @@ public class RestaurantService :
     BaseEntityService<App.BLL.DTO.Restaurant, App.Domain.Restaurant, IRestaurantRepository>, IRestaurantService
 {
     protected IAppUOW Uow;
-    private readonly IImageService _imageService;
+    private readonly IFileService _fileService;
 
 
-    public RestaurantService(IAppUOW uow, IMapper<Restaurant, Domain.Restaurant> mapper, IImageService imageService)
+    public RestaurantService(IAppUOW uow, IMapper<Restaurant, Domain.Restaurant> mapper, IFileService fileService)
         : base(uow.RestaurantRepository, mapper)
     {
         Uow = uow;
-        _imageService = imageService;
+        _fileService = fileService;
     }
 
     public async Task<List<Restaurant>?> SearchRestaurantsAsync(string? restaurantName, string? city, string? street,
@@ -45,6 +45,7 @@ public class RestaurantService :
         var restaurant = await Uow.RestaurantRepository.FindByUserIdAsync(userId);
         return Mapper.Map(restaurant);
     }
+    
 
     public IEnumerable<Restaurant> GetAll(int limit, string? search)
     {
@@ -158,29 +159,12 @@ public class RestaurantService :
         throw new Exception("Missing restaurant for payment approval");
     }
 
-    public async Task UpdateRestaurantWithImagesAsync(Restaurant restaurant, IFormFile image)
-    {
-        string imagePath =  await _imageService.SaveImageToFileSystemAsync(image);
-        var existingRestaurant = await Uow.RestaurantRepository.FindAsync(restaurant.Id);
 
-        var restaurantImage = new App.Domain.Image()
-        {
-            EntityType = EntityType.Restaurant,
-            Restaurant = existingRestaurant,
-            IsApproved = false,
-            IsMain = false,
-            Url = imagePath,
-            CreatedAt = DateTime.UtcNow
-        };
-        
-        Uow.ImageRepository.Add(restaurantImage);
-        await Uow.SaveChangesAsync();
-    }
     
     
     public async Task UploadRestaurantImagesAsync(Guid restaurantId, List<IFormFile> images)
     {
-        List<string> imagePaths =  await _imageService.SaveImagesToFileSystemAsync(images);
+        List<string> imagePaths =  await _fileService.SaveImagesToFileSystemAsync(images);
         var existingRestaurant = await Uow.RestaurantRepository.FindAsync(restaurantId);
 
         foreach (var imagePath in imagePaths)

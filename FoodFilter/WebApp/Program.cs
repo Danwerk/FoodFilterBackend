@@ -38,7 +38,7 @@ builder.Services.AddScoped<IAppBLL, AppBLL>();
 // todo: create separate static class and move services registering services there
 builder.Services.AddScoped<IdentityBLL>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<RestaurantService>();
 // Mapper registered because of PaymentExpirationBackgroundService
 builder.Services.AddScoped<IMapper<Restaurant, App.Domain.Restaurant>, RestaurantMapper>();
@@ -50,7 +50,15 @@ builder.Services.AddHostedService<PaymentExpirationBackgroundService>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services
-    .AddIdentity<AppUser, AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddIdentity<AppUser, AppRole>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequireDigit = true; 
+        options.Password.RequireLowercase = true; 
+        options.Password.RequireUppercase = true;
+        options.Password.RequireNonAlphanumeric = true; 
+        options.Password.RequiredLength = 8; 
+    })
     .AddDefaultTokenProviders()
     .AddDefaultUI()
     // .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)

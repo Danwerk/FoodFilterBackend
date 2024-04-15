@@ -11,24 +11,7 @@ public class RestaurantMapper: BaseMapper<App.BLL.DTO.Restaurant, App.Public.DTO
     {
     }
     
-    public Restaurant MapRestaurantEdit(RestaurantEdit restaurantEditDto)
-    {
-        // todo: images and openhours
-        return new Restaurant()
-        {
-            Id = restaurantEditDto.Id,
-            Name = restaurantEditDto.Name!,
-            AppUserId = restaurantEditDto.AppUserId,
-            City = restaurantEditDto.City,
-            Street = restaurantEditDto.Street,
-            StreetNumber = restaurantEditDto.StreetNumber,
-            PhoneNumber = restaurantEditDto.PhoneNumber!,
-            Website = restaurantEditDto.Website,
-            PaymentStartsAt = restaurantEditDto.PaymentStartsAt,
-            PaymentEndsAt = restaurantEditDto.PaymentEndsAt
-        };
-    }
-    
+   
     public Restaurant MapRestaurantCreate(RestaurantCreate restaurantCreateDto)
     {
         // todo: images and openhours

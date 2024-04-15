@@ -36,6 +36,7 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
         return await RepositoryDbSet
             .Include(c => c.AppUser)
             .Include(c=>c.Images)
+            .Include(c=>c.OpenHours)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 

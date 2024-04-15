@@ -36,5 +36,7 @@ public class AutomapperConfig : Profile
             .ForPath(dest => dest.AppUser!.IsApproved, opt => opt.MapFrom(src => src.IsApproved))
             .ForPath(dest => dest.AppUser!.IsRejected, opt => opt.MapFrom(src => src.IsRejected))
             .ForMember(dest => dest.AppUser, opt => opt.Ignore());
+        
+
     }
 }

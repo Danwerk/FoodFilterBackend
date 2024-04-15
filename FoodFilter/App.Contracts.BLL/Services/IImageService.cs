@@ -1,12 +1,9 @@
-﻿using App.Domain;
-using Microsoft.AspNetCore.Http;
+﻿using App.BLL.DTO;
+using Base.Contracts.DAL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IImageService
+public interface IImageService: IBaseRepository<Image>
 {
-     Task<string> SaveImageToFileSystemAsync(IFormFile imageFile);
-     Task<List<string>> SaveImagesToFileSystemAsync(List<IFormFile> imageFiles);
-     Task<Image> GetImage(Guid id);
-
+    Task<Image?> GetImage(Guid id);
 }

@@ -1,5 +1,6 @@
 ﻿using App.BLL.DTO;
 using App.Domain.Identity;
+using App.Public.DTO.v1;
 using AutoMapper;
 
 namespace App.Public.DTO;
@@ -10,6 +11,9 @@ public class AutomapperConfig : Profile
     {
         CreateMap<App.BLL.DTO.Identity.AppUser, App.Public.DTO.v1.User>().ReverseMap();
         CreateMap<App.BLL.DTO.Restaurant, App.Public.DTO.v1.Restaurant>().ReverseMap();
+        CreateMap<RestaurantEdit, App.BLL.DTO.Restaurant>()
+            .ForMember(dest=>dest.OpenHours, opt=>opt.MapFrom(src=>src.OpenHours))
+            .ReverseMap();
         CreateMap<App.BLL.DTO.Food, App.Public.DTO.v1.Food>().ReverseMap();
         CreateMap<App.BLL.DTO.OpenHours, App.Public.DTO.v1.OpenHours>().ReverseMap();
         CreateMap<App.BLL.DTO.Allergen, App.Public.DTO.v1.Allergen>().ReverseMap();

@@ -24,7 +24,7 @@ public class OpenHoursService : BaseEntityService<App.BLL.DTO.OpenHours, App.Dom
         {
             var openHoursDal = openHoursList.Select(r => Mapper.Map(r)).ToList();
             
-            await Uow.OpenHoursRepository.AddRangeAsync(openHoursDal);
+            await Uow.OpenHoursRepository.AddRangeAsync(openHoursDal!);
 
             await Uow.SaveChangesAsync();
         }

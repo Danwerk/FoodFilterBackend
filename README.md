@@ -83,3 +83,19 @@ dotnet aspnet-codegenerator identity -dc App.DAL.EF.ApplicationDbContext --userC
 2. In App.DAL.EF directory called Repositories create actual Repositories that implements previously created interfaces
 3. Use Repositories in Controllers.
 
+
+# Restaurant Opening Hours - Representation of Days of the Week
+This part outlines the agreed-upon format and values for representing days of the week in the Restaurant Opening Hours application. Consistency between the frontend and backend ensures smooth communication and data handling.
+
+### Frontend Representation
+In the frontend (Vue), days of the week will be represented as strings in the following format:
+
+- 'Sunday'
+- 'Monday'
+- 'Tuesday'
+- 'Wednesday'
+- 'Thursday'
+- 'Friday'
+- 'Saturday'
+### Backend Expectation 
+In the backend (C#), the Day property will expect and handle days of the week using the same string format as specified above.

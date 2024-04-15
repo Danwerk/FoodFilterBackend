@@ -13,6 +13,7 @@ public interface IAppBLL : IBaseBLL
     IAllergenService AllergenService { get; }
     INutrientService NutrientService { get; }
     IIngredientNutrientService IngredientNutrientService { get; }
+    IFileService FileService { get; }
     IImageService ImageService { get; }
     IOpenHoursService OpenHoursService { get; }
     // IUserService UserService { get; }

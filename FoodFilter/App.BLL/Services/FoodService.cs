@@ -17,15 +17,15 @@ namespace App.BLL.Services;
 public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodRepository>, IFoodService
 {
     protected IAppUOW Uow;
-    private readonly IImageService _imageService;
+    private readonly IFileService _fileService;
     private readonly IUnitService _unitService;
 
-    public FoodService(IAppUOW uow, IMapper<Food, Domain.Food> mapper, IImageService imageService,
+    public FoodService(IAppUOW uow, IMapper<Food, Domain.Food> mapper, IFileService fileService,
         IUnitService unitService)
         : base(uow.FoodRepository, mapper)
     {
         Uow = uow;
-        _imageService = imageService;
+        _fileService = fileService;
         _unitService = unitService;
     }
 
@@ -38,7 +38,7 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
             return;
         }
 
-        List<string> imagePaths = await _imageService.SaveImagesToFileSystemAsync(images);
+        List<string> imagePaths = await _fileService.SaveImagesToFileSystemAsync(images);
         await SaveFoodAsync(foodBll, imagePaths);
     }
 
