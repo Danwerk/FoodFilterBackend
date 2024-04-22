@@ -5,7 +5,7 @@ namespace App.Contracts.DAL;
 
 public interface IOpenHoursRepository : IBaseRepository<OpenHours>
 {
-    Task AddRangeAsync(List<OpenHours> openHoursList);
+    Task<OpenHours>? AddAsync(OpenHours openHours);
     Task<List<OpenHours>?> GetOpeningHoursForRestaurant(Guid restaurantId);
 
 }

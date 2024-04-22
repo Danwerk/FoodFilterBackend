@@ -18,15 +18,17 @@ public class OpenHoursService : BaseEntityService<App.BLL.DTO.OpenHours, App.Dom
         Uow = uow;
     }
 
-    public async Task SaveOpenHours(List<OpenHours> openHoursList)
+    public async Task<OpenHours> SaveOpenHours(OpenHours openHours)
     {
         try
         {
-            var openHoursDal = openHoursList.Select(r => Mapper.Map(r)).ToList();
+            var openHoursDal = Mapper.Map(openHours);
             
-            await Uow.OpenHoursRepository.AddRangeAsync(openHoursDal!);
+            var oh = await Uow.OpenHoursRepository.AddAsync(openHoursDal!)!;
 
-            await Uow.SaveChangesAsync();
+            var res = Mapper.Map(oh);
+            
+            return res!;
         }
         catch(Exception e)
         {

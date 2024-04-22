@@ -25,8 +25,8 @@ public class AutomapperConfig : Profile
         CreateMap<App.Public.DTO.v1.FoodNutrient, App.BLL.DTO.FoodNutrient>()
             .ForMember(dest => dest.Nutrient, opt => opt.Ignore());
 
-        CreateMap<App.BLL.DTO.FoodIngredient, App.Public.DTO.v1.FoodIngredient>();
-            // .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient!.Name));
+        CreateMap<App.BLL.DTO.FoodIngredient, App.Public.DTO.v1.FoodIngredient>()
+            .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient!.Name));
         CreateMap<App.Public.DTO.v1.FoodIngredient, App.BLL.DTO.FoodIngredient>();
             // .ForMember(dest => dest.Ingredient, opt => opt.Ignore());
 

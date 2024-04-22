@@ -88,6 +88,7 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
                 Id = f.Id,
                 RestaurantId = f.RestaurantId,
                 Name = f.Name,
+                Description = f.Description,
                 Price = f.Price,
                 Images = f.Images,
                 IsPublished = f.IsPublished

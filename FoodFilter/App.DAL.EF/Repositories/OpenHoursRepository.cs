@@ -26,33 +26,19 @@ public class OpenHoursRepository : EFBaseRepository<OpenHours, ApplicationDbCont
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task AddRangeAsync(List<OpenHours> openHoursList)
+    public async Task<OpenHours> AddAsync(OpenHours openHours)
     {
         try
         {
-            foreach (var openHours in openHoursList)
-            {
-                var existingOpenHours = RepositoryDbContext.OpenHours
-                    .FirstOrDefault(o => o.RestaurantId == openHours.RestaurantId && o.Day == openHours.Day);
-
-                if (existingOpenHours != null)
-                {
-                    existingOpenHours.Open = openHours.Open;
-                    existingOpenHours.Close = openHours.Close;
-
-                    RepositoryDbContext.Entry(existingOpenHours).State = EntityState.Modified;
-                }
-                else
-                {
-                    await RepositoryDbContext.AddAsync(openHours);
-                }
-            }
-
-            await RepositoryDbContext.SaveChangesAsync();
+            await RepositoryDbContext.AddAsync(openHours);
+                await RepositoryDbContext.SaveChangesAsync();
+                return openHours; // Return the added OpenHours entity
+            
         }
         catch (Exception e)
         {
-            throw new Exception("An error occurred while adding a range of OpenHours.", e);
+            // Log the exception
+            throw new Exception("An error occurred while adding or updating OpenHours.", e);
         }
     }
 

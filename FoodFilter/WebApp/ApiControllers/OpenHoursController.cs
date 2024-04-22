@@ -63,7 +63,7 @@ public class OpenHoursController : ControllerBase
     /// <summary>
     /// Save new OpenHours for restaurant
     /// </summary>
-    /// <param name="request">OpenHours request dto</param>
+    /// <param name="openHours">OpenHours request dto</param>
     /// <returns>Created OpenHours object</returns>
     /// <response code="201">OpenHours was successfully created.</response>
     /// <response code="401">Not authorized to perform action.</response>
@@ -71,9 +71,8 @@ public class OpenHoursController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces(MediaTypeNames.Application.Json)]
     [HttpPost]
-    public async Task<ActionResult<List<OpenHours>>> SaveOpeningHours(OpenHours openHours)
+    public async Task<ActionResult<List<OpenHours>>> SaveOpeningHours(OpenHours? openHours)
     {
-        var openHoursEntities = new List<OpenHours>();
         if (openHours != null)
         {
             // var open = TimeSpan.ParseExact(request.Open, "hh\\:mm", CultureInfo.InvariantCulture);
@@ -88,15 +87,13 @@ public class OpenHoursController : ControllerBase
                 Open = open,
                 Close = close
             };
+            
+            var openHoursBll = _mapper.Map(openHoursEntity)!;
 
-            openHoursEntities.Add(openHoursEntity);
+            var res = await _bll.OpenHoursService.SaveOpenHours(openHoursBll);
 
+            return Ok(res);
 
-            var openHoursBllEntities = openHoursEntities.Select(r => _mapper.Map(r)).ToList();
-
-            await _bll.OpenHoursService.SaveOpenHours(openHoursBllEntities);
-
-            return Ok(openHoursEntities);
         }
 
         return BadRequest("No opening hours provided.");
