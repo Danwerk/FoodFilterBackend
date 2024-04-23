@@ -12,6 +12,11 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
     {
     }
 
+    public async Task AddRangeAsync(IEnumerable<Ingredient> ingredients)
+    {
+        await RepositoryDbSet.AddRangeAsync(ingredients);
+        await RepositoryDbContext.SaveChangesAsync();
+    }
 
     public async Task<List<Ingredient>> GetIngredientsByIdsAsync(List<Guid> ingredientIds)
     {
@@ -82,9 +87,7 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
             return true;
         }
         search = search.ToLower();
-        return ingredient.Name.ToLower().Contains(search) || 
-               ingredient.Description == null || 
-               ingredient.Description.ToLower().Contains(search);
+        return ingredient.Name.ToLower().Contains(search);
     }
 
 }

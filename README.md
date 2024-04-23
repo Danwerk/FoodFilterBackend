@@ -99,3 +99,9 @@ In the frontend (Vue), days of the week will be represented as strings in the fo
 - 'Saturday'
 ### Backend Expectation 
 In the backend (C#), the Day property will expect and handle days of the week using the same string format as specified above.
+
+
+### Upload CSV
+- To successfully map ingredients and nutrients CSV file should have this headers: Name (ENG), Energy, Fat, Saturated fatty acids, Carbohydrates, Sugar, Fiber, Protein, Salt
+- CsvRecordDto keeps all headers that should be mapped to objects in code.
+- In database we keep 7 basic nutrients in lowercase, so on search make it sure that search string is lowercased

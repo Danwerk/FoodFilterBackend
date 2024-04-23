@@ -11,6 +11,12 @@ public class IngredientNutrientRepository : EFBaseRepository<IngredientNutrient,
     public IngredientNutrientRepository(ApplicationDbContext dbContext) : base(dbContext)
     {
     }
+    
+    public async Task AddRangeAsync(IEnumerable<IngredientNutrient> ingredientNutrients)
+    {
+        await RepositoryDbSet.AddRangeAsync(ingredientNutrients);
+        await RepositoryDbContext.SaveChangesAsync();
+    }
 
     public IEnumerable<IngredientNutrient> GetAll(int limit, string? search)
     {

@@ -49,6 +49,10 @@ builder.Services.AddHostedService<PaymentExpirationBackgroundService>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole(); 
+});
 builder.Services
     .AddIdentity<AppUser, AppRole>(options =>
     {

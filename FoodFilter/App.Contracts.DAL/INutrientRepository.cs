@@ -5,5 +5,5 @@ namespace App.Contracts.DAL;
 
 public interface INutrientRepository : IBaseRepository<Nutrient>
 {
-    
+    Task<Nutrient?> FirstOrDefaultAsync(string name);
 }

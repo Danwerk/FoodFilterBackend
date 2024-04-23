@@ -11,6 +11,13 @@ public class UnitRepository : EFBaseRepository<Unit, ApplicationDbContext>, IUni
     {
     }
 
+    public async Task<Unit?> FirstOrDefaultAsync(string name)
+    {
+        return await RepositoryDbSet
+            .FirstOrDefaultAsync(m => m.UnitName == name);
+    }
+
+
     public override async Task<IEnumerable<Unit>> AllAsync()
     {
         return await RepositoryDbSet.ToListAsync();

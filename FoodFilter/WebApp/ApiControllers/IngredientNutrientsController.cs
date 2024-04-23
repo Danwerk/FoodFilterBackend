@@ -66,7 +66,6 @@ public class IngredientNutrientsController : ControllerBase
                 {
                     Name = ingredient!.Name,
                     KCaloriesPer100Grams = ingredient.KCaloriesPer100Grams,
-                    Description = ingredient.Description,
                     Id = ingredient.Id
                 },
                 Nutrients = group.ToDictionary(n => n.Nutrient!.Name, n => n.Amount)

@@ -5,11 +5,8 @@ namespace App.Domain;
 
 public class Ingredient : DomainEntityId
 {
-    [MaxLength(128)]
+    [MaxLength(256)]
     public string Name { get; set; } = default!;
-
-    [MaxLength(512)]
-    public string? Description { get; set; } = default!;
     
     public bool IsConfirmed { get; set; }
     

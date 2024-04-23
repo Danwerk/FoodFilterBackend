@@ -5,6 +5,8 @@ namespace App.Contracts.DAL;
 
 public interface IUnitRepository : IBaseRepository<Unit>,  IUnitRepositoryCustom<Unit>
 {
+    Task<Unit?> FirstOrDefaultAsync(string name);
+
     
 }
 

@@ -9,4 +9,5 @@ public interface IIngredientNutrientRepository: IBaseRepository<IngredientNutrie
     
     Task<IEnumerable<IngredientNutrient>> GetAllByIngredientIdAsync(Guid ingredientId);
 
+    Task AddRangeAsync(IEnumerable<IngredientNutrient> ingredientNutrients);
 }
