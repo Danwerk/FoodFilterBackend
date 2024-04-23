@@ -2,7 +2,6 @@
 using System.Globalization;
 using App.Common;
 using App.Common.CsvDtos;
-using App.Contracts.BLL;
 using App.Contracts.DAL;
 using App.Domain;
 using Asp.Versioning;
@@ -34,8 +33,8 @@ public class FilesController : ControllerBase
         _uow = uow;
         _logger = logger;
     }
-    
-    
+
+
     [HttpPost]
     // [Consumes("text/csv")]
     public async Task<IActionResult> Upload(IFormFile file)
@@ -44,14 +43,14 @@ public class FilesController : ControllerBase
         {
             return BadRequest("File is empty");
         }
-    
+
         try
         {
             using (var reader = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 var records = csv.GetRecords<CsvRecordDto>();
-    
+
                 var unit = await _uow.UnitRepository.FirstOrDefaultAsync(UnitTypes.G);
                 Guid unitId;
                 if (unit == null)
@@ -68,49 +67,65 @@ public class FilesController : ControllerBase
                 {
                     unitId = unit!.Id;
                 }
-    
+
                 var ingredients = new List<Ingredient>();
                 var ingredientNutrients = new List<IngredientNutrient>();
                 Stopwatch stopwatch = Stopwatch.StartNew(); // Start the stopwatch
-    
+
                 foreach (var record in records)
                 {
-                    var id = Guid.NewGuid();
-                    var ingredient = new Ingredient
+                    Guid id;
+                    var existingIngredient = await _uow.IngredientRepository.FirstOrDefaultAsync(record.IngredientName);
+                    // if ingredient exist, then update it and delete all ingredientNutrients associated with it
+                    if (existingIngredient != null)
                     {
-                        Id = id,
-                        Name = record.IngredientName,
-                        IsConfirmed = true,
-                        KCaloriesPer100Grams = record.Energy,
-                    };
-                    ingredients.Add(ingredient);
-    
-                    await MapAndSaveNutrient(NutrientNames.FAT, decimal.Parse(record.Fat), ingredient.Id, unitId,
+                        // Update the energy value of the existing ingredient
+                        existingIngredient.KCaloriesPer100Grams = record.Energy;
+                        _uow.IngredientRepository.Update(existingIngredient);
+                        id = existingIngredient.Id;
+
+                        await _uow.IngredientNutrientRepository.DeleteRangeAsync(i =>
+                            i.IngredientId == existingIngredient.Id);
+                    }
+                    else
+                    {
+                        id = Guid.NewGuid();
+                        var ingredient = new Ingredient
+                        {
+                            Id = id,
+                            Name = record.IngredientName,
+                            IsConfirmed = true,
+                            KCaloriesPer100Grams = record.Energy,
+                        };
+                        ingredients.Add(ingredient);
+                    }
+
+                    await MapAndSaveNutrient(NutrientNames.FAT, decimal.Parse(record.Fat),  id,
+                        unitId,
                         ingredientNutrients);
                     await MapAndSaveNutrient(NutrientNames.SATURATED_FATTY_ACIDS,
-                        decimal.Parse(record.SaturatedFattyAcids), ingredient.Id, unitId, ingredientNutrients);
+                        decimal.Parse(record.SaturatedFattyAcids),  id, unitId, ingredientNutrients);
                     await MapAndSaveNutrient(NutrientNames.CARBOHYDRATES, decimal.Parse(record.Carbohydrates),
-                        ingredient.Id, unitId, ingredientNutrients);
-                    await MapAndSaveNutrient(NutrientNames.SUGAR, decimal.Parse(record.Sugar), ingredient.Id, unitId,
+                         id, unitId, ingredientNutrients);
+                    await MapAndSaveNutrient(NutrientNames.SUGAR, decimal.Parse(record.Sugar),  id, unitId,
                         ingredientNutrients);
-                    await MapAndSaveNutrient(NutrientNames.FIBER, decimal.Parse(record.Fiber), ingredient.Id, unitId,
+                    await MapAndSaveNutrient(NutrientNames.FIBER, decimal.Parse(record.Fiber),  id, unitId,
                         ingredientNutrients);
-                    await MapAndSaveNutrient(NutrientNames.PROTEIN, decimal.Parse(record.Protein), ingredient.Id,
+                    await MapAndSaveNutrient(NutrientNames.PROTEIN, decimal.Parse(record.Protein),  id,
                         unitId, ingredientNutrients);
-                    await MapAndSaveNutrient(NutrientNames.SALT, decimal.Parse(record.Salt), ingredient.Id, unitId,
+                    await MapAndSaveNutrient(NutrientNames.SALT, decimal.Parse(record.Salt),  id, unitId,
                         ingredientNutrients);
                 }
-    
+
                 await _uow.IngredientRepository.AddRangeAsync(ingredients);
                 await _uow.IngredientNutrientRepository.AddRangeAsync(ingredientNutrients);
-    
+
                 await _uow.SaveChangesAsync();
-                stopwatch.Stop(); // Stop the stopwatch
-    
-                TimeSpan elapsedTime = stopwatch.Elapsed; // Get the elapsed time
-    
+                stopwatch.Stop(); 
+
+                TimeSpan elapsedTime = stopwatch.Elapsed; 
+
                 _logger.LogInformation($"Time taken for saving: {elapsedTime.TotalMilliseconds} milliseconds");
-            
             }
         }
         catch (Exception e)
@@ -118,17 +133,17 @@ public class FilesController : ControllerBase
             Console.WriteLine(e);
             throw;
         }
-    
+
         var f = file;
         return Ok(file);
     }
-    
-    
+
+
     private async Task MapAndSaveNutrient(string nutrientName, decimal value, Guid ingredientId, Guid unitId,
         List<IngredientNutrient> ingredientNutrients)
     {
         var nutrient = await _uow.NutrientRepository.FirstOrDefaultAsync(nutrientName.ToLower());
-    
+
         if (nutrient != null)
         {
             var ingredientNutrient = new IngredientNutrient

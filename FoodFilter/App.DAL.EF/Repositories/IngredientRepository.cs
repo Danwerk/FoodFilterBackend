@@ -18,6 +18,12 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
         await RepositoryDbContext.SaveChangesAsync();
     }
 
+    public Task<Ingredient?> FirstOrDefaultAsync(string name)
+    {
+        return RepositoryDbSet
+            .FirstOrDefaultAsync(i => i.Name == name);
+    }
+
     public async Task<List<Ingredient>> GetIngredientsByIdsAsync(List<Guid> ingredientIds)
     {
         return await RepositoryDbSet

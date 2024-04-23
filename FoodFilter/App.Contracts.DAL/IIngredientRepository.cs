@@ -12,7 +12,9 @@ public interface IIngredientRepository : IBaseRepository<Ingredient>
     IEnumerable<Ingredient> GetAll(int limit, string? search);
     Task<List<Ingredient>> GetUnconfirmedIngredients();
     Task<List<Ingredient>> GetConfirmedIngredients();
-    Task AddRangeAsync(IEnumerable<Ingredient> ingredients);
+    Task AddRangeAsync(IEnumerable<Ingredient> ingredients);    
+    Task<Ingredient?> FirstOrDefaultAsync(string name);
+
 
 
 }

@@ -1,4 +1,5 @@
-﻿using App.Contracts.DAL;
+﻿using System.Linq.Expressions;
+using App.Contracts.DAL;
 using App.Domain;
 using Base.DAL.EF;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,14 @@ public class IngredientNutrientRepository : EFBaseRepository<IngredientNutrient,
         await RepositoryDbSet.AddRangeAsync(ingredientNutrients);
         await RepositoryDbContext.SaveChangesAsync();
     }
+
+    public async Task DeleteRangeAsync(Expression<Func<IngredientNutrient, bool>> predicate)
+    {
+        var entitiesToDelete = await RepositoryDbSet.Where(predicate).ToListAsync();
+        RepositoryDbSet.RemoveRange(entitiesToDelete);
+        await RepositoryDbContext.SaveChangesAsync();
+    }
+
 
     public IEnumerable<IngredientNutrient> GetAll(int limit, string? search)
     {

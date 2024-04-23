@@ -1,4 +1,5 @@
-﻿using App.Domain;
+﻿using System.Linq.Expressions;
+using App.Domain;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
@@ -10,4 +11,6 @@ public interface IIngredientNutrientRepository: IBaseRepository<IngredientNutrie
     Task<IEnumerable<IngredientNutrient>> GetAllByIngredientIdAsync(Guid ingredientId);
 
     Task AddRangeAsync(IEnumerable<IngredientNutrient> ingredientNutrients);
+    
+    Task DeleteRangeAsync(Expression<Func<IngredientNutrient, bool>> predicate);
 }
