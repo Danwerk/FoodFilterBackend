@@ -13,12 +13,14 @@ public class AutomapperConfig : Profile
         CreateMap<App.BLL.DTO.Restaurant, App.Public.DTO.v1.Restaurant>().ReverseMap();
         CreateMap<RestaurantEdit, App.BLL.DTO.Restaurant>()
             .ForMember(dest=>dest.OpenHours, opt=>opt.MapFrom(src=>src.OpenHours))
+            .ForMember(dest=>dest.RestaurantAllergens, opt=>opt.MapFrom(src=>src.RestaurantAllergens))
             .ReverseMap();
         CreateMap<App.BLL.DTO.Food, App.Public.DTO.v1.Food>().ReverseMap();
         CreateMap<App.BLL.DTO.OpenHours, App.Public.DTO.v1.OpenHours>().ReverseMap();
         CreateMap<App.BLL.DTO.Allergen, App.Public.DTO.v1.Allergen>().ReverseMap();
         CreateMap<App.BLL.DTO.Image, App.Public.DTO.v1.Image>().ReverseMap();
         CreateMap<App.BLL.DTO.Nutrient, App.Public.DTO.v1.Nutrient>().ReverseMap();
+        CreateMap<App.BLL.DTO.RestaurantAllergen, App.Public.DTO.v1.RestaurantAllergen>().ReverseMap();
 
         CreateMap<App.BLL.DTO.FoodNutrient, App.Public.DTO.v1.FoodNutrient>()
             .ForMember(dest => dest.NutrientName, opt => opt.MapFrom(src => src.Nutrient!.Name));

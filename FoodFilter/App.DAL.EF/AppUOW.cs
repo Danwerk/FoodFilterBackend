@@ -27,6 +27,7 @@ public class AppUOW : EFBaseUOW<ApplicationDbContext>, IAppUOW
     public IUserRepository? _userRepository;
     public IImageRepository? _imageRepository;
     public IIngredientNutrientRepository? _ingredientNutrientRepository;
+    public IRestaurantAllergenRepository? _restaurantAllergenRepository;
 
     public IAllergenRepository AllergenRepository => _allergenRepository ??= new AllergenRepository(UowDbContext);
     public IFoodAllergenRepository FoodAllergenRepository => _foodAllergenRepository ??= new FoodAllergenRepository(UowDbContext);
@@ -42,6 +43,7 @@ public class AppUOW : EFBaseUOW<ApplicationDbContext>, IAppUOW
     public IUserRepository UserRepository => _userRepository ??= new UserRepository(UowDbContext);
     public IImageRepository ImageRepository => _imageRepository ??= new ImageRepository(UowDbContext);
     public IIngredientNutrientRepository IngredientNutrientRepository => _ingredientNutrientRepository ??= new IngredientNutrientRepository(UowDbContext);
+    public IRestaurantAllergenRepository RestaurantAllergenRepository => _restaurantAllergenRepository ??= new RestaurantAllergenRepository(UowDbContext);
 
 
 }

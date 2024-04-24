@@ -327,8 +327,22 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            
+
             var userId = restaurant.AppUserId;
+
+
+            if (restaurantEditDto.RestaurantAllergens != null)
+            {
+                var existingRestaurantAllergens = await _bll.RestaurantAllergenService.AllAsync(id);
+                foreach (var allergen in existingRestaurantAllergens)   
+                {
+                    if (restaurantEditDto.RestaurantAllergens.Any(r => r.AllergenId == allergen.AllergenId))
+                    {
+                        await _bll.RestaurantAllergenService.RemoveAsync(allergen.Id);
+                    }
+                }
+            }
+
             restaurantEditDto.PaymentStartsAt = restaurant.PaymentStartsAt;
             restaurantEditDto.PaymentEndsAt = restaurant.PaymentEndsAt;
 
@@ -336,7 +350,6 @@ namespace WebApp.ApiControllers
             restaurant!.AppUserId = userId;
 
 
-            
             try
             {
                 await _bll.RestaurantService.Edit(restaurant);
@@ -495,6 +508,20 @@ namespace WebApp.ApiControllers
                 // Log the exception
                 return StatusCode(StatusCodes.Status500InternalServerError, "Failed to delete image.");
             }
+        }
+
+
+        [HttpGet("{restaurantId}")]
+        public async Task<ActionResult> GetRestaurantAllergens(Guid restaurantId)
+        {
+            var restaurantAllergens = await _bll.RestaurantAllergenService.AllAsync(restaurantId);
+
+            if (restaurantAllergens == null || !restaurantAllergens.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(restaurantAllergens);
         }
     }
 }

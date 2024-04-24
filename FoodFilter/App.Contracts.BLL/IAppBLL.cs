@@ -16,5 +16,6 @@ public interface IAppBLL : IBaseBLL
     IFileService FileService { get; }
     IImageService ImageService { get; }
     IOpenHoursService OpenHoursService { get; }
+    IRestaurantAllergenService RestaurantAllergenService { get; }
     // IUserService UserService { get; }
 }

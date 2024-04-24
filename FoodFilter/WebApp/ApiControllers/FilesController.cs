@@ -37,11 +37,11 @@ public class FilesController : ControllerBase
 
 
     /// <summary>
-    /// Upload CSV file
+    /// Upload CSV File
     /// </summary>
     /// <returns>Food object</returns>
     /// <response code="200">CSV file was successfully saved.</response>
-    /// <response code="400">File uploading did not success.</response>
+    /// <response code="400">Uploading did not success.</response>
     /// <response code="401">Unauthorized - unable to get the data.</response>
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType( StatusCodes.Status200OK)]
@@ -82,6 +82,7 @@ public class FilesController : ControllerBase
 
                 var ingredients = new List<Ingredient>();
                 var ingredientNutrients = new List<IngredientNutrient>();
+                Stopwatch stopwatch = Stopwatch.StartNew();
 
                 foreach (var record in records)
                 {
@@ -132,6 +133,11 @@ public class FilesController : ControllerBase
                 await _uow.IngredientNutrientRepository.AddRangeAsync(ingredientNutrients);
 
                 await _uow.SaveChangesAsync();
+                stopwatch.Stop(); 
+
+                TimeSpan elapsedTime = stopwatch.Elapsed; 
+
+                _logger.LogInformation($"Time taken for saving: {elapsedTime.TotalMilliseconds} milliseconds");
             }
         }
         catch (Exception e)
@@ -139,6 +145,8 @@ public class FilesController : ControllerBase
             Console.WriteLine(e);
             throw;
         }
+
+        var f = file;
         return Ok(file);
     }
 

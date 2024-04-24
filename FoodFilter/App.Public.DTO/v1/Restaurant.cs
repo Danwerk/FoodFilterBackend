@@ -33,6 +33,7 @@ namespace App.Public.DTO.v1
         
         public List<OpenHours>? OpenHours { get; set; }
         public List<Image>? Images { get; set; }
+        public List<RestaurantAllergen>? RestaurantAllergens { get; set; }
 
        
     }

@@ -7,4 +7,5 @@ public class Allergen : DomainEntityId
 {
     [MaxLength(128)]
     public string Name { get; set; } = default!;
+    
 }

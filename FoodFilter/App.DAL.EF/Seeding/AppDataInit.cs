@@ -102,6 +102,7 @@ public static class AppDataInit
     {
         SeedDataUnits(context);
         SeedDataNutrients(context);
+        SeedDataAllergens(context);
 
         context.SaveChanges();
     }
@@ -122,6 +123,93 @@ public static class AppDataInit
         );
     }
     
+    public static void SeedDataAllergens(ApplicationDbContext context)
+    {
+        if (context.Allergens.Any()) return;
+
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Bell pepper"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Onion"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Crustaceans"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Molluscs"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Fish"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Sesame Seeds"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Celery"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Mustard"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Sulphites"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Lupin"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Gluten"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Peanuts"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Nuts"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Soya"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Milk"
+            }
+        );
+        context.Allergens.Add(new Allergen()
+            {
+                Name = "Egg"
+            }
+        );
+        
+    }
+
     
     public static void SeedDataNutrients(ApplicationDbContext context)
     {

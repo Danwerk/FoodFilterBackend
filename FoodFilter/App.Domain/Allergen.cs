@@ -15,5 +15,5 @@ public class Allergen : DomainEntityId
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<FoodAllergen>? FoodAllergens { get; set; }
-
+    public ICollection<RestaurantAllergen>? RestaurantAllergens { get; set; }
 }

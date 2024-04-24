@@ -50,5 +50,6 @@ public class Restaurant : DomainEntityId
     public ICollection<Image>? Images { get; set; }
     
     public ICollection<OpenHours>? OpenHours { get; set; }
+    public ICollection<RestaurantAllergen>? RestaurantAllergens { get; set; }
 
 }

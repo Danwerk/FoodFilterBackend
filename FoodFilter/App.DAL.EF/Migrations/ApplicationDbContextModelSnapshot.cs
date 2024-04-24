@@ -543,6 +543,27 @@ namespace DAL.EF.Migrations
                     b.ToTable("Restaurants");
                 });
 
+            modelBuilder.Entity("App.Domain.RestaurantAllergen", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AllergenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AllergenId");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("RestaurantAllergens");
+                });
+
             modelBuilder.Entity("App.Domain.SubAdmin", b =>
                 {
                     b.Property<Guid>("Id")
@@ -867,6 +888,25 @@ namespace DAL.EF.Migrations
                     b.Navigation("ApprovedBy");
                 });
 
+            modelBuilder.Entity("App.Domain.RestaurantAllergen", b =>
+                {
+                    b.HasOne("App.Domain.Allergen", "Allergen")
+                        .WithMany("RestaurantAllergens")
+                        .HasForeignKey("AllergenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("App.Domain.Restaurant", "Restaurant")
+                        .WithMany("RestaurantAllergens")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Allergen");
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("App.Domain.SubAdmin", b =>
                 {
                     b.HasOne("App.Domain.Identity.AppUser", "AppUser")
@@ -917,6 +957,8 @@ namespace DAL.EF.Migrations
             modelBuilder.Entity("App.Domain.Allergen", b =>
                 {
                     b.Navigation("FoodAllergens");
+
+                    b.Navigation("RestaurantAllergens");
                 });
 
             modelBuilder.Entity("App.Domain.Food", b =>
@@ -969,6 +1011,8 @@ namespace DAL.EF.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("OpenHours");
+
+                    b.Navigation("RestaurantAllergens");
                 });
 
             modelBuilder.Entity("App.Domain.Unit", b =>

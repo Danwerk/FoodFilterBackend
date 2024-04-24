@@ -24,6 +24,7 @@ public class AutomapperConfig : Profile
             // .ForMember(dest=> dest.IngredientName, opt=> opt.MapFrom(src=> src.Ingredient!.Name))
              .ReverseMap();
         CreateMap<App.Domain.FoodAllergen, App.BLL.DTO.FoodAllergen>().ReverseMap();
+        CreateMap<App.Domain.RestaurantAllergen, App.BLL.DTO.RestaurantAllergen>().ReverseMap();
         CreateMap<App.Domain.Nutrient, App.BLL.DTO.Nutrient>().ReverseMap();
         CreateMap<App.Domain.FoodNutrient, App.BLL.DTO.FoodNutrient>().ReverseMap();
         CreateMap<App.Domain.Restaurant, App.BLL.DTO.Restaurant>()
