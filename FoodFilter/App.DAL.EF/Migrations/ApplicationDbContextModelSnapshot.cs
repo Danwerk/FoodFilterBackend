@@ -44,6 +44,28 @@ namespace DAL.EF.Migrations
                     b.ToTable("Allergens");
                 });
 
+            modelBuilder.Entity("App.Domain.Claim", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Claims");
+                });
+
             modelBuilder.Entity("App.Domain.Food", b =>
                 {
                     b.Property<Guid>("Id")
@@ -113,6 +135,33 @@ namespace DAL.EF.Migrations
                     b.HasIndex("FoodId");
 
                     b.ToTable("FoodAllergens");
+                });
+
+            modelBuilder.Entity("App.Domain.FoodClaim", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClaimId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FoodId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClaimId");
+
+                    b.HasIndex("FoodId");
+
+                    b.ToTable("FoodClaims");
                 });
 
             modelBuilder.Entity("App.Domain.FoodIngredient", b =>
@@ -733,6 +782,25 @@ namespace DAL.EF.Migrations
                     b.Navigation("Food");
                 });
 
+            modelBuilder.Entity("App.Domain.FoodClaim", b =>
+                {
+                    b.HasOne("App.Domain.Claim", "Claim")
+                        .WithMany("FoodClaims")
+                        .HasForeignKey("ClaimId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("App.Domain.Food", "Food")
+                        .WithMany("FoodClaims")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Claim");
+
+                    b.Navigation("Food");
+                });
+
             modelBuilder.Entity("App.Domain.FoodIngredient", b =>
                 {
                     b.HasOne("App.Domain.Food", "Food")
@@ -961,9 +1029,16 @@ namespace DAL.EF.Migrations
                     b.Navigation("RestaurantAllergens");
                 });
 
+            modelBuilder.Entity("App.Domain.Claim", b =>
+                {
+                    b.Navigation("FoodClaims");
+                });
+
             modelBuilder.Entity("App.Domain.Food", b =>
                 {
                     b.Navigation("FoodAllergens");
+
+                    b.Navigation("FoodClaims");
 
                     b.Navigation("FoodIngredients");
 

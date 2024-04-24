@@ -32,6 +32,7 @@ public class Food : DomainEntityId
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }
     public ICollection<FoodAllergen>? FoodAllergens { get; set; }
     public ICollection<Image>? Images { get; set; }
+    public ICollection<FoodClaim>? FoodClaims { get; set; }
 
 
 }

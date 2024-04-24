@@ -21,6 +21,12 @@ public class AutomapperConfig : Profile
         CreateMap<App.BLL.DTO.Image, App.Public.DTO.v1.Image>().ReverseMap();
         CreateMap<App.BLL.DTO.Nutrient, App.Public.DTO.v1.Nutrient>().ReverseMap();
         CreateMap<App.BLL.DTO.RestaurantAllergen, App.Public.DTO.v1.RestaurantAllergen>().ReverseMap();
+        CreateMap<App.BLL.DTO.Claim, App.Public.DTO.v1.Claim>().ReverseMap();
+        
+        CreateMap<App.BLL.DTO.FoodClaim, App.Public.DTO.v1.FoodClaim>()
+            .ForMember(dest => dest.ClaimName, opt => opt.MapFrom(src => src.Claim!.Name));
+        CreateMap<App.Public.DTO.v1.FoodClaim, App.BLL.DTO.FoodClaim>()
+            .ForMember(dest => dest.Claim, opt => opt.Ignore());
 
         CreateMap<App.BLL.DTO.FoodNutrient, App.Public.DTO.v1.FoodNutrient>()
             .ForMember(dest => dest.NutrientName, opt => opt.MapFrom(src => src.Nutrient!.Name));

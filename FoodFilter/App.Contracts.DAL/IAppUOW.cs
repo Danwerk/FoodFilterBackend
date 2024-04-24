@@ -21,5 +21,6 @@ public interface IAppUOW : IBaseUOW
     IUserRepository UserRepository { get; }
     IImageRepository ImageRepository { get; }
     IRestaurantAllergenRepository RestaurantAllergenRepository { get; }
+    IClaimRepository ClaimRepository { get; }
 
 }

@@ -103,6 +103,7 @@ public static class AppDataInit
         SeedDataUnits(context);
         SeedDataNutrients(context);
         SeedDataAllergens(context);
+        SeedDataClaims(context);
 
         context.SaveChanges();
     }
@@ -121,6 +122,63 @@ public static class AppDataInit
                 UnitName = "g"
             }
         );
+    }
+    
+    public static void SeedDataClaims(ApplicationDbContext context)
+    {
+        if (context.Claims.Any()) return;
+
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                 Name = ClaimNames.Halal
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.Kosher
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.Vegan
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.Vegetarian
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.LactoseFree
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.SugarFree
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.NutFree
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.Natural
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.Organic
+            }
+        );
+        context.Claims.Add(new App.Domain.Claim()
+            {
+                Name = ClaimNames.ReducedSodium
+            }
+        );
+        
     }
     
     public static void SeedDataAllergens(ApplicationDbContext context)

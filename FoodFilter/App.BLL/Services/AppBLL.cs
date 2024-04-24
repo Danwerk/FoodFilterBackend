@@ -29,6 +29,7 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     private IImageService? _images;
     private IOpenHoursService? _openHours;
     private IRestaurantAllergenService? _restaurantAllergens;
+    private IClaimService? _claimService;
     
     // private IUserService? _users;
     // public IUserService UserService => _users ??= new UserService(Uow, new UserMapper(_mapper));
@@ -45,5 +46,6 @@ public class AppBLL : BaseBLL<IAppUOW>, IAppBLL
     public IImageService ImageService => _images ??= new ImageService(Uow, new ImageMapper(_mapper));
     public IOpenHoursService OpenHoursService => _openHours ??= new OpenHoursService(Uow, new OpenHoursMapper(_mapper));
     public IRestaurantAllergenService RestaurantAllergenService => _restaurantAllergens ??= new RestaurantAllergenService(Uow, new RestaurantAllergenMapper(_mapper));
+    public IClaimService ClaimService => _claimService ??= new ClaimService(Uow, new ClaimMapper(_mapper));
     
 }

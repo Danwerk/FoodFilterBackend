@@ -15,6 +15,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid, Id
     public DbSet<FoodIngredient> FoodIngredients { get; set; } = default!;
     public DbSet<FoodNutrient> FoodNutrients { get; set; } = default!;
     public DbSet<RestaurantAllergen> RestaurantAllergens { get; set; } = default!;
+    public DbSet<Claim> Claims { get; set; } = default!;
+    public DbSet<FoodClaim> FoodClaims { get; set; } = default!;
     
     
     public DbSet<Ingredient> Ingredients { get; set; } = default!;
