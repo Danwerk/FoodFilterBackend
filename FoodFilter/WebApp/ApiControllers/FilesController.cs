@@ -28,7 +28,8 @@ public class FilesController : ControllerBase
     /// <summary>
     /// Files Constructor
     /// </summary>
-    /// <param name="bll">Application Business Logic Layer Interface</param>
+    /// <param name="uow">Application Unit Of Work Interface</param>
+    /// <param name="logger">Logger interface</param>
     public FilesController(IAppUOW uow, ILogger<FilesController> logger)
     {
         _uow = uow;

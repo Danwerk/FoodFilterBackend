@@ -15,5 +15,6 @@ public class Claim : DomainEntityId
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
     public ICollection<FoodClaim>? FoodClaims { get; set; }
+    public ICollection<RestaurantClaim>? RestaurantClaims { get; set; }
 
 }

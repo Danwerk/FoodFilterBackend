@@ -30,5 +30,6 @@ public class Restaurant : DomainEntityId
     public List<Image>? Images { get; set; }
     public List<OpenHours>? OpenHours { get; set; }
     public ICollection<RestaurantAllergen>? RestaurantAllergens { get; set; }
+    public ICollection<RestaurantClaim>? RestaurantClaims { get; set; }
 
 }

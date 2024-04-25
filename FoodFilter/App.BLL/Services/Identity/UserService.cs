@@ -74,18 +74,9 @@ public class UserService
         return string.Empty;
     }
     
-    public async Task<IEnumerable<AppUser>> GetRestaurantUsersAsync()
-    {
-        var users = await Uow.UserRepository.GetRestaurantUsersAsync();
 
-        return users.Select(e => _userMapper.Map(e)!).ToList();
-    }
 
-    public async Task<IEnumerable<AppUser>> GetUnapprovedRestaurantUsersAsync()
-    {
-        var users = await Uow.UserRepository.GetUnapprovedRestaurantUsersAsync();
-        return users.Select(e => _userMapper.Map(e)!).ToList();
-    }
+  
 
     public async Task<IEnumerable<AppUser>> GetUsersWithRolesAsync()
     {

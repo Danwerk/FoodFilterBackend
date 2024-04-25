@@ -109,43 +109,6 @@ public class UserManagerController : ControllerBase
     
     
     /// <summary>
-    /// Get list of all Restaurant accounts
-    /// </summary>
-    /// <returns>List of all Restaurants</returns>
-    // GET: api/restaurantAccounts
-    [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.User>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetRestaurantUsers()
-    {
-        var allRestaurantUsers = await _identityBll.UserService.GetRestaurantUsersAsync();
-        
-        var res = allRestaurantUsers.Select(e => _mapper.Map(e))
-            .ToList();
-        return Ok(res);
-    }
-    
-    /// <summary>
-    /// Get list of all unapproved Restaurant accounts.
-    /// </summary>
-    /// <returns>List of all unapproved Restaurants</returns>
-    // GET: api/getUnapprovedRestaurantUsers
-    [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.User>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUnapprovedRestaurantUsers()
-    {
-        var allUnapprovedRestaurantUsers = await _identityBll.UserService.GetUnapprovedRestaurantUsersAsync();
-
-        var res = allUnapprovedRestaurantUsers.Select(e => _mapper.Map(e))
-            .ToList();
-        return Ok(res);
-    }
-    
-    
-    /// <summary>
     /// Add role to user
     /// </summary>
     /// <param name="userRoleDto">User and role data</param>

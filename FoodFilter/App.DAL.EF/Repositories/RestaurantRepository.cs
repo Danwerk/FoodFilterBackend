@@ -38,6 +38,7 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
             .Include(c=>c.Images)
             .Include(c=>c.OpenHours)
             .Include(c=>c.RestaurantAllergens)
+            .Include(c=>c.RestaurantClaims)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
@@ -158,4 +159,6 @@ public class RestaurantRepository : EFBaseRepository<Restaurant, ApplicationDbCo
                         r.PaymentEndsAt.Value.ToUniversalTime() < DateTime.UtcNow)
             .ToListAsync();
     }
+
+    
 }

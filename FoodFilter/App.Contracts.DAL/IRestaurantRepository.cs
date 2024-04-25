@@ -19,4 +19,5 @@ public interface IRestaurantRepository : IBaseRepository<Restaurant>
     Task<List<Restaurant>?> GetPendingRestaurants();
     Task<List<Restaurant>?> GetExpiredRestaurants();
 
+
 }

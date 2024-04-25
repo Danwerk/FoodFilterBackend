@@ -334,11 +334,23 @@ namespace WebApp.ApiControllers
             if (restaurantEditDto.RestaurantAllergens != null)
             {
                 var existingRestaurantAllergens = await _bll.RestaurantAllergenService.AllAsync(id);
-                foreach (var allergen in existingRestaurantAllergens)   
+                foreach (var allergen in existingRestaurantAllergens)
                 {
                     if (restaurantEditDto.RestaurantAllergens.Any(r => r.AllergenId == allergen.AllergenId))
                     {
                         await _bll.RestaurantAllergenService.RemoveAsync(allergen.Id);
+                    }
+                }
+            }
+
+            if (restaurantEditDto.RestaurantClaims != null)
+            {
+                var existingRestaurantClaims = await _bll.RestaurantClaimService.AllAsync(id);
+                foreach (var claim in existingRestaurantClaims)
+                {
+                    if (restaurantEditDto.RestaurantClaims.Any(r => r.ClaimId == claim.ClaimId))
+                    {
+                        await _bll.RestaurantClaimService.RemoveAsync(claim.Id);
                     }
                 }
             }
@@ -463,7 +475,7 @@ namespace WebApp.ApiControllers
                 await _bll.RestaurantService.UploadRestaurantImagesAsync(id, images);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception
                 return StatusCode(StatusCodes.Status500InternalServerError, "Failed to upload images.");
@@ -503,7 +515,7 @@ namespace WebApp.ApiControllers
                 await _bll.SaveChangesAsync();
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception
                 return StatusCode(StatusCodes.Status500InternalServerError, "Failed to delete image.");
@@ -516,12 +528,14 @@ namespace WebApp.ApiControllers
         {
             var restaurantAllergens = await _bll.RestaurantAllergenService.AllAsync(restaurantId);
 
-            if (restaurantAllergens == null || !restaurantAllergens.Any())
+            if (!restaurantAllergens.Any())
             {
                 return NotFound();
             }
 
             return Ok(restaurantAllergens);
         }
+
+
     }
 }
