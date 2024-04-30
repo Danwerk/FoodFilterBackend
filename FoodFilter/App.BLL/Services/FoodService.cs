@@ -4,6 +4,7 @@ using App.Common.NutrientCalculationDtos;
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
 using App.Domain;
+using AutoMapper;
 using Base.BLL;
 using Base.Contracts;
 using Microsoft.AspNetCore.Http;
@@ -88,7 +89,7 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
     public IEnumerable<Food> GetAll(Guid id, int limit, string? search)
     {
         var foods = Uow.FoodRepository.GetAll(id, limit, search);
-        
+
         var foodDtos = foods.Select(r => Mapper.Map(r)).ToList();
 
         return foodDtos!;
@@ -153,6 +154,12 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
         throw new Exception("Missing restaurant for approval");
     }
 
+    public async Task<Food> Edit(Food food)
+    {
+        var res = await  Uow.FoodRepository.Edit(Mapper.Map(food)!);
+        return Mapper.Map(res)!;
+    }
+
     // public async Task<Food> Edit(Food entity)
     // {
     //     var editedFood = await Uow.FoodRepository.Edit(Mapper.Map(entity)!);
@@ -169,6 +176,9 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
 
         var res = new FoodCalculationResultDto();
 
+        var convertedToGramsFoodIngredients = ConvertAllFoodIngredientsToGrams(request.FoodIngredients);
+        request.FoodIngredients = convertedToGramsFoodIngredients;
+        
         // Extract all IngredientIds from FoodIngredients
         var ingredientIds = request.FoodIngredients.Select(fi => fi.IngredientId).ToList();
 
@@ -184,17 +194,16 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
             var calculatedNutrient = CalculateNutrientForGroup(request.FoodIngredients, nutrientGroup);
 
             var ingredients = await Uow.IngredientRepository.GetIngredientsByIdsAsync(ingredientIds);
-            
+
             // food total weight
             res.ServingInGrams = request.FoodIngredients.Sum(i => i.Amount);
-            
+
             // set ingredients to result 
             res.Ingredients = ingredients.Select(ing => new IngredientDto { Id = ing.Id, Name = ing.Name }).ToList();
             res.Nutrients.Add(calculatedNutrient);
         }
 
-        
-        
+
         decimal foodTotalCaloriesPer100Grams;
         decimal foodTotalCaloriesPerFoodTotalWeight;
         // avoid division by 0
@@ -206,7 +215,7 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
         else
         {
             // Calculate food calories, per 100 grams and per food total weight
-             foodTotalCaloriesPerFoodTotalWeight =
+            foodTotalCaloriesPerFoodTotalWeight =
                 await CalculateTotalCalories(request.FoodIngredients, ingredientIds, ingredientNutrients);
             foodTotalCaloriesPer100Grams =
                 Math.Round(foodTotalCaloriesPerFoodTotalWeight / res.ServingInGrams * 100, 1);
@@ -215,6 +224,28 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
         res.KCaloriesPerFoodTotalWeight = foodTotalCaloriesPerFoodTotalWeight;
         res.KCaloriesPer100Grams = foodTotalCaloriesPer100Grams;
         return res;
+    }
+
+    private List<FoodIngredientDto> ConvertAllFoodIngredientsToGrams(List<FoodIngredientDto> requestFoodIngredients)
+    {
+        var gramsUnit = Uow.UnitRepository.FirstOrDefaultAsync(UnitTypes.G).Result;
+
+        foreach (var foodIngredient in requestFoodIngredients)
+        {
+            var unit = Uow.UnitRepository.FirstOrDefaultAsync(foodIngredient.UnitId).Result;
+            if (unit != null)
+            {
+                var unitName = unit.UnitName;
+                var convertedValue = _unitService.ConvertToGrams(foodIngredient.Amount, unitName);
+                foodIngredient.Amount = convertedValue;
+                if (gramsUnit != null && foodIngredient.UnitId != gramsUnit.Id)
+                {
+                    foodIngredient.UnitId = gramsUnit.Id;
+                }
+            }
+        }
+
+        return requestFoodIngredients;
     }
 
     private NutrientDto CalculateNutrientForGroup(List<FoodIngredientDto> foodIngredients,
@@ -231,15 +262,21 @@ public class FoodService : BaseEntityService<Food, App.Domain.Food, IFoodReposit
 
         var nutrientName = nutrientGroup.First().NutrientName;
         var unitName = nutrientGroup.First().UnitName;
-
+        var unitId = nutrientGroup.First().UnitId;
+        var unit = new UnitDTO
+        {
+            Id = unitId,
+            UnitName = unitName
+        };
         return new NutrientDto
         {
             Name = nutrientName,
             AmountPerFoodTotalWeight = amountPerFoodTotalWeightRounded,
             AmountPer100Grams = Math.Round(amountPerFoodTotalWeight / foodTotalWeight * 100, 1),
-            UnitName = unitName,
+            //UnitName = unitName,
             NutrientId = nutrientGroup.Key,
-            UnitId = nutrientGroup.First().UnitId
+            //UnitId = nutrientGroup.First().UnitId,
+            Unit = unit
         };
     }
 

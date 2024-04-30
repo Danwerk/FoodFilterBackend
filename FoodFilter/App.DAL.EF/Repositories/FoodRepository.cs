@@ -95,29 +95,38 @@ public class FoodRepository : EFBaseRepository<Food, ApplicationDbContext>, IFoo
             })
             .ToListAsync();
     }
+    
 
-    // public async Task<Food> Edit(Food entity)
-    // {
-    //     var existingEntity = RepositoryDbSet.Find(entity.Id);
-    //
-    //     if (existingEntity != null)
-    //     {
-    //         RepositoryDbContext.Entry(existingEntity).State = EntityState.Detached;
-    //     }
-    //
-    //     return RepositoryDbSet.Update(entity).Entity;
-    // }
+    public async Task<Food> Edit(Food entity)
+    {
+        if (entity.FoodNutrients != null)
+        {
+            foreach (var nutrient in entity.FoodNutrients)
+            {
+                nutrient.UnitId = nutrient.Unit!.Id;
+                nutrient.Unit = null;
+            }
+        }
+
+        // Perform the update
+        var updatedEntity = RepositoryDbSet.Update(entity).Entity;
+        
+        await RepositoryDbContext.SaveChangesAsync();
+        return updatedEntity;
+    }
 
     public override async Task<Food?> FindAsync(Guid id)
     {
         return await RepositoryDbSet
             .Include(c => c.Restaurant)
-            .Include(f=>f.FoodClaims)!
-            .ThenInclude(fc=> fc.Claim)
+            .Include(f => f.FoodClaims)!
+            .ThenInclude(fc => fc.Claim)
             .Include(f => f.FoodAllergens)!
             .ThenInclude(fa => fa.Allergen)
             .Include(f => f.FoodNutrients)!
             .ThenInclude(f => f.Nutrient)
+            .Include(f => f.FoodNutrients)!
+            .ThenInclude(f => f.Unit)
             .Include(f => f.FoodIngredients)!
             .ThenInclude(fi => fi.Ingredient)
             //.ThenInclude(i => i!.IngredientNutrients)!

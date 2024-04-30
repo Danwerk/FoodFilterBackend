@@ -30,6 +30,8 @@ public class AutomapperConfig : Profile
         CreateMap<App.Domain.RestaurantClaim, App.BLL.DTO.RestaurantClaim>().ReverseMap();
         CreateMap<App.Domain.Nutrient, App.BLL.DTO.Nutrient>().ReverseMap();
         CreateMap<App.Domain.FoodNutrient, App.BLL.DTO.FoodNutrient>().ReverseMap();
+        
+        
         CreateMap<App.Domain.Restaurant, App.BLL.DTO.Restaurant>()
             .ForMember(dest => dest.IsApproved, opt => opt.MapFrom(src => src.AppUser!.IsApproved))
             .ForMember(dest => dest.IsRejected, opt => opt.MapFrom(src => src.AppUser!.IsRejected))

@@ -9,11 +9,10 @@ public class FoodNutrient : DomainEntityId
     [JsonIgnore]
     public Nutrient? Nutrient { get; set; }
     public Guid FoodId { get; set; }
-    public Guid UnitId { get; set; }
-    //public string NutrientName { get; set; } = default!;
+    //public Guid UnitId { get; set; }
+    public Unit? Unit { get; set; }
     public decimal AmountPer100Grams { get; set; }
     public decimal AmountPerFoodTotalWeight { get; set; }
-   // public string UnitName { get; set; } = default!;
 
 
 

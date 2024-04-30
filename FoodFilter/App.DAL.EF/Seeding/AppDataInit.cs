@@ -275,37 +275,37 @@ public static class AppDataInit
 
         context.Nutrients.Add(new Nutrient()
             {
-                Name = "carbohydrates"
+                Name = NutrientNames.CARBOHYDRATES
             }
         );
         context.Nutrients.Add(new Nutrient()
             {
-                Name = "fat"
+                Name = NutrientNames.FAT
             }
         );
         context.Nutrients.Add(new Nutrient()
             {
-                Name = "saturatedFattyAcids"
+                Name = NutrientNames.SATURATED_FATTY_ACIDS
             }
         );
         context.Nutrients.Add(new Nutrient()
             {
-                Name = "protein"
+                Name = NutrientNames.PROTEIN
             }
         );
         context.Nutrients.Add(new Nutrient()
             {
-                Name = "sugar"
+                Name = NutrientNames.SUGAR
             }
         );
         context.Nutrients.Add(new Nutrient()
             {
-                Name = "fiber"
+                Name = NutrientNames.FIBER
             }
         );
         context.Nutrients.Add(new Nutrient()
             {
-                Name = "salt"
+                Name = NutrientNames.SALT
             }
         );
     }

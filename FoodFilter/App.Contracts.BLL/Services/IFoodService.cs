@@ -15,7 +15,8 @@ public interface IFoodService : IBaseRepository<Food>
     Task<List<Food>?> GetFoods();
     Task<Food?> PublishFoodAsync(Guid id);
     Task<Food?> UnpublishFoodAsync(Guid id);
-    // Task<Food> Edit(Food entity);
+    Task<Food> Edit(Food entity);
+    
     
     Task<FoodCalculationResultDto> CalculateNutrients(FoodCalculationRequestDto request);
 

@@ -29,7 +29,10 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+{
+    options.UseNpgsql(connectionString);
+   // options.EnableSensitiveDataLogging();
+});
 
 // Register our UOW with scoped lifecycle
 builder.Services.AddScoped<IAppUOW, AppUOW>();

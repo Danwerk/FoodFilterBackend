@@ -10,7 +10,6 @@ public interface IFoodRepository : IBaseRepository<Food>
     IEnumerable<Food> GetAll(Guid restaurantId, int limit, string? search);
     Task<IEnumerable<Food>> AllAsync(Guid restaurantId);
     Task<IEnumerable<Food>> PublishedAllAsync(Guid restaurantId);
-
-
-    // Task<Food> Edit(Food entity);
+    
+    Task<Food> Edit(Food entity);
 }

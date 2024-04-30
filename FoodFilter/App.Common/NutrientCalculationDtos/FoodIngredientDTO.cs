@@ -4,5 +4,5 @@ public class FoodIngredientDto
 {
     public Guid IngredientId { get; set; }
     public decimal Amount { get; set; }
-    public string Unit { get; set; } = default!;
+    public Guid UnitId { get; set; }
 }

@@ -537,5 +537,48 @@ namespace WebApp.ApiControllers
         }
 
 
+        [HttpGet("{restaurantId}")]
+        public async Task<ActionResult> GetRestaurantClaims(Guid restaurantId)
+        {
+            var restaurantClaims = await _bll.RestaurantClaimService.AllAsync(restaurantId);
+
+            if (!restaurantClaims.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(restaurantClaims);
+        }
+
+        /// <summary>
+        /// Delete Restaurant with specified id
+        /// </summary>
+        /// <param name="id">Restaurant ID</param>
+        /// <returns>Action result</returns>
+        [HttpDelete("{id}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(RestApiErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteRestaurant(Guid id)
+        {
+            if (User.IsInRole(RoleNames.Admin))
+            {
+                var restaurant = await _bll.RestaurantService.FirstOrDefaultAsync(id);
+
+                if (restaurant == null)
+                {
+                    return NotFound();
+                }
+                
+                await _bll.RestaurantService.RemoveAsync(restaurant.Id);
+                await _bll.SaveChangesAsync();
+
+                return Ok();
+            }
+
+            return NotFound();
+        }
     }
 }

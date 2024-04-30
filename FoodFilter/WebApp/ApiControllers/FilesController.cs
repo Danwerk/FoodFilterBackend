@@ -155,7 +155,7 @@ public class FilesController : ControllerBase
     private async Task MapAndSaveNutrient(string nutrientName, decimal value, Guid ingredientId, Guid unitId,
         List<IngredientNutrient> ingredientNutrients)
     {
-        var nutrient = await _uow.NutrientRepository.FirstOrDefaultAsync(nutrientName.ToLower());
+        var nutrient = await _uow.NutrientRepository.FirstOrDefaultAsync(nutrientName);
 
         if (nutrient != null)
         {

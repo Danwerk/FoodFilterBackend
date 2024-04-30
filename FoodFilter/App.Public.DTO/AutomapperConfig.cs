@@ -30,9 +30,12 @@ public class AutomapperConfig : Profile
             .ForMember(dest => dest.Claim, opt => opt.Ignore());
 
         CreateMap<App.BLL.DTO.FoodNutrient, App.Public.DTO.v1.FoodNutrient>()
-            .ForMember(dest => dest.NutrientName, opt => opt.MapFrom(src => src.Nutrient!.Name));
+            .ForMember(dest => dest.NutrientName, opt => 
+                opt.MapFrom(src => src.Nutrient!.Name));
         CreateMap<App.Public.DTO.v1.FoodNutrient, App.BLL.DTO.FoodNutrient>()
             .ForMember(dest => dest.Nutrient, opt => opt.Ignore());
+            //.ForMember(dest => dest.UnitId, opt => opt.MapFrom(src => src.Unit!.Id));
+
 
         CreateMap<App.BLL.DTO.FoodIngredient, App.Public.DTO.v1.FoodIngredient>()
             .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient!.Name));

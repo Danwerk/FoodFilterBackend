@@ -201,8 +201,8 @@ public class FoodsController : ControllerBase
         try
         {
             var foodBll = _mapper.Map(food);
-            var editedFood = _bll.FoodService.Update(foodBll!);
-            await _bll.SaveChangesAsync();
+            
+            var editedFood = await _bll.FoodService.Edit(foodBll!);
             return Ok(editedFood);
         }
         catch (DbUpdateConcurrencyException)

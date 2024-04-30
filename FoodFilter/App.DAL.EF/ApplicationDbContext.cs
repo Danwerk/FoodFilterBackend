@@ -11,13 +11,13 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid, Id
 {
     public DbSet<Allergen> Allergens { get; set; } = default!;
     public DbSet<Food> Foods { get; set; } = default!;
-    public DbSet<FoodAllergen> FoodAllergens { get; set; } = default!;
-    public DbSet<FoodIngredient> FoodIngredients { get; set; } = default!;
-    public DbSet<FoodNutrient> FoodNutrients { get; set; } = default!;
     public DbSet<RestaurantAllergen> RestaurantAllergens { get; set; } = default!;
     public DbSet<RestaurantClaim> RestaurantClaims { get; set; } = default!;
     public DbSet<Claim> Claims { get; set; } = default!;
+    public DbSet<FoodIngredient> FoodIngredients { get; set; } = default!;
+    public DbSet<FoodAllergen> FoodAllergens { get; set; } = default!;
     public DbSet<FoodClaim> FoodClaims { get; set; } = default!;
+    public DbSet<FoodNutrient> FoodNutrients { get; set; } = default!;
     
     
     public DbSet<Ingredient> Ingredients { get; set; } = default!;
@@ -34,10 +34,12 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid, Id
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
+        
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        
         base.OnModelCreating(builder);
 
         // disable cascade delete
