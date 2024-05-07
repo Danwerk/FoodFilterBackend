@@ -8,10 +8,9 @@ public class Ingredient
 
     public string Name { get; set; } = default!;
 
-    [MaxLength(512)]
-    public string? Description { get; set; }
-    
     public decimal? KCaloriesPer100Grams { get; set; }
 
     public bool IsConfirmed { get; set; }
+    
+    public Guid AddedBy { get; set; }
 }

@@ -19,6 +19,8 @@ public class Ingredient : DomainEntityId
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
+    public Guid? AddedBy { get; set; }
+    
     public ICollection<FoodIngredient>? FoodIngredients { get; set; }
     public ICollection<IngredientNutrient>? IngredientNutrients { get; set; }
 }

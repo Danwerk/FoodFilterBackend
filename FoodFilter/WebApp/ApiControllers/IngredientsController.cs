@@ -44,20 +44,76 @@ public class IngredientsController : ControllerBase
     /// Phrase which ingredient name or description must contain.
     /// If left blank, all ingredients will be returned.
     /// </param>
-    /// <returns>Collection of features</returns>
+    /// <returns>Collection of ingredients</returns>
     /// <response code="200">Collection of ingredients was successfully retrieved.</response>
     /// <response code="401">Not authorized to see the data.</response>
     [ProducesResponseType(typeof(IEnumerable<Ingredient>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces(MediaTypeNames.Application.Json)]
     [HttpGet("{limit}/{search?}")]
-    public Task<ActionResult<IEnumerable<Ingredient>>> GetAllIngredients(int limit, string? search)
+    public async Task<ActionResult<IEnumerable<Ingredient>>> GetAllIngredients(int limit, string? search)
     {
-        var vm = _bll.IngredientService.GetAll(limit, search);
-        var res = vm.Select(e => _mapper.Map(e))
-            .ToList();
+        if (User.IsInRole(RoleNames.Admin))
+        {
+            var vm = _bll.IngredientService.GetAll(limit, search);
+            var res = vm.Select(e => _mapper.Map(e))
+                .ToList();
 
-        return Task.FromResult<ActionResult<IEnumerable<Ingredient>>>(Ok(res));
+            return Ok(res);
+        }
+
+        return Ok();
+    }
+
+
+    /// <summary>
+    /// Get ingredients ordered descending based on time created for restaurant
+    /// </summary>
+    /// <param name="id">RestaurantId</param>
+    /// <returns>Collection of ingredients</returns>
+    /// <response code="200">Collection of ingredients was successfully retrieved.</response>
+    /// <response code="401">Not authorized to see the data.</response>
+    [ProducesResponseType(typeof(IEnumerable<Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<IEnumerable<Ingredient>>> GetIngredients(Guid id)
+    {
+        if (User.IsInRole(RoleNames.Restaurant))
+        {
+            var vm = await _bll.IngredientService.AllAsync(id);
+
+            var res = vm.Select(e => _mapper.Map(e))
+                .ToList();
+
+            return Ok(res);
+        }
+
+        return BadRequest();
+    }
+
+    /// <summary>
+    /// Get ingredients ordered descending based on time created for admin
+    /// </summary>
+    /// <returns>Collection of ingredients</returns>
+    /// <response code="200">Collection of ingredients was successfully retrieved.</response>
+    /// <response code="401">Not authorized to see the data.</response>
+    [ProducesResponseType(typeof(IEnumerable<Ingredient>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Ingredient>>> GetIngredients()
+    {
+        if (User.IsInRole(RoleNames.Admin))
+        {
+            var vm = await _bll.IngredientService.AllAsync();
+
+            var res = vm.Select(e => _mapper.Map(e))
+                .ToList();
+
+            return Ok(res);
+        }
+        return BadRequest();
     }
 
     /// <summary>
@@ -156,10 +212,7 @@ public class IngredientsController : ControllerBase
 
         await _bll.SaveChangesAsync();
 
-        if (User.IsInRole(RoleNames.Admin))
-        {
-            await _bll.IngredientNutrientService.AddIngredientNutrientsForIngredient(bllIngredient!);
-        }
+        await _bll.IngredientNutrientService.AddIngredientNutrientsForIngredient(bllIngredient!);
 
         return CreatedAtAction("GetIngredient", new { id = ingredient.Id }, ingredient);
     }

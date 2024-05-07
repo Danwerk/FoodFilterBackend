@@ -24,6 +24,15 @@ public class IngredientService :
         return ingredients.Select(i => i.Name).ToList();
     }
 
+    public async Task<IEnumerable<Ingredient>> AllAsync(Guid restaurantId)
+    {
+        var ingredients = await Uow.IngredientRepository.AllAsync(restaurantId);
+        
+        var ingredientDtos = ingredients.Select(r => Mapper.Map(r)).ToList();
+
+        return ingredientDtos!;
+    }
+
     public IEnumerable<Ingredient> GetAll(int limit, string? search)
     {
         var ingredients = Uow.IngredientRepository.GetAll(limit, search);

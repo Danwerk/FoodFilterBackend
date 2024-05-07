@@ -70,18 +70,26 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
         return newQuery;
     }
 
+    public async Task<IEnumerable<Ingredient>> AllAsync(Guid restaurantId)
+    {
+        return await RepositoryDbSet
+            .OrderByDescending(i => i.CreatedAt)
+            .Where(i => (i.IsConfirmed && i.AddedBy == null) || i.AddedBy == restaurantId)
+            .ToListAsync();
+    }
+
     public async Task<List<Ingredient>> GetUnconfirmedIngredients()
     {
         return await RepositoryDbSet
-            .OrderBy(i=>i.CreatedAt)
+            .OrderBy(i => i.CreatedAt)
             .Where(i => !i.IsConfirmed)
             .ToListAsync();
     }
-    
+
     public async Task<List<Ingredient>> GetConfirmedIngredients()
     {
         return await RepositoryDbSet
-            .OrderByDescending(i=>i.CreatedAt)
+            .OrderByDescending(i => i.CreatedAt)
             .Where(i => i.IsConfirmed)
             .ToListAsync();
     }
@@ -92,8 +100,8 @@ public class IngredientRepository : EFBaseRepository<Ingredient, ApplicationDbCo
         {
             return true;
         }
+
         search = search.ToLower();
         return ingredient.Name.ToLower().Contains(search);
     }
-
 }

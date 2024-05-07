@@ -6,6 +6,7 @@ namespace App.Contracts.BLL.Services;
 public interface IIngredientService: IBaseRepository<App.BLL.DTO.Ingredient>
 {
     Task<List<string>> GetIngredientNamesAsync(List<Guid> ids);
+    Task<IEnumerable<Ingredient>> AllAsync(Guid restaurantId);
 
     IEnumerable<Ingredient> GetAll(int limit, string? search);
     Task<List<Ingredient>> GetUnconfirmedIngredients();
