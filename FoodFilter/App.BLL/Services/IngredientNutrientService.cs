@@ -1,9 +1,12 @@
-﻿using App.BLL.DTO;
+﻿using App.Common;
 using App.Common.IngredientNutrientDtos;
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
+using App.Domain;
 using Base.BLL;
 using Base.Contracts;
+using Ingredient = App.BLL.DTO.Ingredient;
+using IngredientNutrient = App.BLL.DTO.IngredientNutrient;
 
 namespace App.BLL.Services;
 
@@ -28,9 +31,25 @@ public class IngredientNutrientService :
         return ingredientNutrientDtos!;
     }
 
-    public Task AddIngredientNutrientsForIngredient(Ingredient ingredient)
+    public async Task AddIngredientNutrientsForIngredient(Ingredient ingredient)
     {
         var nutrients = Uow.NutrientRepository.AllAsync().Result;
+        var unit = await Uow.UnitRepository.FirstOrDefaultAsync(UnitTypes.G);
+        Guid unitId;
+        if (unit == null)
+        {
+            var unitToSave = new Unit()
+            {
+                UnitName = UnitTypes.G
+            };
+            Uow.UnitRepository.Add(unitToSave);
+            await Uow.SaveChangesAsync();
+            unitId = unitToSave.Id;
+        }
+        else
+        {
+            unitId = unit!.Id;
+        }
 
         foreach (var nutrient in nutrients)
         {
@@ -38,6 +57,7 @@ public class IngredientNutrientService :
             {
                 IngredientId = ingredient.Id,
                 NutrientId = nutrient.Id,
+                UnitId = unitId,
                 Amount = 0,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
@@ -46,7 +66,7 @@ public class IngredientNutrientService :
             Uow.IngredientNutrientRepository.Add(Mapper.Map(ingredientNutrient)!);
         }
 
-        return Uow.SaveChangesAsync();
+        await Uow.SaveChangesAsync();
     }
 
     public async Task UpdateIngredientNutrientsAsync(Guid ingredientId, List<NutrientUpdateDto>? nutrients)
@@ -62,7 +82,7 @@ public class IngredientNutrientService :
         foreach (var nutrient in nutrients)
         {
             var existingNutrient = existingIngredientNutrients.FirstOrDefault(n => n.Nutrient!.Name == nutrient.Name);
-            
+
             if (existingNutrient != null)
             {
                 existingNutrient.Amount = nutrient.Amount;
@@ -71,7 +91,7 @@ public class IngredientNutrientService :
             else
             {
                 // If the nutrient does not exist, you may choose to add it or skip it
-               
+
                 continue;
             }
         }

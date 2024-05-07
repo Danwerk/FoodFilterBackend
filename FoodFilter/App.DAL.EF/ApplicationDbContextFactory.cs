@@ -8,9 +8,18 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
+        var contentRootPath = Directory.GetCurrentDirectory();
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(contentRootPath)
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        // Get connection string from appsettings.json
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        
-        optionsBuilder.UseNpgsql("Host=localhost:5446;Database=food-filter;Username=postgres;Password=postgres");
+
+        optionsBuilder.UseNpgsql(connectionString);
 
         return new ApplicationDbContext(optionsBuilder.Options);
     }
