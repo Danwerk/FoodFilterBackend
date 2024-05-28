@@ -7,10 +7,6 @@ Copy in root directory appsettings.json and modify "DefaultConnection" connectio
 Create Image...
 Host it...
 
-# ERD SCHEMA
-```
-will be here
-```
 # INSTALL OR UPDATE DOTNET TOOL
 ```
 dotnet tool install --global dotnet-ef
