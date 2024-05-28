@@ -1,3 +1,6 @@
+# Description
+A web application that allows restaurants to manage their dishes, ingredients, energy, and macronutrient content, and mark food allergens. The system generates codes for the added dishes, which users can later scan with a smart device to get information about allergens and the content of various ingredients.
+
 # Running and configuration
 ### If using docker
 Copy in root directory appsettings.json and modify "DefaultConnection" connection string with your hosting db settings.
